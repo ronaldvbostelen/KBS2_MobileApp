@@ -14,7 +14,7 @@ namespace Wijkagent_App.Views
 	{
 		public MapPage ()
 		{
-			InitializeComponent ();
+            InitializeComponent();
 		}
 	}
 }
