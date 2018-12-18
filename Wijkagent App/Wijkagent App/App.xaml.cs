@@ -14,7 +14,7 @@ namespace Wijkagent_App
             InitializeComponent();
 
 
-            MainPage = new MainPage();
+            MainPage = new MapPage();
         }
 
         protected override void OnStart()
