@@ -32,6 +32,7 @@ namespace Wijkagent_App.Views
 
 	    private void SetInitialPosition()
 	    {
+	        MainMap.MapType = MapType.Hybrid;
 	        MainMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(52.499312, 6.079549), Distance.FromKilometers(1)));
         }
 
