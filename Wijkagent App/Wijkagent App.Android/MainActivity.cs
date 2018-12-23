@@ -2,15 +2,9 @@
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
-using Android.Runtime;
-using Android.Support.V4.App;
-using Android.Support.V4.Content;
-using Android.Webkit;
-using Plugin.Permissions;
 using Xamarin;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
-using Wijkagent_App;
 
 namespace Wijkagent_App.Droid
 {
