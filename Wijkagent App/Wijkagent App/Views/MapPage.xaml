@@ -14,7 +14,9 @@
                 x:Name="MainMap"
                 HeightRequest="100"
                 WidthRequest="960"
-                VerticalOptions="FillAndExpand" />
+                VerticalOptions="FillAndExpand" 
+                IsShowingUser="True"
+                MapType="Hybrid"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
