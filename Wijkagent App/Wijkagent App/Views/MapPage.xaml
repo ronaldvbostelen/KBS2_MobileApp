@@ -1,16 +1,30 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps"
              x:Class="Wijkagent_App.Views.MapPage">
     <ContentPage.Content>
-        <StackLayout VerticalOptions="StartAndExpand" Padding="30">
-            <maps:Map WidthRequest="320" HeightRequest="550"
-                      x:Name="MyMap"
-                      IsShowingUser="False"
-                      MapType="Street"
-                      HasScrollEnabled="False"
-            />
+        <StackLayout
+            VerticalOptions="FillAndExpand"
+            HorizontalOptions="FillAndExpand"
+            Padding="5"
+            Spacing="0">
+            <maps:Map
+                x:Name="MainMap"
+                HeightRequest="100"
+                WidthRequest="960"
+                VerticalOptions="FillAndExpand" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="BtnOne" Grid.Column="0" Text="PRIO 1"/>
+                <Button x:Name="BtnTwo" Grid.Column="1" Text="PRIO 2"/>
+                <Button x:Name="BtnThree" Grid.Column="2" Text="PRIO 3"/>
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
