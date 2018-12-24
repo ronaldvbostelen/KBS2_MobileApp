@@ -1,25 +1,15 @@
-﻿using Xamarin.Forms.Maps;
+﻿using Wijkagent_App.DataModels.Enums;
+using Xamarin.Forms.Maps;
 
 namespace Wijkagent_App.Models
 {
-    public enum Priority
-    {
-        Low,
-        Medium,
-        High
-    }
-
     public class Message
     {
-        public string Label { get; set; }
-        public string Content { get; set; }
         public Priority Priority { get; set; }
         public Pin Pin { get; set; }
 
         public Message(string label, string content, Priority priority, Position position)
         {
-            Label = label;
-            Content = content;
             Priority = priority;
             Pin = new Pin
             {

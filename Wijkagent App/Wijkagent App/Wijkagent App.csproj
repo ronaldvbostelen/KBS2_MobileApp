@@ -30,6 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DataModels\Interfaces\" />
+    <Folder Include="DataModels\Delegates\" />
+    <Folder Include="DataModels\Collections\" />
     <Folder Include="Services\" />
     <Folder Include="ViewModels\" />
   </ItemGroup>
