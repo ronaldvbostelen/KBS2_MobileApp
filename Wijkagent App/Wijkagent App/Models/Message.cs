@@ -1,12 +1,39 @@
-﻿using Wijkagent_App.DataModels.Enums;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using Wijkagent_App.DataModels.Enums;
 using Xamarin.Forms.Maps;
 
 namespace Wijkagent_App.Models
 {
-    public class Message
+    public class Message : INotifyPropertyChanged
     {
-        public Priority Priority { get; set; }
-        public Pin Pin { get; set; }
+        private Priority priority;
+        public Priority Priority
+        {
+            get { return priority; }
+            set
+            {
+                if (value != priority)
+                {
+                    priority = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private Pin pin;
+        public Pin Pin
+        {
+            get { return pin; }
+            set
+            {
+                if (value != pin)
+                {
+                    pin = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public Message(string label, string content, Priority priority, Position position)
         {
@@ -34,6 +61,13 @@ namespace Wijkagent_App.Models
                 default:
                     return PinType.Generic;
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Wijkagent_App.Views
+namespace Wijkagent_App.Views.Pages
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class PageThree : ContentPage
+	public partial class MessagePage : ContentPage
 	{
-		public PageThree ()
+		public MessagePage ()
 		{
-			InitializeComponent();
+			InitializeComponent ();
 		}
 	}
 }

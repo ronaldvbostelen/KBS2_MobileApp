@@ -10,30 +10,33 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Xam.Plugin.Geolocator" Version="4.5.0.6" />
     <PackageReference Include="Xamarin.Forms" Version="3.3.0.967583" />
     <PackageReference Include="Xamarin.Forms.Maps" Version="3.3.0.967583" />  
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Views\MapPage.xaml">
+    <EmbeddedResource Update="Views\MainPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\PageOne.xaml">
+    <EmbeddedResource Update="Views\Pages\MapPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\PageThree.xaml">
+    <EmbeddedResource Update="Views\Pages\MessagePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\PageTwo.xaml">
+    <EmbeddedResource Update="Views\Pages\PinsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Pages\StarsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DataModels\Interfaces\" />
-    <Folder Include="DataModels\Delegates\" />
-    <Folder Include="DataModels\Collections\" />
     <Folder Include="Services\" />
-    <Folder Include="ViewModels\" />
+    <Folder Include="DataModels\Delegates\" />
+    <Folder Include="DataModels\Interfaces\" />
+    <Folder Include="DataModels\Collections\" />
   </ItemGroup>
 </Project>

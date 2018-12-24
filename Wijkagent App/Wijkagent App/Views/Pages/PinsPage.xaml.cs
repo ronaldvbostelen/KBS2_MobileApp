@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Wijkagent_App.Views
+namespace Wijkagent_App.Views.Pages
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class PageOne : ContentPage
+	public partial class PinsPage : ContentPage
 	{
-		public PageOne ()
+		public PinsPage ()
 		{
 			InitializeComponent ();
 		}

@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using Wijkagent_App.DataModels.Enums;
+using Wijkagent_App.Models;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
 
-namespace Wijkagent_App.Views
+namespace Wijkagent_App.Views.Pages
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class PageTwo : ContentPage
+	public partial class MapPage : ContentPage
 	{
-		public PageTwo ()
+		public MapPage ()
 		{
-		    InitializeComponent();
+            InitializeComponent();   
         }
 	}
 }

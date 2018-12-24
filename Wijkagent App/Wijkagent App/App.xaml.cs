@@ -1,4 +1,5 @@
 ﻿using System;
+using Wijkagent_App.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Wijkagent_App.Views;
@@ -11,18 +12,26 @@ namespace Wijkagent_App
 
         public App()
         {
-            var startPage = new TabbedPage();
-            
-            startPage.Children.Add(new MapPage { Title = "Map/Zoom", Icon = "target_with_circle.png" });
-            
-            startPage.Children.Add(new PageOne { Title = "Pins", Icon = "big_map_placeholder.png" });
-            
-            startPage.Children.Add(new PageTwo { Title = "5 Stars", Icon = "star_point.png" });
-            
-            startPage.Children.Add(new PageThree { Title = "Messages", Icon = "error_message.png" });
+            InitializeComponent();
 
-          
-            MainPage = startPage;
+
+            MainPage = new MainPage();
+        }
+
+        protected override void OnStart()
+        {
+            // Handle when your app starts
+        }
+
+        protected override void OnSleep()
+        {
+            // Handle when your app sleeps
+        }
+
+        protected override void OnResume()
+        {
+            // Handle when your app resumes
         }
     }
-}
+    }
+
