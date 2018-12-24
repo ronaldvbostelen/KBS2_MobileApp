@@ -47,7 +47,7 @@ namespace Wijkagent_App.ViewModels
             get { return new ActionCommand(action => PrioTwo(), canExecute => CanExecutePrioTwo()); }
         }
 
-        private bool CanExecutePrioTwo() => messages.Exists(x => x.Priority == Priority.High);
+        private bool CanExecutePrioTwo() => messages.Exists(x => x.Priority == Priority.Medium);
 
         private void PrioTwo()
         {
@@ -59,7 +59,7 @@ namespace Wijkagent_App.ViewModels
             get { return new ActionCommand(action => PrioThree(), canExecute => CanExecutePrioThree()); }
         }
 
-        private bool CanExecutePrioThree() => messages.Exists(x => x.Priority == Priority.High);
+        private bool CanExecutePrioThree() => messages.Exists(x => x.Priority == Priority.Low);
 
         private void PrioThree()
         {
