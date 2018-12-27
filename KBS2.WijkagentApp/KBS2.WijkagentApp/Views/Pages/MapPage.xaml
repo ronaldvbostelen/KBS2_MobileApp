@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:KBS2.WijkagentApp.ViewModels;assembly=KBS2.WijkagentApp"
+             x:Class="KBS2.WijkagentApp.Views.Pages.MapPage"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.BindingContext>
+        <viewModels:MapViewModel/>
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <StackLayout
+            VerticalOptions="FillAndExpand"
+            HorizontalOptions="FillAndExpand"
+            Padding="5"
+            Spacing="0">
+            <ContentView Content="{Binding BindMap}"
+                         VerticalOptions="FillAndExpand"
+                         HeightRequest="100"
+                         WidthRequest="960"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Text="PRIO 1" Command="{Binding PrioOneCommand}" />
+                <Button Grid.Column="1" Text="PRIO 2" Command="{Binding PrioTwoCommand}" />
+                <Button Grid.Column="2" Text="PRIO 3" Command="{Binding PrioThreeCommand}" />
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

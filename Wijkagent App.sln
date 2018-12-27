@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wijkagent App.iOS", "Wijkagent App\Wijkagent App.iOS\Wijkagent App.iOS.csproj", "{675DAA73-14F7-4904-8644-284D0DAA8B77}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBS2.WijkagentApp.Android", "KBS2.WijkagentApp\KBS2.WijkagentApp.Android\KBS2.WijkagentApp.Android.csproj", "{8C30DAFC-D55D-4C4C-835C-8C6B1743A325}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSB2.WijkagentApp.Android", "KSB2.WijkagentApp\KSB2.WijkagentApp.Android\KSB2.WijkagentApp.Android.csproj", "{8C30DAFC-D55D-4C4C-835C-8C6B1743A325}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSB2.WijkagentApp", "KSB2.WijkagentApp\KSB2.WijkagentApp\KSB2.WijkagentApp.csproj", "{95C32A54-C6FA-4661-BE8B-F71F6AAA275E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBS2.WijkagentApp", "KBS2.WijkagentApp\KBS2.WijkagentApp\KBS2.WijkagentApp.csproj", "{95C32A54-C6FA-4661-BE8B-F71F6AAA275E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
