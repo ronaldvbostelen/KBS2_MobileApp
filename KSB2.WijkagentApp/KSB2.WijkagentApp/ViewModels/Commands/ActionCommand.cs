@@ -5,8 +5,8 @@ namespace KSB2.WijkagentApp.ViewModels.Commands
 {
     public class ActionCommand : ICommand
     {
-        readonly Action<object> _action;
-        readonly Predicate<object> _canExecute;
+        private readonly Action<object> _action;
+        private readonly Predicate<object> _canExecute;
         private EventHandler _eventHandler;
 
         public ActionCommand(Action<object> action) : this(action, null) { }
