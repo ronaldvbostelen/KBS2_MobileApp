@@ -13,8 +13,8 @@ namespace KSB2.WijkagentApp.ViewModels.Commands
 
         public ActionCommand(Action<object> action, Predicate<object> canExecute)
         {
-            this._action = action;
-            this._canExecute = canExecute;
+            _action = action;
+            _canExecute = canExecute;
         }
 
         public event EventHandler CanExecuteChanged
