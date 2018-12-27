@@ -7,29 +7,29 @@ namespace KSB2.WijkagentApp.Datamodels
 {
     public class Message : INotifyPropertyChanged
     {
-        private Priority priority;
+        private Priority _priority;
         public Priority Priority
         {
-            get { return priority; }
+            get { return _priority; }
             set
             {
-                if (value != priority)
+                if (value != _priority)
                 {
-                    priority = value;
+                    _priority = value;
                     NotifyPropertyChanged();
                 }
             }
         }
 
-        private Pin pin;
+        private Pin _pin;
         public Pin Pin
         {
-            get { return pin; }
+            get { return _pin; }
             set
             {
-                if (value != pin)
+                if (value != _pin)
                 {
-                    pin = value;
+                    _pin = value;
                     NotifyPropertyChanged();
                 }
             }

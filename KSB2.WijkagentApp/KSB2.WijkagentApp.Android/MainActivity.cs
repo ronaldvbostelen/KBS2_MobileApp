@@ -14,7 +14,7 @@ namespace KSB2.WijkagentApp.Droid
     [Activity(Label = "KSB2.WijkagentApp", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        private readonly string[] permissions =
+        private readonly string[] _permissions =
         {
             Manifest.Permission.AccessFineLocation,
             Manifest.Permission.AccessCoarseLocation
@@ -25,8 +25,8 @@ namespace KSB2.WijkagentApp.Droid
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
-            RequestPermissions(permissions, 0);
-            RequestPermissions(permissions, 1);
+            RequestPermissions(_permissions, 0);
+            RequestPermissions(_permissions, 1);
 
             base.OnCreate(savedInstanceState);
             Forms.Init(this, savedInstanceState);

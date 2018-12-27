@@ -7,11 +7,11 @@ namespace KSB2.WijkagentApp.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        string title = string.Empty;
+        string _title = string.Empty;
         public string Title
         {
-            get { return title; }
-            set { SetProperty(ref title, value); }
+            get { return _title; }
+            set { SetProperty(ref _title, value); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
