@@ -4,7 +4,7 @@
     {
         public StarViewModel()
         {
-            Title = "Star";
+            //TODO
         }
     }
 }

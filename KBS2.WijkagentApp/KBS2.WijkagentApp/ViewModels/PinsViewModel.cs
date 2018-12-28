@@ -4,7 +4,7 @@
     {
         public PinsViewModel()
         {
-            Title = "Pins";
+            //TODO
         }
     }
 }

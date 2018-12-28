@@ -4,7 +4,7 @@
     {
         public MessageViewModel()
         {
-            Title = "Message";
+            //TODO
         }
     }
 }

@@ -6,28 +6,29 @@
              x:Class="KBS2.WijkagentApp.Views.Pages.MapPage"
              NavigationPage.HasNavigationBar="False">
     <ContentPage.BindingContext>
-        <viewModels:MapViewModel/>
+        <viewModels:MapViewModel />
     </ContentPage.BindingContext>
     <ContentPage.Content>
-        <StackLayout
-            VerticalOptions="FillAndExpand"
-            HorizontalOptions="FillAndExpand"
-            Padding="5"
-            Spacing="0">
-            <ContentView Content="{Binding BindMap}"
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <ContentView Grid.Row="0" Grid.ColumnSpan="3"
+                         Content="{Binding Map}"
                          VerticalOptions="FillAndExpand"
-                         HeightRequest="100"
-                         WidthRequest="960"/>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Text="PRIO 1" Command="{Binding PrioOneCommand}" />
-                <Button Grid.Column="1" Text="PRIO 2" Command="{Binding PrioTwoCommand}" />
-                <Button Grid.Column="2" Text="PRIO 3" Command="{Binding PrioThreeCommand}" />
-            </Grid>
-        </StackLayout>
+                         HorizontalOptions="FillAndExpand" />
+            <Button Grid.Row="1" Grid.Column="0" Text="PRIO 1" 
+                    Command="{Binding PrioOneCommand}" />
+            <Button Grid.Row="1" Grid.Column="1" Text="PRIO 2" 
+                    Command="{Binding PrioTwoCommand}" />
+            <Button Grid.Row="1" Grid.Column="2" Text="PRIO 3" 
+                    Command="{Binding PrioThreeCommand}" />
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

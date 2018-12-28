@@ -5,43 +5,47 @@ namespace KBS2.WijkagentApp.ViewModels.Commands
 {
     public class ActionCommand : ICommand
     {
-        private readonly Action<object> _action;
-        private readonly Predicate<object> _canExecute;
-        private EventHandler _eventHandler;
+        /*
+         *This class makes it possible to bind actions to a (view)command
+         * eg clicking on a button
+         */
+        private readonly Action<object> action;
+        private readonly Predicate<object> canExecute;
+        private EventHandler eventHandler;
 
         public ActionCommand(Action<object> action) : this(action, null) { }
 
         public ActionCommand(Action<object> action, Predicate<object> canExecute)
         {
-            _action = action;
-            _canExecute = canExecute;
+            this.action = action;
+            this.canExecute = canExecute;
         }
 
         public event EventHandler CanExecuteChanged
         {
             add
             {
-                _eventHandler += value;
+                eventHandler += value;
             }
             remove
             {
-                _eventHandler -= value;
+                eventHandler -= value;
             }
         }
 
         public void RaiseCanExecuteChanged()
         {
-            _eventHandler?.Invoke(this, new EventArgs());
+            eventHandler?.Invoke(this, new EventArgs());
         }
 
         public bool CanExecute(object parameter)
         {
-            return _canExecute?.Invoke(parameter) ?? true;
+            return canExecute?.Invoke(parameter) ?? true;
         }
 
         public void Execute(object parameter)
         {
-            if (CanExecute(parameter)) _action(parameter);
+            if (CanExecute(parameter)) action(parameter);
         }
     }
 }

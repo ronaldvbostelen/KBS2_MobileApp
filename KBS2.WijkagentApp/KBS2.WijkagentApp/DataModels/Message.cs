@@ -5,6 +5,12 @@ using Xamarin.Forms.Maps;
 
 namespace KBS2.WijkagentApp.Datamodels
 {
+    /*
+     * Class containing the messages displayed on the map
+     * first draw. probably better to make a custum pinsclass eg for creating a custum panel / menu
+     * implements INotifyPropertyChanged so the UI gets updated if something changes
+     * PinTypeChooser to set the corresponding colors of the pins (NOT WORKING AT THE MOMENT)
+     */
     public class Message : INotifyPropertyChanged
     {
         private Priority _priority;
