@@ -1,14 +1,14 @@
 ﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Wijkagent_App.Views
+namespace KBS2.WijkagentApp.Views.Pages
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MapPage : ContentPage
 	{
 		public MapPage ()
 		{
-            InitializeComponent();
-		}
+            InitializeComponent();   
+        }
 	}
 }

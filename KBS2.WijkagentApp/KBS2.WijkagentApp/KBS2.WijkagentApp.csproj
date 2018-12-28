@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Xam.Plugin.Geolocator" Version="4.5.0.6" />
+    <PackageReference Include="Xamarin.Forms" Version="3.4.0.1008975" />
+    <PackageReference Include="Xamarin.Forms.Maps" Version="3.4.0.1008975" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DataModels\Collections\" />
+    <Folder Include="DataModels\Delegates\" />
+    <Folder Include="DataModels\Interfaces\" />
+    <Folder Include="Models\DataControllers\" />
+    <Folder Include="Models\DataProviders\" />
+    <Folder Include="Managers\" />
+    <Folder Include="Models\Interfaces\" />
+    <Folder Include="Views\Attached\" />
+    <Folder Include="Views\Controls\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\Pages\MapPage.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Pages\MessagePage.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Pages\PinsPage.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Pages\StarsPage.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

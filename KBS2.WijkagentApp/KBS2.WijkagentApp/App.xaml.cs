@@ -1,20 +1,17 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using Wijkagent_App.Views;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
-namespace Wijkagent_App
+namespace KBS2.WijkagentApp
 {
     public partial class App : Application
     {
-
         public App()
         {
             InitializeComponent();
 
-
-            MainPage = new MapPage();
+            MainPage = new MainPage();
         }
 
         protected override void OnStart()
