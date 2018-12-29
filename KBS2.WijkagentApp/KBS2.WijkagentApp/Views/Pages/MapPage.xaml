@@ -27,7 +27,7 @@
                     Command="{Binding PrioOneCommand}" />
             <Button Grid.Row="1" Grid.Column="1" Text="PRIO 2" 
                     Command="{Binding PrioTwoCommand}" />
-            <Button Grid.Row="1" Grid.Column="2" Text="PRIO 3" 
+            <Button Grid.Row="1" Grid.Column="2" Text="PRIO 4" 
                     Command="{Binding PrioThreeCommand}" />
         </Grid>
     </ContentPage.Content>

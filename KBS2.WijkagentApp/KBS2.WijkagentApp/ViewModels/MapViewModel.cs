@@ -63,7 +63,7 @@ namespace KBS2.WijkagentApp.ViewModels
         {
             get { return new ActionCommand(action => PrioOne(), canExecute => CanExecutePrioOne()); }
         }
-
+        
         //validation for action (eg is the user able to click on it)
         private bool CanExecutePrioOne() => messages.Exists(x => x.Priority == Priority.High);
 
