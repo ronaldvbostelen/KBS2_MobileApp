@@ -92,7 +92,6 @@ namespace KBS2.WijkagentApp.ViewModels
         private void PrioOne()
         {
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(messages.Find(x => x.Priority == Priority.High).Pin.Position, Distance.FromMeters(35)));
-            messages[0].Pin.SendTap();
         }
 
         //bindable property to the button on the maps screen
