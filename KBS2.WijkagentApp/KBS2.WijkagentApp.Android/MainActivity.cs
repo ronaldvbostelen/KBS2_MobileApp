@@ -11,7 +11,8 @@ using Xamarin.Forms;
 
 namespace KBS2.WijkagentApp.Droid
 {
-    [Activity(Label = "KBS2.WijkagentApp", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    //MainLauncher false: splashscreen will be used
+    [Activity(Label = "KBS2.WijkagentApp", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         private readonly string[] _permissions =
@@ -22,6 +23,8 @@ namespace KBS2.WijkagentApp.Droid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            //@style / MainTheme
+
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
