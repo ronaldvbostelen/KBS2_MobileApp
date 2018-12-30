@@ -14,23 +14,23 @@ namespace KBS2.WijkagentApp.ViewModels
     {
         public Map Map { get; }
 
-        //some mockup messages / pins for the map
-        private List<Message> messages = new List<Message>
+        //some mockup notices / pins for the map
+        private List<Notice> notices = new List<Notice>
         {
-            new Message("<<LAAG>>", "Zwolle CS", Priority.Low, new Position(52.505969, 6.090399)),
-            new Message("<<MIDDEL>>", "GGD", Priority.Medium, new Position(52.508171, 6.093015)),
-            new Message("<<HOOG>>", "Wezenlanden park", Priority.High, new Position(52.507746, 6.105814)),
+            new Notice("<<LAAG>>", "Zwolle CS", Priority.Low, new Position(52.505969, 6.090399)),
+            new Notice("<<MIDDEL>>", "GGD", Priority.Medium, new Position(52.508171, 6.093015)),
+            new Notice("<<HOOG>>", "Wezenlanden park", Priority.High, new Position(52.507746, 6.105814)),
         };
 
         // property for binding later (maybe)
-        public List<Message> Messages
+        public List<Notice> Notices
         {
-            get { return messages; }
+            get { return notices; }
             set
             {
-                if (messages != value)
+                if (notices != value)
                 {
-                    messages = value;
+                    notices = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -55,7 +55,7 @@ namespace KBS2.WijkagentApp.ViewModels
         //wrapper for setting the pins on the map
         private void SetPins()
         {
-            messages.ForEach(x => Map.Pins.Add(x.Pin));
+            notices.ForEach(x => Map.Pins.Add(x.Pin));
         }
 
         //bindable property to the button on the maps screen
@@ -65,12 +65,12 @@ namespace KBS2.WijkagentApp.ViewModels
         }
         
         //validation for action (eg is the user able to click on it)
-        private bool CanExecutePrioOne() => messages.Exists(x => x.Priority == Priority.High);
+        private bool CanExecutePrioOne() => notices.Exists(x => x.Priority == Priority.High);
 
         //action if the command is able te execute
         private void PrioOne()
         {
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(messages.Find(x => x.Priority == Priority.High).Pin.Position, Distance.FromMeters(35)));
+            Map.MoveToRegion(MapSpan.FromCenterAndRadius(notices.Find(x => x.Priority == Priority.High).Pin.Position, Distance.FromMeters(35)));
         }
 
         //bindable property to the button on the maps screen
@@ -80,12 +80,12 @@ namespace KBS2.WijkagentApp.ViewModels
         }
 
         //validation for action (eg is the user able to click on it)
-        private bool CanExecutePrioTwo() => messages.Exists(x => x.Priority == Priority.Medium);
+        private bool CanExecutePrioTwo() => notices.Exists(x => x.Priority == Priority.Medium);
 
         //action if the command is able te execute
         private void PrioTwo()
         {
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(messages.Find(x => x.Priority == Priority.Medium).Pin.Position, Distance.FromMeters(35)));
+            Map.MoveToRegion(MapSpan.FromCenterAndRadius(notices.Find(x => x.Priority == Priority.Medium).Pin.Position, Distance.FromMeters(35)));
         }
 
         //bindable property to the button on the maps screen
@@ -95,12 +95,12 @@ namespace KBS2.WijkagentApp.ViewModels
         }
 
         //validation for action (eg is the user able to click on it)
-        private bool CanExecutePrioThree() => messages.Exists(x => x.Priority == Priority.Low);
+        private bool CanExecutePrioThree() => notices.Exists(x => x.Priority == Priority.Low);
 
         //action if the command is able te execute
         private void PrioThree()
         {
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(messages.Find(x => x.Priority == Priority.Low).Pin.Position, Distance.FromMeters(35)));
+            Map.MoveToRegion(MapSpan.FromCenterAndRadius(notices.Find(x => x.Priority == Priority.Low).Pin.Position, Distance.FromMeters(35)));
         }
     }
 }
