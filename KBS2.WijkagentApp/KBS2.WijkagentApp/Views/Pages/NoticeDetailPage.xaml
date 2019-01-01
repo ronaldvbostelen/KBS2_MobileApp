@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KBS2.WijkagentApp.Views.Pages.NoticeDetailPage"
+             Title="Detail melding">
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label Text="Melding: mishandeling"
+                   Margin="16,0"
+                   Grid.Row="0" 
+                   Grid.Column="0" />
+
+            <Label Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+                   Margin="16,0"
+                   Grid.Row="1" 
+                   Grid.Column="0" />
+
+            <StackLayout Grid.Column="0" Grid.Row="2">
+                <TableView Intent="Data">
+                    <TableRoot>
+                        <TableSection Title="Betrokkenen">
+                            <!-- Color needs to be changed with a custom renderer-->
+                            <ViewCell>
+                                <Grid Margin="16,0">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="Karen Bosch" />
+                                        <Label Text="Verdachte"
+                                           HorizontalOptions="EndAndExpand" />
+                                    </StackLayout>
+                                </Grid>
+                            </ViewCell>
+                            <ViewCell>
+                                <Grid Margin="16,0">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="Karen" />
+                                        <Label Text="Slachtoffer"
+                                           HorizontalOptions="EndAndExpand" />
+                                    </StackLayout>
+                                </Grid>
+                            </ViewCell>
+                        </TableSection>
+                    </TableRoot>
+                </TableView>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

@@ -6,7 +6,7 @@ using KBS2.WijkagentApp.Datamodels;
 using KBS2.WijkagentApp.Datamodels.Enums;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using Plugin.Geolocator;
-
+using System.Diagnostics;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
@@ -36,10 +36,10 @@ namespace KBS2.WijkagentApp.ViewModels
             }
         }
 
-        //creats a xamarin map instance and sets the currentlocation and loaded pins
+        //creates a xamarin map instance and sets the currentlocation and loaded pins
         public MapViewModel()
         {
-            Map = new Map {IsShowingUser = true, MapType = MapType.Hybrid};
+            Map = new Map { IsShowingUser = true, MapType = MapType.Hybrid };
             SetInitialLocation();
             SetPins();
         }

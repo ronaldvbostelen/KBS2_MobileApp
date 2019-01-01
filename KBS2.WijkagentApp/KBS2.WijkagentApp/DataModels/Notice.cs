@@ -1,6 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using KBS2.WijkagentApp.Datamodels.Enums;
+using KBS2.WijkagentApp.Views.Pages;
+using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
 namespace KBS2.WijkagentApp.Datamodels
@@ -39,7 +42,7 @@ namespace KBS2.WijkagentApp.Datamodels
                     NotifyPropertyChanged();
                 }
             }
-        }
+        }        
 
         public Notice(string label, string content, Priority priority, Position position)
         {
@@ -51,8 +54,14 @@ namespace KBS2.WijkagentApp.Datamodels
                 Label = label,
                 Address = content
             };
-        }
 
+            // TEMPORARY: this is a temporary fix to make sure we can navigate to the NoticeDetailPage. It executes when you
+            // click the balloon that shows AFTER clicking the pin, not when clicking the pin directly.
+            Pin.Clicked += (object sender, EventArgs e) =>
+            {
+                Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage());
+            };      
+        }
 
         private PinType PinTypeChooser(Priority priority)
         {
