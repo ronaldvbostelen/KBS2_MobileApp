@@ -6,6 +6,9 @@ using KBS2.WijkagentApp.Datamodels;
 using KBS2.WijkagentApp.Datamodels.Enums;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using Plugin.Geolocator;
+using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
+using Xamarin.Forms;
 
 
 namespace KBS2.WijkagentApp.ViewModels
@@ -39,17 +42,35 @@ namespace KBS2.WijkagentApp.ViewModels
         //creats a xamarin map instance and sets the currentlocation and loaded pins
         public MapViewModel()
         {
-            Map = new Map {IsShowingUser = true, MapType = MapType.Hybrid};
+            Map = new Map {MapType = MapType.Hybrid};
             SetInitialLocation();
             SetPins();
         }
 
-        //async method to set the current location <<this may cause a exception because of missing privileges
+        //async method to set the current location, this uses the permissionplugin to request the needed permission to get the GPS 
         async void SetInitialLocation()
         {
-            var locator = CrossGeolocator.Current;
-            var position = await locator.GetPositionAsync();
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMeters(50)));
+            try
+            {
+                var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location);
+                if (status != PermissionStatus.Granted)
+                {
+                    var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Location);
+                    status = results[Permission.Location];
+                }
+                if (status == PermissionStatus.Granted)
+                {
+                    var locator = CrossGeolocator.Current;
+                    var position = await locator.GetPositionAsync();
+                    Map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMeters(50)));
+                    Map.IsShowingUser = true;
+                    NotifyPropertyChanged(nameof(Map));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Write("Error: " + ex);
+            }
         }
 
         //wrapper for setting the pins on the map
@@ -102,5 +123,6 @@ namespace KBS2.WijkagentApp.ViewModels
         {
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(messages.Find(x => x.Priority == Priority.Low).Pin.Position, Distance.FromMeters(35)));
         }
+
     }
 }
