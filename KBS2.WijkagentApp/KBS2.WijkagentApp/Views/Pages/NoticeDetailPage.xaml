@@ -1,14 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:KBS2.WijkagentApp.ViewModels"
              x:Class="KBS2.WijkagentApp.Views.Pages.NoticeDetailPage"
              Title="Detail melding">
-    <ContentPage.BindingContext>
-        <viewModels:NoticeDetailViewModel />
-    </ContentPage.BindingContext>
     <ContentPage.Content>
-        <Grid>
+        <Grid BindingContext="{Binding Notice}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />

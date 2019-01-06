@@ -21,9 +21,10 @@ namespace KBS2.WijkagentApp.ViewModels
         //some mockup notices / pins for the map
         private List<Notice> notices = new List<Notice>
         {
-            new Notice("<<LAAG>>", "Zwolle CS", Priority.Low, new Position(52.505969, 6.090399)),
-            new Notice("<<MIDDEL>>", "GGD", Priority.Medium, new Position(52.508171, 6.093015)),
-            new Notice("<<HOOG>>", "Wezenlanden park", Priority.High, new Position(52.507746, 6.105814)),
+            //this looks long atm but will be fetched out DB so we wont see it in code anymore
+            new Notice("<<LAAG>>", "Zwolle CS", Priority.Low, new Position(52.505969, 6.090399), "Melding: Zware mishandeling", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "Karen Bosch", "Ronald van Bostelen"),
+            new Notice("<<MIDDEL>>", "GGD", Priority.Medium, new Position(52.508171, 6.093015), "Melding: Poging tot doodslag", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "Karen Bosch", "Joost Reijmer"),
+            new Notice("<<HOOG>>", "Wezenlanden park", Priority.High, new Position(52.507746, 6.105814), "Melding: Moord", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "Karen Bosch", "Sake Elfring"),
         };
 
         // property for binding later (maybe)
@@ -82,9 +83,9 @@ namespace KBS2.WijkagentApp.ViewModels
                 Map.Pins.Add(notice.Pin);
 
                 //redirects the user to the Notice Detail Page when the Pin balloon is clicked
-                notice.Pin.Clicked += (object sender, EventArgs e) =>
+                notice.Pin.Clicked += (sender, e) =>
                 {
-                    Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage());
+                    Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(notices.Find(x => x.Pin.Equals((Pin)sender))))); //quick and dirty, for now
                 };
             }
         }

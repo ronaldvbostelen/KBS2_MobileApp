@@ -8,7 +8,7 @@ namespace KBS2.WijkagentApp.Views.Pages
 	{
 		public MessagePage ()
 		{
-			InitializeComponent ();
+			InitializeComponent();
 		}
 	}
 }

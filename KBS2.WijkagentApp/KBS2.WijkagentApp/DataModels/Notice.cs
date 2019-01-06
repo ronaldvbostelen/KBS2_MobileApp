@@ -18,36 +18,32 @@ namespace KBS2.WijkagentApp.Datamodels
     public class Notice : BaseDataModel
     {
         private Priority priority;
-        public Priority Priority
-        {
-            get { return priority; }
-            set
-            {
-                if (value != priority)
-                {
-                    priority = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+        public Priority Priority { get { return priority; } set { if (value != priority) priority = value; NotifyPropertyChanged(); } }
 
         private Pin pin;
-        public Pin Pin
-        {
-            get { return pin; }
-            set
-            {
-                if (value != pin)
-                {
-                    pin = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }        
+        public Pin Pin { get { return pin; } set { if (value != pin) pin = value; NotifyPropertyChanged(); } }
+        
+        private string type;
+        public string Type { get { return type; } set { if (value != type) type = value; NotifyPropertyChanged(); } }
 
-        public Notice(string label, string content, Priority priority, Position position)
+        private string description;
+        public string Description { get { return description;} set { if (value != description) description = value; NotifyPropertyChanged(); } }
+
+        private string suspect;
+        public string Suspect { get { return suspect;} set { if (value != suspect) suspect = value; NotifyPropertyChanged(); } }
+
+        private string victim;
+        public string Victim { get { return victim; } set { if (value != victim) victim = value; NotifyPropertyChanged(); } }
+
+
+        public Notice(string label, string content, Priority priority, Position position, string type, string description, string suspect, string victim)
         {
-            Priority = priority;
+            this.priority = priority;
+            this.type = type;
+            this.description = description;
+            this.suspect = suspect;
+            this.victim = victim;
+
             Pin = new Pin
             {
                 Type = PinTypeChooser(priority),
@@ -56,8 +52,7 @@ namespace KBS2.WijkagentApp.Datamodels
                 Address = content
             };
         }
-
-
+        
         private PinType PinTypeChooser(Priority priority)
         {
             switch (priority)
