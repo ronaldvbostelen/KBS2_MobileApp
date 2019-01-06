@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using KBS2.WijkagentApp.Datamodels.Enums;
 using KBS2.WijkagentApp.Views.Pages;
 using Xamarin.Forms;
+using KBS2.WijkagentApp.DataModels;
 using Xamarin.Forms.Maps;
 
 namespace KBS2.WijkagentApp.Datamodels
@@ -11,34 +12,34 @@ namespace KBS2.WijkagentApp.Datamodels
     /*
      * Class containing the notices displayed on the map
      * first draw. probably better to make a custum pinsclass eg for creating a custum panel / menu
-     * implements INotifyPropertyChanged so the UI gets updated if something changes
+     * derived from BaseDataModel which implements the inotifychanged interface
      * PinTypeChooser to set the corresponding colors of the pins (NOT WORKING AT THE MOMENT)
      */
-    public class Notice : INotifyPropertyChanged
+    public class Notice : BaseDataModel
     {
-        private Priority _priority;
+        private Priority priority;
         public Priority Priority
         {
-            get { return _priority; }
+            get { return priority; }
             set
             {
-                if (value != _priority)
+                if (value != priority)
                 {
-                    _priority = value;
+                    priority = value;
                     NotifyPropertyChanged();
                 }
             }
         }
 
-        private Pin _pin;
+        private Pin pin;
         public Pin Pin
         {
-            get { return _pin; }
+            get { return pin; }
             set
             {
-                if (value != _pin)
+                if (value != pin)
                 {
-                    _pin = value;
+                    pin = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -56,6 +57,7 @@ namespace KBS2.WijkagentApp.Datamodels
             };
         }
 
+
         private PinType PinTypeChooser(Priority priority)
         {
             switch (priority)
@@ -69,13 +71,6 @@ namespace KBS2.WijkagentApp.Datamodels
                 default:
                     return PinType.Generic;
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
