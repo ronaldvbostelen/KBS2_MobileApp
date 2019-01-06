@@ -54,13 +54,6 @@ namespace KBS2.WijkagentApp.Datamodels
                 Label = label,
                 Address = content
             };
-
-            // TEMPORARY: this is a temporary fix to make sure we can navigate to the NoticeDetailPage. It executes when you
-            // click the balloon that shows AFTER clicking the pin, not when clicking the pin directly.
-            Pin.Clicked += (object sender, EventArgs e) =>
-            {
-                Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage());
-            };      
         }
 
         private PinType PinTypeChooser(Priority priority)

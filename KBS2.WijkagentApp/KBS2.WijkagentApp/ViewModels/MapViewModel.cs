@@ -7,6 +7,8 @@ using KBS2.WijkagentApp.Datamodels.Enums;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using Plugin.Geolocator;
 using System.Diagnostics;
+using Xamarin.Forms;
+using KBS2.WijkagentApp.Views.Pages;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
@@ -55,7 +57,16 @@ namespace KBS2.WijkagentApp.ViewModels
         //wrapper for setting the pins on the map
         private void SetPins()
         {
-            notices.ForEach(x => Map.Pins.Add(x.Pin));
+            foreach (var notice in notices)
+            {
+                Map.Pins.Add(notice.Pin);
+
+                //redirects the user to the Notice Detail Page when the Pin balloon is clicked
+                notice.Pin.Clicked += (object sender, EventArgs e) =>
+                {
+                    Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage());
+                };
+            }
         }
 
         //bindable property to the button on the maps screen
