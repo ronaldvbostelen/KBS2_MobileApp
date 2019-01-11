@@ -10,6 +10,7 @@ using Plugin.CurrentActivity;
 using Plugin.Permissions;
 using Xamarin;
 using Xamarin.Forms;
+using Microsoft.WindowsAzure.MobileServices;
 
 namespace KBS2.WijkagentApp.Droid
 {
@@ -17,6 +18,10 @@ namespace KBS2.WijkagentApp.Droid
     [Activity(Label = "KBS2.WijkagentApp", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
+        public static MobileServiceClient MobileService =
+            new MobileServiceClient(
+                "https://wijkagent.azurewebsites.net"
+            );
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
