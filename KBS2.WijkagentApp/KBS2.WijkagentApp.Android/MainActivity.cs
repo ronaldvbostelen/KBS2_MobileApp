@@ -32,7 +32,6 @@ namespace KBS2.WijkagentApp.Droid
             ToolbarResource = Resource.Layout.Toolbar;
 
             Forms.Init(this, savedInstanceState);
-            FormsMaps.Init(this, savedInstanceState);
             TKGoogleMaps.Init(this, savedInstanceState);
 
             LoadApplication(new App());
