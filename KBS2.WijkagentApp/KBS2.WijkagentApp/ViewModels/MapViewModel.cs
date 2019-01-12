@@ -92,14 +92,13 @@ namespace KBS2.WijkagentApp.ViewModels
                 Pins.Add(notice.Pin);
 
                 Map.Pins = Pins;
-
-                //redirects the user to the Notice Detail Page when the Pin balloon is clicked
-                Map.PinSelected += (sender, e) =>
-                {
-                    //Hier is iets mis
-                    Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(notices.Find(x => x.Pin.Equals((TKCustomMapPin)sender))))); //quick and dirty, for now
-                };
             }
+
+            //redirects the user to the Notice Detail Page when the Pin balloon is clicked
+            Map.PinSelected += (sender, e) =>
+            {
+                Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(notices.Find(x => x.Pin.Equals((TKCustomMapPin)e.Value))))); //quick and dirty, for now
+            };
         }
 
         //bindable property to the button on the maps screen
