@@ -10,6 +10,7 @@ using Plugin.CurrentActivity;
 using Plugin.Permissions;
 using Xamarin;
 using Xamarin.Forms;
+using TK.CustomMap.Droid;
 
 namespace KBS2.WijkagentApp.Droid
 {
@@ -32,6 +33,8 @@ namespace KBS2.WijkagentApp.Droid
 
             Forms.Init(this, savedInstanceState);
             FormsMaps.Init(this, savedInstanceState);
+            TKGoogleMaps.Init(this, savedInstanceState);
+
             LoadApplication(new App());
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
