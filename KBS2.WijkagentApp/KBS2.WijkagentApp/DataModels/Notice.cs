@@ -46,14 +46,14 @@ namespace KBS2.WijkagentApp.Datamodels
 
             Pin = new TKCustomMapPin
             {
-                DefaultPinColor = PinColor(Priority),
+                DefaultPinColor = SetPinColor(Priority),
                 Position = position,
                 Title = label,
                 Subtitle = content
             };
         }
         
-        private Color PinColor(Priority priority)
+        private Color SetPinColor(Priority priority)
         {
             switch (priority)
             {

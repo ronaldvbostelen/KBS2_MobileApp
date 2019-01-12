@@ -48,14 +48,14 @@ namespace KBS2.WijkagentApp.ViewModels
         {
             Map = new TKCustomMap { MapType = MapType.Hybrid };
             Pins = new ObservableCollection<TKCustomMapPin> { };
-            Map.MapLongPress += Map_MapLongPress; //bah
+            Map.MapLongPress += Map_MapLongPress;
             SetInitialLocation();
             SetPins();
         }
 
         private void Map_MapLongPress(object sender, TKGenericEventArgs<Position> e)
         {
-            Console.WriteLine("Map was pressed long in this position: " + e.Value.Latitude);
+            Application.Current.MainPage.Navigation.PushModalAsync(new NewNoticePage(new NewNoticeViewModel(e.Value.Longitude, e.Value.Longitude)));
         }
 
         //async method to set the current location, this uses the permissionplugin to request the needed permission to get the GPS 
