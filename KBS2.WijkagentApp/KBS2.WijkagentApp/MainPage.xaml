@@ -12,7 +12,7 @@
                 </OnPlatform>
             </NavigationPage.Icon>
             <x:Arguments>
-                <pages:Page1 />
+                <pages:MapPage />
             </x:Arguments>
         </NavigationPage>
 

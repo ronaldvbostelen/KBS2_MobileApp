@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
-using Xamarin.Forms.Maps;
 using KBS2.WijkagentApp.Datamodels;
 using KBS2.WijkagentApp.Datamodels.Enums;
 using KBS2.WijkagentApp.ViewModels.Commands;
@@ -11,12 +10,15 @@ using Xamarin.Forms;
 using KBS2.WijkagentApp.Views.Pages;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using TK.CustomMap;
+using System.Collections.ObjectModel;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
     public class MapViewModel : BaseViewModel
     {
-        public Map Map { get; }
+        public TKCustomMap Map { get; }
+        public ObservableCollection<TKCustomMapPin> Pins { get; private set; }
 
         //some mockup notices / pins for the map
         private List<Notice> notices = new List<Notice>
@@ -44,9 +46,16 @@ namespace KBS2.WijkagentApp.ViewModels
         //creates a xamarin map instance and sets the currentlocation and loaded pins
         public MapViewModel()
         {
-            Map = new Map { MapType = MapType.Hybrid };
+            Map = new TKCustomMap { MapType = MapType.Hybrid };
+            Pins = new ObservableCollection<TKCustomMapPin> { };
+            Map.MapLongPress += Map_MapLongPress; //bah
             SetInitialLocation();
             SetPins();
+        }
+
+        private void Map_MapLongPress(object sender, TKGenericEventArgs<Position> e)
+        {
+            Console.WriteLine("Map was pressed long in this position: " + e.Value.Latitude);
         }
 
         //async method to set the current location, this uses the permissionplugin to request the needed permission to get the GPS 
@@ -64,7 +73,7 @@ namespace KBS2.WijkagentApp.ViewModels
                 {
                     var locator = CrossGeolocator.Current;
                     var position = await locator.GetPositionAsync();
-                    Map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMeters(50)));
+                    Map.MoveToMapRegion(MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMeters(50)));
                     Map.IsShowingUser = true;
                     NotifyPropertyChanged(nameof(Map));
                 }
@@ -80,12 +89,15 @@ namespace KBS2.WijkagentApp.ViewModels
         {
             foreach (var notice in notices)
             {
-                Map.Pins.Add(notice.Pin);
+                Pins.Add(notice.Pin);
+
+                Map.Pins = Pins;
 
                 //redirects the user to the Notice Detail Page when the Pin balloon is clicked
-                notice.Pin.Clicked += (sender, e) =>
+                Map.PinSelected += (sender, e) =>
                 {
-                    Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(notices.Find(x => x.Pin.Equals((Pin)sender))))); //quick and dirty, for now
+                    //Hier is iets mis
+                    Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(notices.Find(x => x.Pin.Equals((TKCustomMapPin)sender))))); //quick and dirty, for now
                 };
             }
         }
@@ -102,7 +114,7 @@ namespace KBS2.WijkagentApp.ViewModels
         //action if the command is able te execute
         private void PrioOne()
         {
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(notices.Find(x => x.Priority == Priority.High).Pin.Position, Distance.FromMeters(35)));
+            Map.MoveToMapRegion(MapSpan.FromCenterAndRadius(notices.Find(x => x.Priority == Priority.High).Pin.Position, Distance.FromMeters(35)));
         }
 
         //bindable property to the button on the maps screen
@@ -117,7 +129,7 @@ namespace KBS2.WijkagentApp.ViewModels
         //action if the command is able te execute
         private void PrioTwo()
         {
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(notices.Find(x => x.Priority == Priority.Medium).Pin.Position, Distance.FromMeters(35)));
+            Map.MoveToMapRegion(MapSpan.FromCenterAndRadius(notices.Find(x => x.Priority == Priority.Medium).Pin.Position, Distance.FromMeters(35)));
         }
 
         //bindable property to the button on the maps screen
@@ -132,7 +144,7 @@ namespace KBS2.WijkagentApp.ViewModels
         //action if the command is able te execute
         private void PrioThree()
         {
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(notices.Find(x => x.Priority == Priority.Low).Pin.Position, Distance.FromMeters(35)));
+            Map.MoveToMapRegion(MapSpan.FromCenterAndRadius(notices.Find(x => x.Priority == Priority.Low).Pin.Position, Distance.FromMeters(35)));
         }
     }
 }
