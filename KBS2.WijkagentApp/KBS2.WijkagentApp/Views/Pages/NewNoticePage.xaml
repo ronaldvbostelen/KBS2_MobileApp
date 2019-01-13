@@ -8,6 +8,8 @@
             <Label Text="Welcome to Xamarin.Forms!"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
+            <Label Text="{Binding Longitude}"/>
+            <Label Text="{Binding Latitude}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

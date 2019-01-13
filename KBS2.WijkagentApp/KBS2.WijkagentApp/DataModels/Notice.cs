@@ -49,8 +49,10 @@ namespace KBS2.WijkagentApp.Datamodels
                 DefaultPinColor = SetPinColor(Priority),
                 Position = position,
                 Title = label,
-                Subtitle = content
-            };
+                Subtitle = content,
+                IsCalloutClickable = true,
+                ShowCallout = true
+        };
         }
         
         private Color SetPinColor(Priority priority)
