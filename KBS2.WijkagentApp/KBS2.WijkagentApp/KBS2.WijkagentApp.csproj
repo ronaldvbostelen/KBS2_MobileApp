@@ -54,6 +54,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Assets\Styles.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Views\Pages\NewNoticePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
