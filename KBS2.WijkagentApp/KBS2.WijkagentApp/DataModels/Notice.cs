@@ -5,7 +5,7 @@ using KBS2.WijkagentApp.Datamodels.Enums;
 using KBS2.WijkagentApp.Views.Pages;
 using Xamarin.Forms;
 using KBS2.WijkagentApp.DataModels;
-using Xamarin.Forms.Maps;
+using TK.CustomMap;
 
 namespace KBS2.WijkagentApp.Datamodels
 {
@@ -20,8 +20,8 @@ namespace KBS2.WijkagentApp.Datamodels
         private Priority priority;
         public Priority Priority { get { return priority; } set { if (value != priority) priority = value; NotifyPropertyChanged(); } }
 
-        private Pin pin;
-        public Pin Pin { get { return pin; } set { if (value != pin) pin = value; NotifyPropertyChanged(); } }
+        private TKCustomMapPin pin;
+        public TKCustomMapPin Pin { get { return pin; } set { if (value != pin) pin = value; NotifyPropertyChanged(); } }
         
         private string type;
         public string Type { get { return type; } set { if (value != type) type = value; NotifyPropertyChanged(); } }
@@ -44,27 +44,29 @@ namespace KBS2.WijkagentApp.Datamodels
             this.suspect = suspect;
             this.victim = victim;
 
-            Pin = new Pin
+            Pin = new TKCustomMapPin
             {
-                Type = PinTypeChooser(priority),
+                DefaultPinColor = SetPinColor(Priority),
                 Position = position,
-                Label = label,
-                Address = content
-            };
+                Title = label,
+                Subtitle = content,
+                IsCalloutClickable = true,
+                ShowCallout = true
+        };
         }
         
-        private PinType PinTypeChooser(Priority priority)
+        private Color SetPinColor(Priority priority)
         {
             switch (priority)
             {
                 case Priority.Low:
-                    return PinType.Generic;
+                    return Color.White; //Change the colors later
                 case Priority.Medium:
-                    return PinType.Place;
+                    return Color.Wheat;
                 case Priority.High:
-                    return PinType.SavedPin;
+                    return Color.Red;
                 default:
-                    return PinType.Generic;
+                    return Color.White;
             }
         }
     }

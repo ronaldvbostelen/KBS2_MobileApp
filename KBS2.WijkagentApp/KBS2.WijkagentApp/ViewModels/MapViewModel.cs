@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
-using Xamarin.Forms.Maps;
 using KBS2.WijkagentApp.Datamodels;
 using KBS2.WijkagentApp.Datamodels.Enums;
 using KBS2.WijkagentApp.ViewModels.Commands;
@@ -11,46 +10,61 @@ using Xamarin.Forms;
 using KBS2.WijkagentApp.Views.Pages;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using TK.CustomMap;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
     public class MapViewModel : BaseViewModel
     {
-        public Map Map { get; }
+        public MapType MapType { get; }
+        public bool ShowingUser { get; }
+        public bool RegionChangeAnimated { get; }
+
+        private ObservableCollection<TKCustomMapPin> pins;
+        public ObservableCollection<TKCustomMapPin> Pins { get { return pins; } private set { if (value != pins) pins = value; NotifyPropertyChanged(); } }
+
+        private TKCustomMapPin selectedPin;
+        public TKCustomMapPin SelectedPin { get { return selectedPin; } set { if (value != selectedPin) selectedPin = value; NotifyPropertyChanged(); } }
+
+        private MapSpan mapRegion = MapSpan.FromCenterAndRadius(new Position(52.4996, 6.07895), Distance.FromKilometers(2)); //preventing nullpointerexception
+        public MapSpan MapRegion { get { return mapRegion; } set { if (value != mapRegion) mapRegion = value; NotifyPropertyChanged(); } }
 
         //some mockup notices / pins for the map
         private List<Notice> notices = new List<Notice>
         {
             //this looks long atm but will be fetched out DB so we wont see it in code anymore
-            new Notice("<<LAAG>>", "Zwolle CS", Priority.Low, new Position(52.505969, 6.090399), "Melding: Zware mishandeling", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "Karen Bosch", "Ronald van Bostelen"),
-            new Notice("<<MIDDEL>>", "GGD", Priority.Medium, new Position(52.508171, 6.093015), "Melding: Poging tot doodslag", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "Karen Bosch", "Joost Reijmer"),
-            new Notice("<<HOOG>>", "Wezenlanden park", Priority.High, new Position(52.507746, 6.105814), "Melding: Moord", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "Karen Bosch", "Sake Elfring"),
+            new Notice("<<LAAG>>", "Zwolle CS", Priority.Low, new Position(52.505969, 6.090399),
+                "Melding: Zware mishandeling",
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                "Karen Bosch", "Ronald van Bostelen"),
+            new Notice("<<MIDDEL>>", "GGD", Priority.Medium, new Position(52.508171, 6.093015),
+                "Melding: Poging tot doodslag",
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                "Karen Bosch", "Joost Reijmer"),
+            new Notice("<<HOOG>>", "Wezenlanden park", Priority.High, new Position(52.507746, 6.105814),
+                "Melding: Moord",
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                "Karen Bosch", "Sake Elfring"),
         };
 
         // property for binding later (maybe)
-        public List<Notice> Notices
-        {
-            get { return notices; }
-            set
-            {
-                if (notices != value)
-                {
-                    notices = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+        public List<Notice> Notices { get { return notices; } set { if (notices != value) { notices = value; NotifyPropertyChanged(); } } }
 
         //creates a xamarin map instance and sets the currentlocation and loaded pins
         public MapViewModel()
         {
-            Map = new Map { MapType = MapType.Hybrid };
+            MapType = MapType.Hybrid;
+            ShowingUser = true;
+            RegionChangeAnimated = true;
+
+            Pins = new ObservableCollection<TKCustomMapPin>(notices.Select(x => x.Pin));
             SetInitialLocation();
-            SetPins();
         }
 
         //async method to set the current location, this uses the permissionplugin to request the needed permission to get the GPS 
-        async void SetInitialLocation()
+        async void SetInitialLocation() 
         {
             try
             {
@@ -60,13 +74,12 @@ namespace KBS2.WijkagentApp.ViewModels
                     var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Location);
                     status = results[Permission.Location];
                 }
+
                 if (status == PermissionStatus.Granted)
                 {
                     var locator = CrossGeolocator.Current;
                     var position = await locator.GetPositionAsync();
-                    Map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMeters(50)));
-                    Map.IsShowingUser = true;
-                    NotifyPropertyChanged(nameof(Map));
+                    MapRegion = MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromKilometers(2));
                 }
             }
             catch (Exception ex)
@@ -75,64 +88,31 @@ namespace KBS2.WijkagentApp.ViewModels
             }
         }
 
-        //wrapper for setting the pins on the map
-        private void SetPins()
-        {
-            foreach (var notice in notices)
-            {
-                Map.Pins.Add(notice.Pin);
+        public ICommand CalloutClickedCommand { get { return new ActionCommand(x => CalloutClicked(x)); } }
 
-                //redirects the user to the Notice Detail Page when the Pin balloon is clicked
-                notice.Pin.Clicked += (sender, e) =>
-                {
-                    Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(notices.Find(x => x.Pin.Equals((Pin)sender))))); //quick and dirty, for now
-                };
-            }
-        }
+        private void CalloutClicked(object callout) => 
+            Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(notices.Find(x => x.Pin.Equals((TKCustomMapPin) callout)))));
 
-        //bindable property to the button on the maps screen
-        public ICommand PrioOneCommand
-        {
-            get { return new ActionCommand(action => PrioOne(), canExecute => CanExecutePrioOne()); }
-        }
-        
-        //validation for action (eg is the user able to click on it)
-        private bool CanExecutePrioOne() => notices.Exists(x => x.Priority == Priority.High);
+        public ICommand SelectedPinCommand { get { return new ActionCommand(pin => PinSelect(pin), pin => PinExists(pin)); } }
 
-        //action if the command is able te execute
-        private void PrioOne()
-        {
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(notices.Find(x => x.Priority == Priority.High).Pin.Position, Distance.FromMeters(35)));
-        }
+        private bool PinExists(object pin) => notices.Exists(x => x.Pin.Equals(pin));
+
+        private void PinSelect(object pin) => selectedPin = (TKCustomMapPin) pin;
+
+        public ICommand MapLongPressCommand { get { return new ActionCommand(position => MapLongPress((Position) position)); } }
+
+        private void MapLongPress(Position position) => Application.Current.MainPage.Navigation.PushModalAsync(new NewNoticePage(new NewNoticeViewModel(position)));
 
         //bindable property to the button on the maps screen
-        public ICommand PrioTwoCommand
+        public ICommand PrioCommand { get { return new ActionCommand(parm => Prio(parm), parm => CanExecutePrio(parm)); } }
+
+        private bool CanExecutePrio(object parm) => notices.Exists(x => x.Priority == (Priority) int.Parse((string) parm));
+
+        private void Prio(object parm)
         {
-            get { return new ActionCommand(action => PrioTwo(), canExecute => CanExecutePrioTwo()); }
-        }
-
-        //validation for action (eg is the user able to click on it)
-        private bool CanExecutePrioTwo() => notices.Exists(x => x.Priority == Priority.Medium);
-
-        //action if the command is able te execute
-        private void PrioTwo()
-        {
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(notices.Find(x => x.Priority == Priority.Medium).Pin.Position, Distance.FromMeters(35)));
-        }
-
-        //bindable property to the button on the maps screen
-        public ICommand PrioThreeCommand
-        {
-            get { return new ActionCommand(action => PrioThree(), canExecute => CanExecutePrioThree()); }
-        }
-
-        //validation for action (eg is the user able to click on it)
-        private bool CanExecutePrioThree() => notices.Exists(x => x.Priority == Priority.Low);
-
-        //action if the command is able te execute
-        private void PrioThree()
-        {
-            Map.MoveToRegion(MapSpan.FromCenterAndRadius(notices.Find(x => x.Priority == Priority.Low).Pin.Position, Distance.FromMeters(35)));
+            var pin = notices.Find(x => x.Priority == (Priority) int.Parse((string) parm)).Pin;
+            MapRegion = MapSpan.FromCenterAndRadius(pin.Position, Distance.FromMeters(35));
+            SelectedPin = pin;
         }
     }
 }
