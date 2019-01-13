@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Android.Util;
 
 namespace KBS2.WijkagentApp.DataModels
 {
