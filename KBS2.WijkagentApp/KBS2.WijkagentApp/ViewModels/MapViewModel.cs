@@ -18,19 +18,6 @@ namespace KBS2.WijkagentApp.ViewModels
 {
     public class MapViewModel : BaseViewModel
     {
-        public MapType MapType { get; }
-        public bool ShowingUser { get; }
-        public bool RegionChangeAnimated { get; }
-
-        private ObservableCollection<TKCustomMapPin> pins;
-        public ObservableCollection<TKCustomMapPin> Pins { get { return pins; } private set { if (value != pins) pins = value; NotifyPropertyChanged(); } }
-
-        private TKCustomMapPin selectedPin;
-        public TKCustomMapPin SelectedPin { get { return selectedPin; } set { if (value != selectedPin) selectedPin = value; NotifyPropertyChanged(); } }
-
-        private MapSpan mapRegion = MapSpan.FromCenterAndRadius(new Position(52.4996, 6.07895), Distance.FromKilometers(2)); //preventing nullpointerexception
-        public MapSpan MapRegion { get { return mapRegion; } set { if (value != mapRegion) mapRegion = value; NotifyPropertyChanged(); } }
-
         //some mockup notices / pins for the map
         private List<Notice> notices = new List<Notice>
         {
@@ -49,8 +36,18 @@ namespace KBS2.WijkagentApp.ViewModels
                 "Karen Bosch", "Sake Elfring"),
         };
 
-        // property for binding later (maybe)
+        private ObservableCollection<TKCustomMapPin> pins;
+        private TKCustomMapPin selectedPin;
+        private MapSpan mapRegion = MapSpan.FromCenterAndRadius(new Position(52.4996, 6.07895), Distance.FromKilometers(2)); //preventing nullpointerexception
+
+        public ObservableCollection<TKCustomMapPin> Pins { get { return pins; } private set { if (value != pins) pins = value; NotifyPropertyChanged(); } }
+        public TKCustomMapPin SelectedPin { get { return selectedPin; } set { if (value != selectedPin) selectedPin = value; NotifyPropertyChanged(); } }
+        public MapSpan MapRegion { get { return mapRegion; } set { if (value != mapRegion) mapRegion = value; NotifyPropertyChanged(); } }
         public List<Notice> Notices { get { return notices; } set { if (notices != value) { notices = value; NotifyPropertyChanged(); } } }
+
+        public MapType MapType { get; }
+        public bool ShowingUser { get; }
+        public bool RegionChangeAnimated { get; }
 
         //creates a xamarin map instance and sets the currentlocation and loaded pins
         public MapViewModel()
@@ -90,29 +87,27 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public ICommand CalloutClickedCommand { get { return new ActionCommand(x => CalloutClicked(x)); } }
 
-        private void CalloutClicked(object callout) => 
-            Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(notices.Find(x => x.Pin.Equals((TKCustomMapPin) callout)))));
-
         public ICommand SelectedPinCommand { get { return new ActionCommand(pin => PinSelect(pin), pin => PinExists(pin)); } }
 
-        private bool PinExists(object pin) => notices.Exists(x => x.Pin.Equals(pin));
+        public ICommand MapLongPressCommand { get { return new ActionCommand(position => MapLongPress((Position)position)); } }
 
-        private void PinSelect(object pin) => selectedPin = (TKCustomMapPin) pin;
-
-        public ICommand MapLongPressCommand { get { return new ActionCommand(position => MapLongPress((Position) position)); } }
-
-        private void MapLongPress(Position position) => Application.Current.MainPage.Navigation.PushModalAsync(new NewNoticePage(new NewNoticeViewModel(position)));
-
-        //bindable property to the button on the maps screen
         public ICommand PrioCommand { get { return new ActionCommand(parm => Prio(parm), parm => CanExecutePrio(parm)); } }
 
-        private bool CanExecutePrio(object parm) => notices.Exists(x => x.Priority == (Priority) int.Parse((string) parm));
+        private void CalloutClicked(object callout) => 
+            Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(notices.Find(x => x.Pin.Equals((TKCustomMapPin) callout)))));
+        
+        private void PinSelect(object pin) => selectedPin = (TKCustomMapPin) pin;
+        
+        private void MapLongPress(Position position) => Application.Current.MainPage.Navigation.PushModalAsync(new NewNoticePage(new NewNoticeViewModel(position)));
 
         private void Prio(object parm)
         {
-            var pin = notices.Find(x => x.Priority == (Priority) int.Parse((string) parm)).Pin;
-            MapRegion = MapSpan.FromCenterAndRadius(pin.Position, Distance.FromMeters(35));
-            SelectedPin = pin;
+            SelectedPin = notices.Find(x => x.Priority == (Priority)int.Parse((string)parm)).Pin;
+            MapRegion = MapSpan.FromCenterAndRadius(SelectedPin.Position, Distance.FromMeters(35));
         }
+
+        private bool PinExists(object pin) => notices.Exists(x => x.Pin.Equals(pin));
+
+        private bool CanExecutePrio(object parm) => notices.Exists(x => x.Priority == (Priority) int.Parse((string) parm));
     }
 }
