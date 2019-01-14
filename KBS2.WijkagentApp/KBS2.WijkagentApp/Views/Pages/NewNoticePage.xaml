@@ -4,12 +4,85 @@
              xmlns:viewModels="clr-namespace:KBS2.WijkagentApp.ViewModels;assembly=KBS2.WijkagentApp"
              x:Class="KBS2.WijkagentApp.Views.Pages.NewNoticePage">
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-            <Label Text="{Binding Longitude}"/>
-            <Label Text="{Binding Latitude}"/>
-        </StackLayout>
+        <!--<Label Text="{Binding Longitude}"/>
+        <Label Text="{Binding Latitude}"/>-->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="100" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label Text="Nieuwe melding"
+                   Margin="{StaticResource MarginLeftRightTop}"
+                   Style="{StaticResource Title}"
+                   Grid.Row="0"
+                   Grid.Column="0" />
+
+            <Label Text="Naam melding" 
+                   Margin="{StaticResource MarginLeftRightTop}"
+                   Grid.Row="1"
+                   Grid.Column="0" />
+            
+            <Entry x:Name="etrName" 
+                   Margin="{StaticResource MarginLeftRight}"
+                   Grid.Row="2"
+                   Grid.Column="0" />
+
+            <Label Text="Locatie" 
+                   Margin="{StaticResource MarginLeftRight}"
+                   Grid.Row="3"
+                   Grid.Column="0" />
+            
+            <Entry x:Name="etrLocation" 
+                   Margin="{StaticResource MarginLeftRight}"
+                   Grid.Row="4"
+                   Grid.Column="0" />
+
+            <Label Text="Soort delict" 
+                   Margin="{StaticResource MarginLeftRight}"
+                   Grid.Row="5"
+                   Grid.Column="0" />
+
+            <Picker x:Name="pkrOffense"
+                    Title="Selecteer een delictsoort" 
+                    Margin="{StaticResource MarginLeftRight}"
+                    Grid.Row="6" 
+                    Grid.Column="0">
+                        <Picker.Items>
+                            <x:String>Huiselijk geweld</x:String>
+                            <x:String>Mishandeling</x:String>
+                            <x:String>Vandalisme</x:String>
+                            <x:String>Kat in de boom</x:String>
+                        </Picker.Items>
+            </Picker>
+
+            <Label Text="Extra informatie" 
+                   Margin="{StaticResource MarginLeftRight}"
+                   Grid.Row="7"
+                   Grid.Column="0" />
+
+            <Editor x:Name="edtrDescription"
+                    Margin="{StaticResource MarginLeftRight}"
+                    Grid.Row="8"
+                    Grid.Column="0" />
+
+            <Button Text="Toevoegen" 
+                    Style="{StaticResource BlueButton}"
+                    Margin="{StaticResource MarginLeftRight}"
+                    Grid.Row="9"
+                    Grid.Column="0" />
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

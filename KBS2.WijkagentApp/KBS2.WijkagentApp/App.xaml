@@ -3,13 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KBS2.WijkagentApp.App">
     <Application.Resources>
-        <ResourceDictionary>
-            <Style x:Key="ButtonStyle" TargetType="Button">
-                <Setter Property="BackgroundColor" Value="#2196F3"/>
-                <Setter Property="CornerRadius" Value="0"/>
-                <Setter Property="TextColor" Value="#000000"/>
-                <Setter Property="Image" Value="map_locator_med.png"/>
-            </Style>
-        </ResourceDictionary>
+        <ResourceDictionary Source="/Assets/Styles.xaml" />
     </Application.Resources>
 </Application>
