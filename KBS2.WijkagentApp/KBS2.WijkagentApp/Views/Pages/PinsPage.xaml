@@ -1,13 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:KBS2.WijkagentApp.ViewModels;assembly=KBS2.WijkagentApp"
              x:Class="KBS2.WijkagentApp.Views.Pages.PinsPage"
              NavigationPage.HasNavigationBar="False">
+    <ContentPage.BindingContext>
+        <viewModels:PinsViewModel/>
+    </ContentPage.BindingContext>
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+        <StackLayout
+            VerticalOptions="End">
+            <Label Text="Name"/>
+            <Label Text="{Binding FullName}"/>
+            <Label Text="Logged in as:"/>
+            <Label Text="{Binding UserName}"/>
+            <Button Text="LOGOUT" Command="{Binding LogoutCommand}"></Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

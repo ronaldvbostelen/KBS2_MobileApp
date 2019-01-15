@@ -8,8 +8,7 @@ namespace KBS2.WijkagentApp.DataModels
     {
         private string officerId;
         private string userName;
-        private string passWord;
-
+        private string password;
 
         public string OfficerId
         {
@@ -39,14 +38,14 @@ namespace KBS2.WijkagentApp.DataModels
         }
 
 
-        public string PassWord
+        public string Password
         {
-            get { return passWord; }
+            get { return password; }
             set
             {
-                if (value != passWord)
+                if (value != password)
                 {
-                    passWord = value;
+                    password = value;
                     NotifyPropertyChanged();
                 }
             }
