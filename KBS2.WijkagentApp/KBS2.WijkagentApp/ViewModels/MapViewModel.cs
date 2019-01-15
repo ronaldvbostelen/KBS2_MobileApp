@@ -38,7 +38,8 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private ObservableCollection<TKCustomMapPin> pins;
         private TKCustomMapPin selectedPin;
-        private MapSpan mapRegion = MapSpan.FromCenterAndRadius(new Position(52.4996, 6.07895), Distance.FromKilometers(2)); //preventing nullpointerexception
+        private MapSpan mapRegion = MapSpan.FromCenterAndRadius(new Position(52.4996, 6.07895), Distance.FromKilometers(500)); //preventing nullpointerexception
+        private bool showingUser;
 
         public ObservableCollection<TKCustomMapPin> Pins { get { return pins; } private set { if (value != pins) pins = value; NotifyPropertyChanged(); } }
         public TKCustomMapPin SelectedPin { get { return selectedPin; } set { if (value != selectedPin) selectedPin = value; NotifyPropertyChanged(); } }
@@ -46,14 +47,14 @@ namespace KBS2.WijkagentApp.ViewModels
         public List<Notice> Notices { get { return notices; } set { if (notices != value) { notices = value; NotifyPropertyChanged(); } } }
 
         public MapType MapType { get; }
-        public bool ShowingUser { get; }
         public bool RegionChangeAnimated { get; }
+        public bool ShowingUser { get { return showingUser; } set { if (value != showingUser) showingUser = value; NotifyPropertyChanged(); } }
 
         //creates a xamarin map instance and sets the currentlocation and loaded pins
         public MapViewModel()
         {
+            ShowingUser = false;
             MapType = MapType.Hybrid;
-            ShowingUser = true;
             RegionChangeAnimated = true;
 
             Pins = new ObservableCollection<TKCustomMapPin>(notices.Select(x => x.Pin));
@@ -76,7 +77,8 @@ namespace KBS2.WijkagentApp.ViewModels
                 {
                     var locator = CrossGeolocator.Current;
                     var position = await locator.GetPositionAsync();
-                    MapRegion = MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromKilometers(2));
+                    MapRegion = MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMeters(250));
+                    ShowingUser = true;
                 }
             }
             catch (Exception ex)
