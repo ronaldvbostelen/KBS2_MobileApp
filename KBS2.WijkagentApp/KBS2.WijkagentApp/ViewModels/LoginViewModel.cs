@@ -19,7 +19,7 @@ namespace KBS2.WijkagentApp.ViewModels
         public string LoginMessage { get { return loginMessage; } set { if (value != loginMessage) loginMessage = value; NotifyPropertyChanged(); } }
 
         public LoginViewModel() { Officer = new Officer(); }
-        
+
         public ICommand LoginCommand => loginCommand ?? (loginCommand = new ActionCommand(x => Login(), x => CanLogin()));
 
         private bool CanLogin() => true;
@@ -30,7 +30,7 @@ namespace KBS2.WijkagentApp.ViewModels
             {
                 if (!App.CredentialsService.DoCredentialsExist())
                 {
-                    App.CredentialsService.SaveCredentials(Constants.Id, Officer.UserName, Officer.Password);
+                    App.CredentialsService.SaveCredentials(Constants.User.OfficerId, Officer.UserName, Officer.Password);
                 }
 
                 Application.Current.MainPage = new MainPage();
@@ -44,7 +44,7 @@ namespace KBS2.WijkagentApp.ViewModels
 
         bool AreCredentialsCorrect(string username, string password)
         {
-            return username == Constants.UserName && password == Constants.Password;
+            return username == Constants.User.UserName && password == Constants.User.Password;
         }
     }
 }

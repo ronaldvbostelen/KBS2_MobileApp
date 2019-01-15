@@ -52,7 +52,7 @@ namespace KBS2.WijkagentApp.DataModels
                 if (value != firstName)
                 {
                     firstName = value;
-                    NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(FirstName), nameof(FullName));
                 }
             }
         }
@@ -66,11 +66,12 @@ namespace KBS2.WijkagentApp.DataModels
                 if (value != lastName)
                 {
                     lastName = value;
-                    NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(LastName), nameof(FullName));
                 }
             }
         }
 
+        public string FullName { get { return FirstName + " " + LastName; } }
 
         public char Gender
         {
