@@ -77,7 +77,7 @@ namespace KBS2.WijkagentApp.ViewModels
                 {
                     var locator = CrossGeolocator.Current;
                     var position = await locator.GetPositionAsync();
-                    MapRegion = MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMeters(250));
+                    MapRegion = MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMeters(125));
                     ShowingUser = true;
                 }
             }
