@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using KBS2.WijkagentApp.Datamodels;
-using KBS2.WijkagentApp.Datamodels.Enums;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using Plugin.Geolocator;
-using System.Diagnostics;
 using Xamarin.Forms;
 using KBS2.WijkagentApp.Views.Pages;
 using Plugin.Permissions;
@@ -13,29 +11,13 @@ using Plugin.Permissions.Abstractions;
 using TK.CustomMap;
 using System.Collections.ObjectModel;
 using System.Linq;
+using KBS2.WijkagentApp.Assets;
+using KBS2.WijkagentApp.DataModels;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
     public class MapViewModel : BaseViewModel
     {
-        //some mockup notices / pins for the map
-        private List<Notice> notices = new List<Notice>
-        {
-            //this looks long atm but will be fetched out DB so we wont see it in code anymore
-            new Notice("<<LAAG>>", "Zwolle CS", Priority.Low, new Position(52.505969, 6.090399),
-                "Melding: Zware mishandeling",
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                "Karen Bosch", "Ronald van Bostelen"),
-            new Notice("<<MIDDEL>>", "GGD", Priority.Medium, new Position(52.508171, 6.093015),
-                "Melding: Poging tot doodslag",
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                "Karen Bosch", "Joost Reijmer"),
-            new Notice("<<HOOG>>", "Wezenlanden park", Priority.High, new Position(52.507746, 6.105814),
-                "Melding: Moord",
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                "Karen Bosch", "Sake Elfring"),
-        };
-
         private ObservableCollection<TKCustomMapPin> pins;
         private TKCustomMapPin selectedPin;
         private MapSpan mapRegion = MapSpan.FromCenterAndRadius(new Position(52.4996, 6.07895), Distance.FromKilometers(2)); //preventing nullpointerexception
@@ -43,23 +25,27 @@ namespace KBS2.WijkagentApp.ViewModels
         public ObservableCollection<TKCustomMapPin> Pins { get { return pins; } private set { if (value != pins) pins = value; NotifyPropertyChanged(); } }
         public TKCustomMapPin SelectedPin { get { return selectedPin; } set { if (value != selectedPin) selectedPin = value; NotifyPropertyChanged(); } }
         public MapSpan MapRegion { get { return mapRegion; } set { if (value != mapRegion) mapRegion = value; NotifyPropertyChanged(); } }
-        public List<Notice> Notices { get { return notices; } set { if (notices != value) { notices = value; NotifyPropertyChanged(); } } }
 
         public MapType MapType { get; }
         public bool ShowingUser { get; }
         public bool RegionChangeAnimated { get; }
 
+        //vieModel data
+        private List<Notice> notices;
+
         //creates a xamarin map instance and sets the currentlocation and loaded pins
         public MapViewModel()
         {
+            notices = LoadData();
+            Pins = new ObservableCollection<TKCustomMapPin>(notices.Select(x => x.Pin));
+
             MapType = MapType.Hybrid;
             ShowingUser = true;
             RegionChangeAnimated = true;
-
-            Pins = new ObservableCollection<TKCustomMapPin>(notices.Select(x => x.Pin));
+            
             SetInitialLocation();
         }
-
+        
         //async method to set the current location, this uses the permissionplugin to request the needed permission to get the GPS 
         async void SetInitialLocation() 
         {
@@ -91,23 +77,71 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public ICommand MapLongPressCommand { get { return new ActionCommand(position => MapLongPress((Position)position)); } }
 
-        public ICommand PrioCommand { get { return new ActionCommand(parm => Prio(parm), parm => CanExecutePrio(parm)); } }
+        //based on the pin-object it creates the detailpage view
+        private void CalloutClicked(object callout)
+        {
+            var clickedNotice = notices.Find(x => x.Pin.Equals((TKCustomMapPin)callout));
+            var suspect = clickedNotice.Persons.First(x => x.Description == "Verdachte");
+            var victim = clickedNotice.Persons.First(x => x.Description == "Slachtoffer");
 
-        private void CalloutClicked(object callout) => 
-            Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(notices.Find(x => x.Pin.Equals((TKCustomMapPin) callout)))));
+            Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(clickedNotice.Report, suspect, victim)));
+        }
+            
         
-        private void PinSelect(object pin) => selectedPin = (TKCustomMapPin) pin;
+        private void PinSelect(object pin) => SelectedPin = (TKCustomMapPin) pin;
         
         private void MapLongPress(Position position) => Application.Current.MainPage.Navigation.PushModalAsync(new NewNoticePage(new NewNoticeViewModel(position)));
-
-        private void Prio(object parm)
-        {
-            SelectedPin = notices.Find(x => x.Priority == (Priority)int.Parse((string)parm)).Pin;
-            MapRegion = MapSpan.FromCenterAndRadius(SelectedPin.Position, Distance.FromMeters(35));
-        }
+        
 
         private bool PinExists(object pin) => notices.Exists(x => x.Pin.Equals(pin));
+        
+        //this wont be really useful when we get the API. its just temporary
+        //it combines the db data to usable objects on the GUI
+        private List<Notice> LoadData()
+        {
+            var data = new List<Notice>();
 
-        private bool CanExecutePrio(object parm) => notices.Exists(x => x.Priority == (Priority) int.Parse((string) parm));
+            foreach (var report in Constants.Reports)
+            {
+                var notice = new Notice(report);
+
+                var reportdetails =
+                    from reportDetail in Constants.ReportDetails
+                    where reportDetail.ReportId == report.ReportId
+                    select reportDetail;
+
+                notice.ReportDetails = new ObservableCollection<ReportDetails>(reportdetails);
+                
+                var persons =
+                    from person in Constants.Persons
+                    where reportdetails.Select(x => x.PersonId).Contains(person.PersonId)
+                    select person;
+
+                notice.Persons = new ObservableCollection<Person>(persons);
+
+                notice.Pin = PinCreator(report);
+
+                data.Add(notice);
+            }
+
+            return data;
+        }
+
+        //creates a pin based on database entry
+        public TKCustomMapPin PinCreator(Report report)
+        {
+            var pinColor = new Color(1, 0, 0);
+            if (report.Priority != 1) pinColor = report.Priority == 2 ? new Color(1, .5, 0) : new Color(1, 1, 0);
+
+            return new TKCustomMapPin
+            {
+                DefaultPinColor = pinColor,
+                Position = new Position(report.Latitude, report.Longitude),
+                Title = report.Location,
+                Subtitle = report.Type,
+                IsCalloutClickable = true,
+                ShowCallout = true
+            };
+        }
     }
 }

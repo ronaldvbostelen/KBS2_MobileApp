@@ -4,7 +4,7 @@ using System.Text;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class ReportDetails : BaseDataModel
+    public class ReportDetails : BaseDataModel
     {
         private string reportId;
         private string personId;

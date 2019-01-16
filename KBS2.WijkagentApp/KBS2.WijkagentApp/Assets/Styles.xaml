@@ -8,13 +8,6 @@
     <Thickness x:Key="MarginLeftRight" Left="16" Right="16" />
     <Thickness x:Key="MarginLeftRightTop" Left="16" Right="16" Top="8" />
 
-    <Style x:Key="ButtonStyle" TargetType="Button">
-        <Setter Property="BackgroundColor" Value="#2196F3"/>
-        <Setter Property="CornerRadius" Value="0"/>
-        <Setter Property="TextColor" Value="#000000"/>
-        <Setter Property="Image" Value="map_locator_med.png"/>
-    </Style>
-    
     <Style x:Key="Title" TargetType="Label">
         <Setter Property="FontSize" Value="Medium" />
         <Setter Property="FontAttributes" Value="Bold" />
@@ -23,6 +16,8 @@
     <Style x:Key="BlueButton" TargetType="Button">
         <Setter Property="BackgroundColor" Value="{StaticResource BluePolice}"/>
         <Setter Property="TextColor" Value="#fff"/>
+        <Setter Property="Padding" Value="5,0,5,0"/>
+        <Setter Property="Margin" Value="5"/>
     </Style>
     
 </ResourceDictionary>

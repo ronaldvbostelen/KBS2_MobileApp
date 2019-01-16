@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TK.CustomMap;
+﻿using TK.CustomMap;
 
 namespace KBS2.WijkagentApp.ViewModels
 {

@@ -9,40 +9,10 @@
         <viewModels:MapViewModel />
     </ContentPage.BindingContext>
     <ContentPage.Content>
-        <StackLayout
-            Spacing="0">
-            <ContentView x:Name="MapLayout"
-                         VerticalOptions="FillAndExpand"
-                         HorizontalOptions="FillAndExpand" 
-                         Padding="0"
-                         Margin="0"/>
-            <Grid
-                BackgroundColor="#2196F3"
-                ColumnSpacing="0">
-                <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Text="PRIO 1"
-                        x:Name="BtnOne"
-                        Command="{Binding PrioCommand}" 
-                        CommandParameter="2"
-                        Style="{StaticResource ButtonStyle}"
-                        Clicked="OnButtonClicked"/>
-                <Button Grid.Column="1" Text="PRIO 2" 
-                        x:Name="BtnTwo"
-                        Command="{Binding PrioCommand}"
-                        CommandParameter="1"
-                        Style="{StaticResource ButtonStyle}"
-                        Clicked="OnButtonClicked"/>
-                <Button Grid.Column="2" Text="PRIO 3"
-                        x:Name="BtnThree"
-                        Command="{Binding PrioCommand}"
-                        CommandParameter="0"
-                        Style="{StaticResource ButtonStyle}"
-                        Clicked="OnButtonClicked"/>
-            </Grid>
-        </StackLayout>
+        <ContentView x:Name="MapLayout"
+                     VerticalOptions="FillAndExpand"
+                     HorizontalOptions="FillAndExpand"
+                     Padding="0"
+                     Margin="0" />
     </ContentPage.Content>
 </ContentPage>

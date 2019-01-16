@@ -22,7 +22,6 @@ namespace KBS2.WijkagentApp
 
             if (CredentialsService.DoCredentialsExist())
             {
-
                 MainPage = new MainPage();
             }
             else
