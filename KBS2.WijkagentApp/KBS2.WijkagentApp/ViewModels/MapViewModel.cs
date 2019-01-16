@@ -101,7 +101,12 @@ namespace KBS2.WijkagentApp.ViewModels
         {
             var data = new List<Notice>();
 
-            foreach (var report in Constants.Reports)
+            var activeReports =
+                from reportt in Constants.Reports
+                where reportt.Status == 'A'
+                select reportt;
+
+            foreach (var report in activeReports)
             {
                 var notice = new Notice(report);
 

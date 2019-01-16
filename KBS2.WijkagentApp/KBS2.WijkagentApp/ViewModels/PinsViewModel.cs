@@ -17,9 +17,9 @@ namespace KBS2.WijkagentApp.ViewModels
         private ICommand itemTappedCommand;
 
         //these objects will be filled with DB-entrys for not its the static data, with a select
-        public ObservableCollection<Report> HighReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 1));
-        public ObservableCollection<Report> MidReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 2));
-        public ObservableCollection<Report> LowReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 3));
+        public ObservableCollection<Report> HighReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 1 && x.Status == 'A'));
+        public ObservableCollection<Report> MidReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 2 && x.Status == 'A'));
+        public ObservableCollection<Report> LowReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 3 && x.Status == 'A'));
 
         public ICommand ShowPinOnMapCommand => showPinOnMapCommand ?? (showPinOnMapCommand = new ActionCommand(report => ShowPinOnMap((Report)report)));
         
