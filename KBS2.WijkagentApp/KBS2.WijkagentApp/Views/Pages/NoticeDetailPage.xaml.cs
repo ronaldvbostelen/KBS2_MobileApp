@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using KBS2.WijkagentApp.Datamodels;
-using KBS2.WijkagentApp.ViewModels;
+﻿using KBS2.WijkagentApp.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 

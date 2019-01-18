@@ -12,6 +12,7 @@ namespace KBS2.WijkagentApp.DataModels
         private TimeSpan time;
         private string description;
         private decimal latitude;
+        private char status;
 
         public string EmergencyId
         {
@@ -105,6 +106,19 @@ namespace KBS2.WijkagentApp.DataModels
                 if (value != latitude)
                 {
                     latitude = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public char Status
+        {
+            get { return status;}
+            set
+            {
+                if (value != status)
+                {
+                    status = value;
                     NotifyPropertyChanged();
                 }
             }

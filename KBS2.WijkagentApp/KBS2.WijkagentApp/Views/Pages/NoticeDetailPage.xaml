@@ -1,57 +1,64 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KBS2.WijkagentApp.Views.Pages.NoticeDetailPage"
              Title="Detail melding">
     <ContentPage.Content>
-        <Grid BindingContext="{Binding Notice}">
+        <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <Label Text="{Binding Type}"
+            <Label Text="Melding"
                    Margin="16,0"
-                   Grid.Row="0" 
-                   Grid.Column="0" />
+                   Grid.Row="0"
+                   FontAttributes="Bold" />
 
-            <Label Text="{Binding Description}"
+            <Label Text="{Binding Report.Type}"
                    Margin="16,0"
-                   Grid.Row="1" 
-                   Grid.Column="0" />
+                   Grid.Row="1" />
 
-            <StackLayout Grid.Column="0" Grid.Row="2">
-                <TableView Intent="Data">
-                    <TableRoot>
-                        <TableSection Title="Betrokkenen">
-                            <!-- Color needs to be changed with a custom renderer-->
-                            <ViewCell>
-                                <Grid Margin="16,0">
-                                    <StackLayout Orientation="Horizontal">
-                                        <Label Text="{Binding Suspect}" />
-                                        <Label Text="Verdachte"
+            <Label Text="Beschrijving"
+                   Margin="16,0"
+                   Grid.Row="2"
+                   FontAttributes="Bold" />
+
+            <Label Text="{Binding Report.Comment}"
+                   Margin="16,0"
+                   Grid.Row="3" />
+
+            <TableView
+                Grid.Row="4"
+                Intent="Data">
+                <TableRoot>
+                    <TableSection Title="Betrokkenen">
+                        <!-- Color needs to be changed with a custom renderer-->
+                        <ViewCell>
+                            <Grid Margin="16,0">
+                                <StackLayout Orientation="Horizontal">
+                                    <Label Text="{Binding Suspect.FullName}" />
+                                    <Label Text="Verdachte"
                                            HorizontalOptions="EndAndExpand" />
-                                    </StackLayout>
-                                </Grid>
-                            </ViewCell>
-                            <ViewCell>
-                                <Grid Margin="16,0">
-                                    <StackLayout Orientation="Horizontal">
-                                        <Label Text="{Binding Victim}" />
-                                        <Label Text="Slachtoffer"
+                                </StackLayout>
+                            </Grid>
+                        </ViewCell>
+                        <ViewCell>
+                            <Grid Margin="16,0">
+                                <StackLayout Orientation="Horizontal">
+                                    <Label Text="{Binding Victim.FullName}" />
+                                    <Label Text="Slachtoffer"
                                            HorizontalOptions="EndAndExpand" />
-                                    </StackLayout>
-                                </Grid>
-                            </ViewCell>
-                        </TableSection>
-                    </TableRoot>
-                </TableView>
-            </StackLayout>
+                                </StackLayout>
+                            </Grid>
+                        </ViewCell>
+                    </TableSection>
+                </TableRoot>
+            </TableView>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

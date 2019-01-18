@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using KBS2.WijkagentApp.Datamodels;
+﻿using KBS2.WijkagentApp.DataModels;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
     public class NoticeDetailViewModel : BaseViewModel
     {
-        public Notice Notice { get; set; }
+        public Report Report { get; }
+        public Person Suspect { get; }
+        public Person Victim { get; }
 
-        public NoticeDetailViewModel(Notice notice)
+        public NoticeDetailViewModel(Report report, Person suspect, Person victim)
         {
             //This is an example and needs to be filled with real data from the database later
-            Notice = notice;
+            Report = report;
+            Suspect = suspect;
+            Victim = victim;
         }
     }
 }

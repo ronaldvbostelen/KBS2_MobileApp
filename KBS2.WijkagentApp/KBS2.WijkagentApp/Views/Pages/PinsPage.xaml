@@ -1,20 +1,182 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:KBS2.WijkagentApp.ViewModels;assembly=KBS2.WijkagentApp"
+             xmlns:Behavior="clr-namespace:KBS2.WijkagentApp.Views.Behaviors"
              x:Class="KBS2.WijkagentApp.Views.Pages.PinsPage"
              NavigationPage.HasNavigationBar="False">
     <ContentPage.BindingContext>
-        <viewModels:PinsViewModel/>
+        <viewModels:PinsViewModel x:Name="ViewModel" />
     </ContentPage.BindingContext>
     <ContentPage.Content>
-        <StackLayout
-            VerticalOptions="End">
-            <Label Text="Name"/>
-            <Label Text="{Binding FullName}"/>
-            <Label Text="Logged in as:"/>
-            <Label Text="{Binding UserName}"/>
-            <Button Text="LOGOUT" Command="{Binding LogoutCommand}"></Button>
-        </StackLayout>
+        <Grid
+            Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackLayout Grid.Row="0">
+                <Label Text="Hoge Prioriteit"
+                       Style="{StaticResource Title}" />
+                <ListView
+                    ItemsSource="{Binding HighReports}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid
+                                    ColumnSpacing="0"
+                                    RowSpacing="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <StackLayout
+                                        Orientation="Horizontal"
+                                        Grid.Row="0"
+                                        Grid.Column="0">
+                                        <Label Text="Melding:" />
+                                        <Label Text="{Binding Type}"
+                                               LineBreakMode="TailTruncation" />
+                                    </StackLayout>
+                                    <StackLayout
+                                        Orientation="Horizontal"
+                                        Grid.Row="1"
+                                        Grid.Column="0">
+                                        <Label Text="Locatie:" />
+                                        <Label Text="{Binding Location}"
+                                               LineBreakMode="TailTruncation" />
+                                    </StackLayout>
+                                    <Button
+                                        Grid.RowSpan="2"
+                                        Grid.Column="1"
+                                        HorizontalOptions="End"
+                                        Text="Toon op map"
+                                        Command="{Binding ShowPinOnMapCommand, Source={x:Reference ViewModel}}"
+                                        CommandParameter="{Binding .}"
+                                        Style="{StaticResource BlueButton}"/>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.Behaviors>
+                        <Behavior:EventToCommandBehavior EventName="ItemTapped"
+                                                         Command="{Binding ItemTappedCommand}" />
+                    </ListView.Behaviors>
+                </ListView>
+            </StackLayout>
+            <StackLayout Grid.Row="1">
+                <Label
+                    Text="Normale Prioriteit"
+                    Style="{StaticResource Title}" />
+                <ListView
+                    ItemsSource="{Binding MidReports}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid
+                                    ColumnSpacing="0"
+                                    RowSpacing="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <StackLayout
+                                        Orientation="Horizontal"
+                                        Grid.Row="0"
+                                        Grid.Column="0">
+                                        <Label Text="Melding:" />
+                                        <Label Text="{Binding Type}"
+                                               LineBreakMode="TailTruncation" />
+                                    </StackLayout>
+                                    <StackLayout
+                                        Orientation="Horizontal"
+                                        Grid.Row="1"
+                                        Grid.Column="0">
+                                        <Label Text="Locatie:" />
+                                        <Label Text="{Binding Location}"
+                                               LineBreakMode="TailTruncation" />
+                                    </StackLayout>
+                                    <Button
+                                        Grid.RowSpan="2"
+                                        Grid.Column="1"
+                                        HorizontalOptions="End"
+                                        Text="Toon op map"
+                                        Command="{Binding ShowPinOnMapCommand, Source={x:Reference ViewModel}}"
+                                        CommandParameter="{Binding .}"
+                                        Style="{StaticResource BlueButton}" />
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.Behaviors>
+                        <Behavior:EventToCommandBehavior EventName="ItemTapped"
+                                                         Command="{Binding ItemTappedCommand}" />
+                    </ListView.Behaviors>
+                </ListView>
+            </StackLayout>
+            <StackLayout Grid.Row="2">
+                <Label Text="Lage Prioriteit"
+                       Style="{StaticResource Title}" />
+                <ListView
+                    ItemsSource="{Binding LowReports}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid
+                                    ColumnSpacing="0"
+                                    RowSpacing="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <StackLayout
+                                        Orientation="Horizontal"
+                                        Grid.Row="0"
+                                        Grid.Column="0">
+                                        <Label Text="Melding:" />
+                                        <Label Text="{Binding Type}"
+                                               LineBreakMode="TailTruncation" />
+                                    </StackLayout>
+                                    <StackLayout
+                                        Orientation="Horizontal"
+                                        Grid.Row="1"
+                                        Grid.Column="0">
+                                        <Label Text="Locatie:" />
+                                        <Label Text="{Binding Location}"
+                                               LineBreakMode="TailTruncation" />
+                                    </StackLayout>
+                                    <Button
+                                        Grid.RowSpan="2"
+                                        Grid.Column="1"
+                                        HorizontalOptions="End"
+                                        Text="Toon op map"
+                                        Command="{Binding ShowPinOnMapCommand, Source={x:Reference ViewModel}}"
+                                        CommandParameter="{Binding .}"
+                                        Style="{StaticResource BlueButton}" />
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.Behaviors>
+                        <Behavior:EventToCommandBehavior EventName="ItemTapped"
+                                                         Command="{Binding ItemTappedCommand}" />
+                    </ListView.Behaviors>
+                </ListView>
+            </StackLayout>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

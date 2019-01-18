@@ -4,18 +4,18 @@ using System.Text;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class Report : BaseDataModel
+    public class Report : BaseDataModel
     {
         private string reportId;
         private string reporterId;
         private string type;
         private TimeSpan time;
         private string location;
-        private string status;
-        private string priority;
+        private char status;
+        private int priority;
         private string comment;
-        private decimal longitude;
-        private decimal latitude;
+        private double longitude;
+        private double latitude;
 
         public string ReportId
         {
@@ -87,7 +87,7 @@ namespace KBS2.WijkagentApp.DataModels
         }
 
 
-        public string Status
+        public char Status
         {
             get { return status; }
             set
@@ -101,7 +101,7 @@ namespace KBS2.WijkagentApp.DataModels
         }
 
 
-        public string Priority
+        public int Priority
         {
             get { return priority; }
             set
@@ -129,7 +129,7 @@ namespace KBS2.WijkagentApp.DataModels
         }
 
 
-        public decimal Longitude
+        public double Longitude
         {
             get { return longitude; }
             set
@@ -143,7 +143,7 @@ namespace KBS2.WijkagentApp.DataModels
         }
 
 
-        public decimal Latitude
+        public double Latitude
         {
             get { return latitude; }
             set
