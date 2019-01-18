@@ -3,6 +3,8 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KBS2.WijkagentApp.Views.Pages.NoticeDetailPage"
+             NavigationPage.HasNavigationBar="True"
+             NavigationPage.HasBackButton="True"
              Title="Detail melding">
     <ContentPage.Content>
         <Grid>
@@ -14,22 +16,23 @@
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <Label Text="Melding"
-                   Margin="16,0"
-                   Grid.Row="0"
-                   FontAttributes="Bold" />
+            <Label FontAttributes="Bold" Margin="{StaticResource MarginLeftRight}" Grid.Row="1">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Melding: "/>
+                        <Span Text="{Binding Report.Type}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
 
-            <Label Text="{Binding Report.Type}"
-                   Margin="16,0"
-                   Grid.Row="1" />
 
             <Label Text="Beschrijving"
-                   Margin="16,0"
+                   Margin="{StaticResource MarginLeftRight}"
                    Grid.Row="2"
                    FontAttributes="Bold" />
 
             <Label Text="{Binding Report.Comment}"
-                   Margin="16,0"
+                   Margin="{StaticResource MarginLeftRight}"
                    Grid.Row="3" />
 
             <TableView
