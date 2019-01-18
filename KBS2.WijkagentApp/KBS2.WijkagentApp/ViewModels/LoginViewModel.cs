@@ -15,22 +15,21 @@ namespace KBS2.WijkagentApp.ViewModels
         private Officer officer;
         private ICommand loginCommand;
 
-        public Officer Officer { get { return officer; } set { officer = value; NotifyPropertyChanged(); } } 
+        public string UserName { get { return officer.UserName; } set { if (value != officer.UserName) officer.UserName = value; NotifyPropertyChanged(); ((ActionCommand)LoginCommand).RaiseCanExecuteChanged(); } }
+        public string Password { get { return officer.Password; } set { if (value != officer.Password) officer.Password = value; NotifyPropertyChanged(); ((ActionCommand)LoginCommand).RaiseCanExecuteChanged(); } }
         public string LoginMessage { get { return loginMessage; } set { if (value != loginMessage) loginMessage = value; NotifyPropertyChanged(); } }
 
-        public LoginViewModel() { Officer = new Officer(); }
+        public LoginViewModel() { officer = new Officer(); }
 
         public ICommand LoginCommand => loginCommand ?? (loginCommand = new ActionCommand(x => Login(), x => CanLogin()));
-
-        private bool CanLogin() => true;
-
+        
         private void Login()
         {
-            if (AreCredentialsCorrect(Officer.UserName, Officer.Password))
+            if (AreCredentialsCorrect(officer.UserName, officer.Password))
             {
                 if (!App.CredentialsService.DoCredentialsExist())
                 {
-                    App.CredentialsService.SaveCredentials(Constants.User.OfficerId, Officer.UserName, Officer.Password);
+                    App.CredentialsService.SaveCredentials(Constants.User.OfficerId, officer.UserName, officer.Password);
                 }
 
                 Application.Current.MainPage = new MainPage();
@@ -38,13 +37,12 @@ namespace KBS2.WijkagentApp.ViewModels
             else
             {
                 LoginMessage = "Login failed";
-                Officer.Password = string.Empty;
+                Password = string.Empty;
             }
         }
 
-        bool AreCredentialsCorrect(string username, string password)
-        {
-            return username == Constants.User.UserName && password == Constants.User.Password;
-        }
+        private bool CanLogin() => !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password);
+
+        private bool AreCredentialsCorrect(string username, string password) => username == Constants.User.UserName && password == Constants.User.Password;
     }
 }
