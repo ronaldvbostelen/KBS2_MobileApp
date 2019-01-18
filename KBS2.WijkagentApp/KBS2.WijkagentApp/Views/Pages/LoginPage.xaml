@@ -12,9 +12,9 @@
                    VerticalOptions="Start" HorizontalTextAlignment="Center"/>
             <StackLayout Margin="20" VerticalOptions="CenterAndExpand">
                 <Label Text="Username" />
-                <Entry Placeholder="username" Text="{Binding Officer.UserName}"/>
+                <Entry Placeholder="username" Text="{Binding UserName}"/>
                 <Label Text="Password" />
-                <Entry IsPassword="true" Text="{Binding Officer.Password}" ReturnCommand="{Binding LoginCommand}" Placeholder="password"/>
+                <Entry IsPassword="true" Text="{Binding Password}" ReturnCommand="{Binding LoginCommand}" Placeholder="password"/>
                 <Button Text="Login" Command="{Binding LoginCommand}" />
                 <Label Text="{Binding LoginMessage}" />
             </StackLayout>
