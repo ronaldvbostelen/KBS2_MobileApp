@@ -97,9 +97,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AzureNotificationHubService.cs" />
+    <Compile Include="Services\AzureNotificationHubService.cs" />
     <Compile Include="CloseApplication.cs" />
-    <Compile Include="FirebaseRegistrationService.cs" />
+    <Compile Include="Services\FirebaseNotificationService.cs" />
+    <Compile Include="Services\FirebaseRegistrationService.cs" />
     <Compile Include="SplashScreenActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
