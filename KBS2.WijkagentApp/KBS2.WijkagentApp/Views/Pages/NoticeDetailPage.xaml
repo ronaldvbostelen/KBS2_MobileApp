@@ -3,6 +3,8 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KBS2.WijkagentApp.Views.Pages.NoticeDetailPage"
+             NavigationPage.HasNavigationBar="True"
+             NavigationPage.HasBackButton="True"
              Title="Detail melding">
     <ContentPage.Content>
         <Grid>
@@ -10,34 +12,87 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="30" />
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="70" />
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <Label Text="Melding"
-                   Margin="16,0"
-                   Grid.Row="0"
-                   FontAttributes="Bold" />
+            <Label FontAttributes="Bold" Margin="{StaticResource MarginLeftRight}" Grid.Row="1">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Melding: "/>
+                        <Span Text="{Binding Report.Type}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
 
-            <Label Text="{Binding Report.Type}"
-                   Margin="16,0"
-                   Grid.Row="1" />
-
-            <Label Text="Beschrijving"
-                   Margin="16,0"
+            <Label Text="Locatie"
+                   Margin="{StaticResource MarginLeftRight}"
                    Grid.Row="2"
                    FontAttributes="Bold" />
 
-            <Label Text="{Binding Report.Comment}"
-                   Margin="16,0"
+            <Label Text="{Binding Report.Location}"
+                   Margin="{StaticResource MarginLeftRight}"
                    Grid.Row="3" />
 
-            <TableView
-                Grid.Row="4"
+            <Label Text="Beschrijving"
+                   Margin="{StaticResource MarginLeftRight}"
+                   Grid.Row="4"
+                   FontAttributes="Bold" />
+
+            <Label Text="{Binding Report.Comment}"
+                   Margin="{StaticResource MarginLeftRight}"
+                   Grid.Row="5" />
+
+            <StackLayout Grid.Row="6">
+                <BoxView Grid.Column="0" BackgroundColor="{StaticResource BluePolice}" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="28"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
+                    </Grid.ColumnDefinitions >
+                    <BoxView Grid.Column="0" Grid.ColumnSpan="8" Grid.RowSpan="1" BackgroundColor="{StaticResource BluePolice}" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
+                    <Label Text="Betrokkenen" FontAttributes="Bold" Grid.Column="1"/>
+                    <Label Text="Soort" FontAttributes="Bold" Grid.Column="2"/>
+                </Grid>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="28"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
+                    </Grid.ColumnDefinitions >
+                    <BoxView Grid.Column="0" Grid.ColumnSpan="8" Grid.RowSpan="1" BackgroundColor="{StaticResource BluePolice}" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
+                    <Label Text="{Binding Suspect.FullName}" Grid.Column="1"/>
+                    <Label Text="Verdachte" Grid.Column="2"/>
+                </Grid>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="28"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
+                    </Grid.ColumnDefinitions >
+                    <BoxView Grid.Column="0" Grid.ColumnSpan="8" Grid.RowSpan="1" BackgroundColor="{StaticResource BluePolice}" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
+                    <Label Text="{Binding Victim.FullName}" Grid.Column="1"/>
+                    <Label Text="Slachtoffer" Grid.Column="2"/>
+                </Grid>
+            </StackLayout>
+
+                <!--<TableView
+                Grid.Row="6"
                 Intent="Data">
                 <TableRoot>
                     <TableSection Title="Betrokkenen">
-                        <!-- Color needs to be changed with a custom renderer-->
                         <ViewCell>
                             <Grid Margin="16,0">
                                 <StackLayout Orientation="Horizontal">
@@ -58,7 +113,7 @@
                         </ViewCell>
                     </TableSection>
                 </TableRoot>
-            </TableView>
+            </TableView>-->
         </Grid>
     </ContentPage.Content>
 </ContentPage>
