@@ -8,6 +8,7 @@ namespace KBS2.WijkagentApp.DataModels
     {
         private string reportId;
         private string reporterId;
+        private string processedBy;
         private string type;
         private TimeSpan time;
         private string location;
@@ -44,6 +45,18 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
+        public string ProcessedBy   
+        {
+            get { return processedBy; }
+            set
+            {
+                if (value != processedBy)
+                {
+                    processedBy = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public string Type
         {

@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using KBS2.WijkagentApp.Assets;
+using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.Services;
 using KBS2.WijkagentApp.Services.Interfaces;
+using KBS2.WijkagentApp.ViewModels;
 using KBS2.WijkagentApp.Views.Pages;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -27,9 +32,7 @@ namespace KBS2.WijkagentApp
             else
             {
                 MainPage = new LoginPage();
-
             }
-
         }
 
         protected override void OnStart()

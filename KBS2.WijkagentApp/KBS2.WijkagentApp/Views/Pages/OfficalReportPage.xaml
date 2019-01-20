@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:textToBool="clr-namespace:KBS2.WijkagentApp.Views.Converters"
+             x:Class="KBS2.WijkagentApp.Views.Pages.OfficalReportPage"
+             xmlns:Behavior="clr-namespace:KBS2.WijkagentApp.Views.Behaviors"
+             x:Name="ThisPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <textToBool:TextToBoolConverter x:Key="TextToBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid
+            RowSpacing="0"
+            ColumnSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackLayout
+                WidthRequest="500"
+                HorizontalOptions="CenterAndExpand"
+                Grid.Row="0"
+                Style="{StaticResource MinimalStack}">
+                <StackLayout
+                    Orientation="Horizontal">
+                    <ContentView 
+                        HorizontalOptions="Start">
+                        <Button
+                            WidthRequest="45"
+                            HeightRequest="40"
+                            Image="photo_white.png" Style="{StaticResource BlueButton}" 
+                            Command="{Binding CameraCommand}"/>
+                    </ContentView>
+                    <StackLayout
+                        HorizontalOptions="CenterAndExpand"
+                        Style="{StaticResource MinimalStack}">
+                        <Label
+                            Margin="0"
+                            Text="Proces-verbaal"
+                            HorizontalTextAlignment="Center"
+                            Style="{StaticResource Title}" />
+                        <StackLayout
+                            HorizontalOptions="CenterAndExpand"
+                            Orientation="Horizontal"
+                            Margin="0"
+                            Padding="0">
+                            <Label
+                                HorizontalTextAlignment="Center"
+                                VerticalTextAlignment="Center"
+                                Text="Meldingsnummer:" FontSize="7" />
+                            <Label
+                                HorizontalTextAlignment="Center"
+                                VerticalTextAlignment="Center"
+                                Text="{Binding Report.ReportId}" FontSize="6" />
+                        </StackLayout>
+                    </StackLayout>
+                    <ContentView 
+                        HorizontalOptions="End">
+                        <Button 
+                            WidthRequest="45"
+                            HeightRequest="40"
+                            Image="audio_white.png" Style="{StaticResource BlueButton}" 
+                            Command="{Binding AudioCommand}"/>
+                    </ContentView>
+                </StackLayout>
+                
+            </StackLayout>
+
+            <StackLayout
+                Grid.Row="1"
+                Style="{StaticResource MinimalStack}">
+                <Label
+                    x:Name="Label1"
+                    Style="{StaticResource SmallInfoLabel}"
+                    Text="Aanleiding"
+                    IsVisible="{Binding Text, Source={x:Reference Entry1},
+                    Converter={StaticResource TextToBoolConverter}}" />
+                <Entry
+                    x:Name="Entry1"
+                    Placeholder="{Binding Text, Source={x:Reference Label1}}"
+                    Text="{Binding Report.Type}">
+                    <Entry.Behaviors>
+                        <Behavior:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateCanSaveCommand}"/>
+                    </Entry.Behaviors>
+                </Entry>
+            </StackLayout>
+
+            <StackLayout
+                Grid.Row="2"
+                Style="{StaticResource MinimalStack}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0"
+                           Text="Tijdstip"
+                           Style="{StaticResource SmallInfoLabel}" />
+                    <TimePicker Grid.Column="0" Time="{Binding TempOfficialReport.Time}">
+                        <TimePicker.Behaviors>
+                            <Behavior:EventToCommandBehavior EventName="PropertyChanged" Command="{Binding ValidateCanSaveCommand}"/>
+                        </TimePicker.Behaviors>
+                    </TimePicker>
+                    <Label
+                        x:Name="Label2" Grid.Column="1" Text="Plaats"
+                        Style="{StaticResource SmallInfoLabel}"
+                        IsVisible="{Binding Text, Source={x:Reference Entry2},
+                        Converter={StaticResource TextToBoolConverter}}" />
+                    <Entry
+                        x:Name="Entry2"
+                        Text="{Binding TempOfficialReport.Location}"
+                        Grid.Column="1"
+                        Placeholder="{Binding Text, Source={x:Reference Label2}}">
+                        <Entry.Behaviors>
+                            <Behavior:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateCanSaveCommand}"/>
+                        </Entry.Behaviors>
+                    </Entry>
+                </Grid>
+            </StackLayout>
+
+            <StackLayout
+                Grid.Row="3"
+                Style="{StaticResource MinimalStack}">
+                <Label
+                    x:Name="Label3"
+                    Style="{StaticResource SmallInfoLabel}"
+                    Text="Waarnemingen"
+                    IsVisible="{Binding Text, Source={x:Reference Editor1}, Converter={StaticResource TextToBoolConverter}}" />
+                <ScrollView
+                    Orientation="Vertical"
+                    VerticalScrollBarVisibility="Default">
+                    <ScrollView.Content>
+                        <StackLayout>
+                            <Editor
+                                Margin="0,5,0,0"
+                                x:Name="Editor1"
+                                HeightRequest="500"
+                                VerticalOptions="FillAndExpand"
+                                AutoSize="TextChanges"
+                                Text="{Binding TempOfficialReport.Observation}"
+                                Placeholder="{Binding Text, Source={x:Reference Label3}}">
+                                <Editor.Behaviors>
+                                    <Behavior:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateCanSaveCommand}"/>
+                                </Editor.Behaviors>
+                            </Editor>
+                        </StackLayout>
+                    </ScrollView.Content>
+                </ScrollView>
+            </StackLayout>
+
+            <StackLayout
+                Grid.Row="4"
+                Style="{StaticResource MinimalStack}">
+                <Grid
+                    VerticalOptions="FillAndExpand">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <ContentView
+                        Grid.Column="0">
+                        <Label 
+                            HorizontalOptions="Start"
+                            Text="Verbalisanten" />
+                    </ContentView>
+                    <ContentView
+                        Grid.Column="1">
+                        <Button 
+                            HorizontalOptions="End"
+                            FontSize="8"
+                            Text="Voeg verbalisant toe" 
+                            Style="{StaticResource BlueButton}"
+                            Command="{Binding AddVerbalisantCommand}" />
+                    </ContentView>
+                    
+                </Grid>
+                <ListView
+                    VerticalOptions="FillAndExpand"
+                    ItemsSource="{Binding Verbalisants}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="1*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label VerticalTextAlignment="Start" Grid.Row="0" Grid.Column="0"
+                                           Text="{Binding FullName}" />
+                                    <Label VerticalTextAlignment="End" Grid.Row="1" Grid.Column="0"
+                                           Text="{Binding BirthDate, StringFormat='{0:dd-MM-yyyy}'}" />
+                                    <Button Grid.RowSpan="2" Grid.Column="1" Text="Pers. geg." FontSize="10"
+                                            Style="{StaticResource BlueButton}"
+                                            Command="{Binding BindingContext.EditPersonCommand, Source={x:Reference ThisPage}}"
+                                            CommandParameter="{Binding .}" />
+                                    <Button Grid.RowSpan="2" Grid.Column="2" Text="Verklaring" FontSize="10"
+                                            Style="{StaticResource BlueButton}"
+                                            Command="{Binding BindingContext.StatementCommand, Source={x:Reference ThisPage}}"
+                                            CommandParameter="{Binding .}" />
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+            
+            <Grid
+                Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button Text="Annuleer" Style="{StaticResource BlueButton}" Command="{Binding CancelCommand}" />
+                <Button Grid.Column="1" Text="Verwijder" Style="{StaticResource BlueButton}" Command="{Binding DeleteCommand}" />
+                <Button Grid.Column="2" Text="Opslaan" Style="{StaticResource BlueButton}" Command="{Binding SaveCommand}" />
+            </Grid>
+
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

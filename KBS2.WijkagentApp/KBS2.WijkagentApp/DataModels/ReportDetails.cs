@@ -7,10 +7,12 @@ namespace KBS2.WijkagentApp.DataModels
     public class ReportDetails : BaseDataModel
     {
         private string reportId;
+        private string officialReportId;
         private string personId;
         private char type;
         private string description;
         private string statement;
+        private bool isHeard;
 
         public string ReportId
         {
@@ -25,6 +27,18 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
+        public string OfficialReportId
+        {
+            get { return officialReportId; }
+            set
+            {
+                if (value != officialReportId)
+                {
+                    officialReportId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public string PersonId
         {
@@ -80,5 +94,17 @@ namespace KBS2.WijkagentApp.DataModels
                 }
             }
         }
+
+        public bool IsHeard
+        {
+            get { return isHeard;}
+            set
+            {
+                if (value != isHeard)
+                {
+                    isHeard = value;
+                    NotifyPropertyChanged();
+                }
+            } }
     }
 }

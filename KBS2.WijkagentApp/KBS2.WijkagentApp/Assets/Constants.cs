@@ -36,31 +36,39 @@ namespace KBS2.WijkagentApp.Assets
         {
             new Person
             {
+                BirthDate = new DateTime(1985,05,15),
                 PersonId = "08f06840-8107-4bd3-97aa-1455eeadacfb",
                 FirstName = "Karen",
                 LastName = "Bosch",
-                Description = "Verdachte"
+                Description = "Verdachte",
+                Gender = 'V'
             },
             new Person
             {
+                BirthDate = new DateTime(1985,05,15),
                 PersonId = "fd7f5586-4246-4774-8d64-14956c23cd26",
                 FirstName = "Sake",
                 LastName = "Elfring",
-                Description = "Slachtoffer"
+                Description = "Slachtoffer",
+                Gender = 'M'
             },
             new Person
             {
+                BirthDate = new DateTime(1985,05,15),
                 PersonId = "f595ec57-2299-4f8c-b0d9-19cd0db00d93",
                 FirstName = "Joost",
                 LastName = "Reijmer",
-                Description = "Slachtoffer"
+                Description = "Slachtoffer",
+                Gender = 'M'
             },
             new Person
             {
+                BirthDate = new DateTime(1985,05,15),
                 PersonId = "fa336ca2-753b-4d17-875b-301ebc42ff18",
                 FirstName = "Ronald",
                 LastName = "van Bostelen",
-                Description = "Slachtoffer"
+                Description = "Slachtoffer",
+                Gender = 'M'
             }
         };
 
@@ -113,44 +121,52 @@ namespace KBS2.WijkagentApp.Assets
             {
                 ReportId = Reports[0].ReportId,
                 PersonId = Persons[0].PersonId, //Karen
-                Statement = "Ik heb het niet gedaan",
+                IsHeard = true,
+//                Statement = "Ik heb het niet gedaan",
                 Type = 'V'
             },
             new ReportDetails
             {
             ReportId = Reports[0].ReportId,
             PersonId = Persons[3].PersonId, //Ronald
-            Statement = "Ze viel mij zomaar aan",
+                IsHeard = false,
+//            Statement = "Ze viel mij zomaar aan",
             Type = 'V'
         },
             new ReportDetails
             {
                 ReportId = Reports[1].ReportId,
                 PersonId = Persons[0].PersonId, //Karen
-                Statement = "Ik heb het niet gedaan",
+                IsHeard = false,
+//                Statement = "Ik heb het niet gedaan",
                 Type = 'V'
             },
             new ReportDetails
             {
                 ReportId = Reports[1].ReportId,
                 PersonId = Persons[2].PersonId, //Joost
-                Statement = "Ze viel mij zomaar aan",
+                IsHeard = false,
+//                Statement = "Ze viel mij zomaar aan",
                 Type = 'V'
             },
             new ReportDetails
             {
                 ReportId = Reports[2].ReportId,
                 PersonId = Persons[0].PersonId, //Karen
-                Statement = "Ik heb het niet gedaan",
+                IsHeard = false,
+//                Statement = "Ik heb het niet gedaan",
                 Type = 'V'
             },
             new ReportDetails
             {
                 ReportId = Reports[2].ReportId,
-                PersonId = Persons[3].PersonId, //Sake
-                Description = "Persoon vermoord",
+                PersonId = Persons[1].PersonId, //Sake
+                IsHeard = false,
+//                Description = "Persoon vermoord",
                 Type = 'A'
             },
         };
+
+        public static ObservableCollection<OfficialReport> OfficialReports = new ObservableCollection<OfficialReport>();
     }
 }

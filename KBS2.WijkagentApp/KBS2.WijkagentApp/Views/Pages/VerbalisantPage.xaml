@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:Converters="clr-namespace:KBS2.WijkagentApp.Views.Converters"
+             xmlns:Behavior="clr-namespace:KBS2.WijkagentApp.Views.Behaviors"
+             x:Class="KBS2.WijkagentApp.Views.Pages.VerbalisantPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Converters:TextToBoolConverter x:Key="TextToBoolConverter" />
+            <Converters:IntToBoolConverter x:Key="IntToBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout
+            Style="{StaticResource MinimalStack}">
+            <Label
+                Text="Persoonsgegevens verbalisant"
+                HorizontalTextAlignment="Center"
+                Margin="0"
+                Style="{StaticResource Title}" />
+            <Picker Title="Selecteer betrokken persoon (optioneel)"
+                    ItemsSource="{Binding InvolvedPersons}"
+                    ItemDisplayBinding="{Binding FullName}"
+                    SelectedItem="{Binding SelectedInvolvedPerson}"
+                    SelectedIndex="{Binding SelectedInvolvedIndex}">
+                <Picker.Behaviors>
+                    <Behavior:EventToCommandBehavior EventName="PropertyChanged" Command="{Binding ValidateCommands}" />
+                </Picker.Behaviors>
+            </Picker>
+
+            <StackLayout
+                VerticalOptions="CenterAndExpand"
+                Style="{StaticResource MinimalStack}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackLayout
+                        HorizontalOptions="FillAndExpand"
+                        Grid.Column="0"
+                        Style="{StaticResource MinimalStack}">
+                        <Label
+                            x:Name="Label1"
+                            Style="{StaticResource SmallInfoLabel}"
+                            Text="Voornaam"
+                            IsVisible="{Binding Text,
+                            Source={x:Reference entry1},
+                            Converter={StaticResource TextToBoolConverter}}" />
+                        <Entry Text="{Binding Verbalisant.FirstName}"
+                               VerticalOptions="EndAndExpand"
+                               Placeholder="{Binding Text, Source={x:Reference Label1}}"
+                               x:Name="entry1">
+                            <Entry.Behaviors>
+                                <Behavior:EventToCommandBehavior EventName="TextChanged"
+                                                                 Command="{Binding ValidateCommands}" />
+                            </Entry.Behaviors>
+                        </Entry>
+                    </StackLayout>
+                    <StackLayout
+                        HorizontalOptions="FillAndExpand"
+                        Grid.Column="1"
+                        Style="{StaticResource MinimalStack}">
+                        <Label
+                            x:Name="Label2"
+                            Style="{StaticResource SmallInfoLabel}"
+                            Text="Achternaam"
+                            IsVisible="{Binding Text,
+                            Source={x:Reference entry2},
+                            Converter={StaticResource TextToBoolConverter}}" />
+                        <Entry Text="{Binding Verbalisant.LastName}"
+                               VerticalOptions="EndAndExpand"
+                               Placeholder="{Binding Text, Source={x:Reference Label2}}"
+                               x:Name="entry2">
+                            <Entry.Behaviors>
+                                <Behavior:EventToCommandBehavior EventName="TextChanged"
+                                                                 Command="{Binding ValidateCommands}" />
+                            </Entry.Behaviors>
+                        </Entry>
+                    </StackLayout>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackLayout
+                        HorizontalOptions="FillAndExpand"
+                        Grid.Column="0"
+                        Style="{StaticResource MinimalStack}">
+                        <Label Text="Geboortedatum"
+                               Style="{StaticResource SmallInfoLabel}" />
+                        <DatePicker
+                            Date="{Binding Verbalisant.BirthDate}" VerticalOptions="FillAndExpand">
+                            <DatePicker.Behaviors>
+                                <Behavior:EventToCommandBehavior EventName="PropertyChanged"
+                                                                 Command="{Binding ValidateCommands}" />
+                            </DatePicker.Behaviors>
+                        </DatePicker>
+                    </StackLayout>
+                    <StackLayout
+                        HorizontalOptions="FillAndExpand"
+                        Grid.Column="1"
+                        Style="{StaticResource MinimalStack}">
+                        <Label
+                            Text="Geslacht"
+                            Style="{StaticResource SmallInfoLabel}"
+                            IsVisible="{Binding SelectedIndex, Source={x:Reference GenderPicker},
+                        Converter={StaticResource IntToBoolConverter}}" />
+                        <Picker
+                            VerticalOptions="EndAndExpand"
+                            x:Name="GenderPicker"
+                            SelectedIndex="{Binding SelectedGenderIndex}"
+                            SelectedItem="{Binding SelectedGender}"
+                            Title="Selecteer geslacht"
+                            ItemsSource="{Binding GenderList}">
+                            <Picker.Behaviors>
+                                <Behavior:EventToCommandBehavior EventName="PropertyChanged"
+                                                                 Command="{Binding ValidateCommands}" />
+                            </Picker.Behaviors>
+                        </Picker>
+                    </StackLayout>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackLayout
+                        HorizontalOptions="FillAndExpand"
+                        Grid.Column="0"
+                        Style="{StaticResource MinimalStack}">
+                        <Label x:Name="Label3"
+                               Text="Burgerservicenummer"
+                               Style="{StaticResource SmallInfoLabel}"
+                               IsVisible="{Binding Text, Source={x:Reference Entry4}, Converter={StaticResource TextToBoolConverter}}" />
+                        <Entry
+                            x:Name="Entry4"
+                            Placeholder="{Binding Text, Source={x:Reference Label3}}"
+                            Text="{Binding Verbalisant.SocialSecurityNumber}"
+                            Keyboard="Numeric">
+                            <Entry.Behaviors>
+                                <Behavior:EventToCommandBehavior EventName="TextChanged"
+                                                                 Command="{Binding ValidateCommands}" />
+                            </Entry.Behaviors>
+                        </Entry>
+                    </StackLayout>
+                    <StackLayout
+                        HorizontalOptions="FillAndExpand"
+                        Grid.Column="1"
+                        Style="{StaticResource MinimalStack}">
+                        <Label
+                            x:Name="Label4"
+                            Text="Telefoonnummer"
+                            Style="{StaticResource SmallInfoLabel}"
+                            IsVisible="{Binding Text, Source={x:Reference Entry3}, Converter={StaticResource TextToBoolConverter}}" />
+                        <Entry
+                            x:Name="Entry3"
+                            Keyboard="Numeric"
+                            VerticalOptions="EndAndExpand"
+                            Placeholder="{Binding Text, Source={x:Reference Label4}}"
+                            Text="{Binding Verbalisant.PhoneNumber}">
+                            <Entry.Behaviors>
+                                <Behavior:EventToCommandBehavior EventName="TextChanged"
+                                                                 Command="{Binding ValidateCommands}" />
+                            </Entry.Behaviors>
+                        </Entry>
+                    </StackLayout>
+                </Grid>
+                <StackLayout
+                    Style="{StaticResource MinimalStack}">
+                    <Label
+                        x:Name="Label6"
+                        Text="E-mailadres"
+                        Style="{StaticResource SmallInfoLabel}"
+                        IsVisible="{Binding Text, Source={x:Reference Entry6}, Converter={StaticResource TextToBoolConverter}}" />
+                    <Entry
+                        x:Name="Entry6"
+                        Text="{Binding Verbalisant.EmailAddress}"
+                        Placeholder="{Binding Text, Source={x:Reference Label6}}">
+                        <Entry.Behaviors>
+                            <Behavior:EventToCommandBehavior EventName="TextChanged"
+                                                             Command="{Binding ValidateCommands}" />
+                        </Entry.Behaviors>
+                    </Entry>
+                </StackLayout>
+
+                <StackLayout
+                    Style="{StaticResource MinimalStack}">
+                    <Label
+                        x:Name="Label5"
+                        Text="Selecteer persoonsbeschrijving"
+                        Style="{StaticResource SmallInfoLabel}"
+                        IsVisible="{Binding SelectedIndex, Source={x:Reference PersonPicker}, Converter={StaticResource IntToBoolConverter}}" />
+                    <Picker
+                        x:Name="PersonPicker"
+                        SelectedIndex="{Binding SelectedPersonIndex}"
+                        SelectedItem="{Binding SelectedPerson}"
+                        Title="{Binding Text, Source={x:Reference Label5}}"
+                        ItemsSource="{Binding PersonDescriptionList}">
+                        <Picker.Behaviors>
+                            <Behavior:EventToCommandBehavior EventName="PropertyChanged"
+                                                             Command="{Binding ValidateCommands}" />
+                        </Picker.Behaviors>
+                    </Picker>
+                </StackLayout>
+            </StackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button Text="Annuleer" Style="{StaticResource BlueButton}" Command="{Binding CancelCommand}" />
+                <Button Grid.Column="1" Text="Verwijder" Style="{StaticResource BlueButton}"
+                        Command="{Binding DeleteCommand}" />
+                <Button Grid.Column="2" Text="Opslaan" Style="{StaticResource BlueButton}"
+                        Command="{Binding SaveCommand}" />
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

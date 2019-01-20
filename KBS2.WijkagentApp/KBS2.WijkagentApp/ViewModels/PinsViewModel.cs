@@ -17,9 +17,9 @@ namespace KBS2.WijkagentApp.ViewModels
         private ICommand itemTappedCommand;
 
         //these objects will be filled with DB-entrys for not its the static data, with a select
-        public ObservableCollection<Report> HighReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 1 && x.Status == 'A'));
-        public ObservableCollection<Report> MidReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 2 && x.Status == 'A'));
-        public ObservableCollection<Report> LowReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 3 && x.Status == 'A'));
+        public ObservableCollection<Report> HighReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 1 && x.Status != 'D'));
+        public ObservableCollection<Report> MidReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 2 && x.Status != 'D'));
+        public ObservableCollection<Report> LowReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 3 && x.Status != 'D'));
 
         public ICommand ShowPinOnMapCommand => showPinOnMapCommand ?? (showPinOnMapCommand = new ActionCommand(report => ShowPinOnMap((Report)report)));
         
@@ -36,17 +36,7 @@ namespace KBS2.WijkagentApp.ViewModels
             }
             else
             {
-                //this is some (prolly unnecessary) complex linq to add the victim/suspect to the message
-                var persons =
-                    from person in Constants.Persons
-                    where Constants.ReportDetails.Where(x => x.ReportId.Equals(((Report) eventArgs.Item).ReportId))
-                        .Select(x => x.PersonId).Any(x => person.PersonId.Equals(x))
-                    select person;
-
-                var victim = persons.First(x => x.Description == "Slachtoffer");
-                var suspect = persons.First(x => x.Description == "Verdachte");
-
-                Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel((Report)eventArgs.Item, suspect, victim)));
+                Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel((Report)eventArgs.Item)));
                 currentTappedReport = null;
             }
         }
