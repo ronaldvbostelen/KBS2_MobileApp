@@ -16,8 +16,8 @@ namespace KBS2.WijkagentApp.ViewModels
         private string selectedPerson;
         private string reportId;
         private int selectedInvolvedIndex = -1;
-        private int selectedPersonIndex = -1;
-        private int selectedGenderIndex = -1;
+        private int selectedPersonIndex;
+        private int selectedGenderIndex;
         private Person verbalisant;
         private Person selectedInvolvedPerson;
         private Person dummyPerson = new Person{FirstName = "[Keuze ongedaan maken]"};
@@ -33,15 +33,35 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public EventHandler NotifyDatabaseChanged;
 
-        public string SelectedGender { get { return selectedGender; } set { if (value != selectedGender) { selectedGender = value; Verbalisant.Gender = SetGender(value); NotifyPropertyChanged(); } } }
+        public ObservableCollection<Person> InvolvedPersons { get; set; }
 
-        public string SelectedPerson { get { return selectedPerson; } set { if (value != selectedPerson) { selectedPerson = value; Verbalisant.Description = value; NotifyPropertyChanged(); } } }
+        public int SelectedInvolvedIndex { get { return selectedInvolvedIndex; } set { if (value != selectedInvolvedIndex) { selectedInvolvedIndex = value; NotifyPropertyChanged(); } } }
 
-        public Person Verbalisant { get { return verbalisant;} set{ if (value != verbalisant) { verbalisant = value; NotifyPropertyChanged(); } } }
+        public Person Verbalisant { get { return verbalisant; } set { if (value != verbalisant) { verbalisant = value; NotifyPropertyChanged(); } } }
 
-        public int SelectedInvolvedIndex { get { return selectedInvolvedIndex;} set{ if (value != selectedInvolvedIndex) { selectedInvolvedIndex = value; NotifyPropertyChanged(); } } }
-        public int SelectedGenderIndex { get { return selectedGenderIndex; } set { if (value != selectedGenderIndex) { selectedGenderIndex = value; NotifyPropertyChanged(); } } }
-        public int SelectedPersonIndex { get { return selectedPersonIndex; } set { if (value != selectedPersonIndex) { selectedPersonIndex = value; NotifyPropertyChanged(); } } }
+        public string SelectedGender
+        {
+            get { return selectedGender; }
+            set { if (value != selectedGender) { selectedGender = value; Verbalisant.Gender = SetGender(value); NotifyPropertyChanged(nameof(SelectedGender), nameof(SelectedGenderIndex)); } }
+        }
+
+        public string SelectedPerson
+        {
+            get { return selectedPerson; }
+            set { if (value != selectedPerson) { selectedPerson = value; Verbalisant.Description = value; NotifyPropertyChanged(nameof(SelectedPerson), nameof(SelectedPersonIndex)); }}
+        }
+
+        public int SelectedGenderIndex
+        {
+            get { return selectedGenderIndex; }
+            set { if (value != selectedGenderIndex) { selectedGenderIndex = value; NotifyPropertyChanged(nameof(SelectedGenderIndex), nameof(SelectedGender)); } }
+        }
+
+        public int SelectedPersonIndex
+        {
+            get { return selectedPersonIndex; }
+            set { if (value != selectedPersonIndex) { selectedPersonIndex = value; NotifyPropertyChanged(nameof(SelectedPersonIndex), nameof(SelectedPerson)); } }
+        }
 
         public Person SelectedInvolvedPerson
         {
@@ -64,8 +84,6 @@ namespace KBS2.WijkagentApp.ViewModels
                 }
             }
         }
-
-        public ObservableCollection<Person> InvolvedPersons { get; set; }
 
         public List<string> GenderList { get; } = new List<string> {"Man", "Vrouw", "Anders"};
 
@@ -103,7 +121,7 @@ namespace KBS2.WijkagentApp.ViewModels
             if (chr == 'M') return 0;
             if (chr == 'V') return 1;
             if (chr == 'A') return 2;
-            return 0;
+            return -1;
             
         }
 
@@ -120,6 +138,9 @@ namespace KBS2.WijkagentApp.ViewModels
         {
             SelectedPersonIndex = PersonDescriptionList.IndexOf(person.Description);
             SelectedGenderIndex = GenderCharToIndex(person.Gender);
+
+            if (selectedPersonIndex >= 0) SelectedPerson = PersonDescriptionList[selectedPersonIndex];
+            if (selectedGenderIndex >= 0) SelectedGender = GenderList[SelectedGenderIndex];
         }
 
         private void ResetValues()

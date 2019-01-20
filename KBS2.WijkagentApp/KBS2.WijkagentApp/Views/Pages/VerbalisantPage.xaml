@@ -22,12 +22,12 @@
             <Picker Title="Selecteer betrokken persoon (optioneel)"
                     ItemsSource="{Binding InvolvedPersons}"
                     ItemDisplayBinding="{Binding FullName}"
-                    SelectedItem="{Binding SelectedInvolvedPerson}" 
+                    SelectedItem="{Binding SelectedInvolvedPerson}"
                     SelectedIndex="{Binding SelectedInvolvedIndex}">
                 <Picker.Behaviors>
-                    <Behavior:EventToCommandBehavior EventName="PropertyChanged" Command="{Binding ValidateCommands}"/>
+                    <Behavior:EventToCommandBehavior EventName="PropertyChanged" Command="{Binding ValidateCommands}" />
                 </Picker.Behaviors>
-            </Picker> 
+            </Picker>
 
             <StackLayout
                 VerticalOptions="CenterAndExpand"
@@ -53,7 +53,8 @@
                                Placeholder="{Binding Text, Source={x:Reference Label1}}"
                                x:Name="entry1">
                             <Entry.Behaviors>
-                                <Behavior:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateCommands}"/>
+                                <Behavior:EventToCommandBehavior EventName="TextChanged"
+                                                                 Command="{Binding ValidateCommands}" />
                             </Entry.Behaviors>
                         </Entry>
                     </StackLayout>
@@ -73,7 +74,8 @@
                                Placeholder="{Binding Text, Source={x:Reference Label2}}"
                                x:Name="entry2">
                             <Entry.Behaviors>
-                                <Behavior:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateCommands}"/>
+                                <Behavior:EventToCommandBehavior EventName="TextChanged"
+                                                                 Command="{Binding ValidateCommands}" />
                             </Entry.Behaviors>
                         </Entry>
                     </StackLayout>
@@ -90,9 +92,11 @@
                         Style="{StaticResource MinimalStack}">
                         <Label Text="Geboortedatum"
                                Style="{StaticResource SmallInfoLabel}" />
-                        <DatePicker Date="{Binding Verbalisant.BirthDate}" VerticalOptions="FillAndExpand">
+                        <DatePicker
+                            Date="{Binding Verbalisant.BirthDate}" VerticalOptions="FillAndExpand">
                             <DatePicker.Behaviors>
-                                <Behavior:EventToCommandBehavior EventName="PropertyChanged" Command="{Binding ValidateCommands}"/>
+                                <Behavior:EventToCommandBehavior EventName="PropertyChanged"
+                                                                 Command="{Binding ValidateCommands}" />
                             </DatePicker.Behaviors>
                         </DatePicker>
                     </StackLayout>
@@ -113,7 +117,8 @@
                             Title="Selecteer geslacht"
                             ItemsSource="{Binding GenderList}">
                             <Picker.Behaviors>
-                                <Behavior:EventToCommandBehavior EventName="PropertyChanged" Command="{Binding ValidateCommands}"/>
+                                <Behavior:EventToCommandBehavior EventName="PropertyChanged"
+                                                                 Command="{Binding ValidateCommands}" />
                             </Picker.Behaviors>
                         </Picker>
                     </StackLayout>
@@ -138,7 +143,8 @@
                             Text="{Binding Verbalisant.SocialSecurityNumber}"
                             Keyboard="Numeric">
                             <Entry.Behaviors>
-                                <Behavior:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateCommands}"/>
+                                <Behavior:EventToCommandBehavior EventName="TextChanged"
+                                                                 Command="{Binding ValidateCommands}" />
                             </Entry.Behaviors>
                         </Entry>
                     </StackLayout>
@@ -158,7 +164,8 @@
                             Placeholder="{Binding Text, Source={x:Reference Label4}}"
                             Text="{Binding Verbalisant.PhoneNumber}">
                             <Entry.Behaviors>
-                                <Behavior:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateCommands}"/>
+                                <Behavior:EventToCommandBehavior EventName="TextChanged"
+                                                                 Command="{Binding ValidateCommands}" />
                             </Entry.Behaviors>
                         </Entry>
                     </StackLayout>
@@ -175,7 +182,8 @@
                         Text="{Binding Verbalisant.EmailAddress}"
                         Placeholder="{Binding Text, Source={x:Reference Label6}}">
                         <Entry.Behaviors>
-                            <Behavior:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateCommands}"/>
+                            <Behavior:EventToCommandBehavior EventName="TextChanged"
+                                                             Command="{Binding ValidateCommands}" />
                         </Entry.Behaviors>
                     </Entry>
                 </StackLayout>
@@ -194,7 +202,8 @@
                         Title="{Binding Text, Source={x:Reference Label5}}"
                         ItemsSource="{Binding PersonDescriptionList}">
                         <Picker.Behaviors>
-                            <Behavior:EventToCommandBehavior EventName="PropertyChanged" Command="{Binding ValidateCommands}"/>
+                            <Behavior:EventToCommandBehavior EventName="PropertyChanged"
+                                                             Command="{Binding ValidateCommands}" />
                         </Picker.Behaviors>
                     </Picker>
                 </StackLayout>
@@ -209,8 +218,10 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Button Text="Annuleer" Style="{StaticResource BlueButton}" Command="{Binding CancelCommand}" />
-                <Button Grid.Column="1" Text="Verwijder" Style="{StaticResource BlueButton}" Command="{Binding DeleteCommand}" />
-                <Button Grid.Column="2" Text="Opslaan" Style="{StaticResource BlueButton}" Command="{Binding SaveCommand}" />
+                <Button Grid.Column="1" Text="Verwijder" Style="{StaticResource BlueButton}"
+                        Command="{Binding DeleteCommand}" />
+                <Button Grid.Column="2" Text="Opslaan" Style="{StaticResource BlueButton}"
+                        Command="{Binding SaveCommand}" />
             </Grid>
         </StackLayout>
     </ContentPage.Content>
