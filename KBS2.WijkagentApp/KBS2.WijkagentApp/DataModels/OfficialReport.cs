@@ -8,7 +8,10 @@ namespace KBS2.WijkagentApp.DataModels
     {
         private string officialReportId;
         private string reporterId;
+        private string reportId;
         private string observation;
+        private string location;
+        private TimeSpan time;
 
         public string OfficialReportId
         {
@@ -23,8 +26,20 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
         public string ReportId
+        {
+            get { return reportId; }
+            set
+            {
+                if (value != reportId)
+                {
+                    reportId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string ReporterId
         {
             get { return reporterId; }
             set
@@ -37,7 +52,6 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
         public string Observation
         {
             get { return observation; }
@@ -46,6 +60,32 @@ namespace KBS2.WijkagentApp.DataModels
                 if (value != observation)
                 {
                     observation = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string Location
+        {
+            get { return location; }
+            set
+            {
+                if (value != location)
+                {
+                    location = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public TimeSpan Time
+        {
+            get { return time; }
+            set
+            {
+                if (value != time)
+                {
+                    time = value;
                     NotifyPropertyChanged();
                 }
             }

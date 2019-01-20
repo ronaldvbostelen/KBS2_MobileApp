@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using KBS2.WijkagentApp.Assets;
 using KBS2.WijkagentApp.DataModels;
+using Xamarin.Forms.Internals;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
@@ -23,22 +24,19 @@ namespace KBS2.WijkagentApp.ViewModels
         private MapSpan mapRegion = MapSpan.FromCenterAndRadius(new Position(52.4996, 6.07895), Distance.FromKilometers(500)); //preventing nullpointerexception
         private bool showingUser;
 
-        public ObservableCollection<TKCustomMapPin> Pins { get { return pins; } private set { if (value != pins) pins = value; NotifyPropertyChanged(); } }
-        public TKCustomMapPin SelectedPin { get { return selectedPin; } set { if (value != selectedPin) selectedPin = value; NotifyPropertyChanged(); } }
-        public MapSpan MapRegion { get { return mapRegion; } set { if (value != mapRegion) mapRegion = value; NotifyPropertyChanged(); } }
+        public ObservableCollection<TKCustomMapPin> Pins { get { return pins; } private set { if (value != pins) { pins = value; NotifyPropertyChanged();} } }
+        public TKCustomMapPin SelectedPin { get { return selectedPin; } set { if (value != selectedPin) { selectedPin = value; NotifyPropertyChanged();} } }
+        public MapSpan MapRegion { get { return mapRegion; } set { if (value != mapRegion) { mapRegion = value; NotifyPropertyChanged();} } }
+        public bool ShowingUser { get { return showingUser; } set { if (value != showingUser) { showingUser = value; NotifyPropertyChanged(); } } }
 
         public MapType MapType { get; }
         public bool RegionChangeAnimated { get; }
-        public bool ShowingUser { get { return showingUser; } set { if (value != showingUser) showingUser = value; NotifyPropertyChanged(); } }
-
-        //vieModel data
-        private List<Notice> notices;
-
+        
         //creates a xamarin map instance and sets the currentlocation and loaded pins
         public MapViewModel()
         {
-            notices = LoadData();
-            Pins = new ObservableCollection<TKCustomMapPin>(notices.Select(x => x.Pin));
+            //create pinlist based on reports (DB entries, != D (D = Done))
+            Pins = new ObservableCollection<TKCustomMapPin>(Constants.Reports.Where(x => x.Status != 'D').Select(PinCreator));
 
             MapType = MapType.Hybrid;
             RegionChangeAnimated = true;
@@ -78,60 +76,20 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public ICommand MapLongPressCommand { get { return new ActionCommand(position => MapLongPress((Position)position)); } }
 
-        //based on the pin-object it creates the detailpage view
-        private void CalloutClicked(object callout)
+        //based on the pin-object it searches the report and then creates a NoticeDetailPage
+        private void CalloutClicked(object pin)
         {
-            var clickedNotice = notices.Find(x => x.Pin.Equals((TKCustomMapPin)callout));
-            var suspect = clickedNotice.Persons.First(x => x.Description == "Verdachte");
-            var victim = clickedNotice.Persons.First(x => x.Description == "Slachtoffer");
-
-            Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(clickedNotice.Report, suspect, victim)));
+            var clickedPin = (TKCustomMapPin) pin;
+            var clickedReport = Constants.Reports.First(x => x.Latitude.Equals(clickedPin.Position.Latitude) && x.Longitude.Equals(clickedPin.Position.Longitude));
+            
+            Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(clickedReport)));
         }
             
-        
         private void PinSelect(object pin) => SelectedPin = (TKCustomMapPin) pin;
         
         private void MapLongPress(Position position) => Application.Current.MainPage.Navigation.PushModalAsync(new NewNoticePage(new NewNoticeViewModel(position)));
-        
 
-        private bool PinExists(object pin) => notices.Exists(x => x.Pin.Equals(pin));
-        
-        //this wont be really useful when we get the API. its just temporary
-        //it combines the db data to usable objects on the GUI
-        private List<Notice> LoadData()
-        {
-            var data = new List<Notice>();
-
-            var activeReports =
-                from reportt in Constants.Reports
-                where reportt.Status == 'A'
-                select reportt;
-
-            foreach (var report in activeReports)
-            {
-                var notice = new Notice(report);
-
-                var reportdetails =
-                    from reportDetail in Constants.ReportDetails
-                    where reportDetail.ReportId == report.ReportId
-                    select reportDetail;
-
-                notice.ReportDetails = new ObservableCollection<ReportDetails>(reportdetails);
-                
-                var persons =
-                    from person in Constants.Persons
-                    where reportdetails.Select(x => x.PersonId).Contains(person.PersonId)
-                    select person;
-
-                notice.Persons = new ObservableCollection<Person>(persons);
-
-                notice.Pin = PinCreator(report);
-
-                data.Add(notice);
-            }
-
-            return data;
-        }
+        private bool PinExists(object pin) => Pins.Contains((TKCustomMapPin) pin);
 
         //creates a pin based on database entry
         public TKCustomMapPin PinCreator(Report report)
