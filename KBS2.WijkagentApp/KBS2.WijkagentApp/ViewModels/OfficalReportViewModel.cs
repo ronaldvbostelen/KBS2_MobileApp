@@ -235,8 +235,7 @@ namespace KBS2.WijkagentApp.ViewModels
                 "Proces-verbaal verwijderen?", "Ja", "Nee");
             if (result)
             {
-                var reportdetails = Constants.ReportDetails.Where(x => x.ReportId.Equals(OfficialReport.ReportId))
-                    .ToArray();
+                var reportdetails = Constants.ReportDetails.Where(x => x.ReportId.Equals(OfficialReport.ReportId)).ToArray();
                 for (int i = 0; i < reportdetails.Length; i++)
                 {
                     reportdetails[i].IsHeard = false;
@@ -245,7 +244,7 @@ namespace KBS2.WijkagentApp.ViewModels
 
                 Constants.OfficialReports.Remove(OfficialReport);
 
-                await Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens verwijderd", "Ok");
+                Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens verwijderd", "Ok");
             }
 
             await Application.Current.MainPage.Navigation.PopModalAsync();
