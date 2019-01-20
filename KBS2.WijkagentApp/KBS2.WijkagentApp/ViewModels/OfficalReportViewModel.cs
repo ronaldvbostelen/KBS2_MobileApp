@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using KBS2.WijkagentApp.Assets;
 using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using KBS2.WijkagentApp.Views.Pages;
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
 
 namespace KBS2.WijkagentApp.ViewModels
 {

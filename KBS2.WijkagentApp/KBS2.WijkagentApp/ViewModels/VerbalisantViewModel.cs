@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Windows.Input;
-using System.Xml.Xsl;
-using Android.Database.Sqlite;
 using KBS2.WijkagentApp.Assets;
 using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.ViewModels.Commands;
@@ -95,7 +92,7 @@ namespace KBS2.WijkagentApp.ViewModels
             UpdateCommands();
         }
 
-        public VerbalisantViewModel(ObservableCollection<Person> persons, string reportId) : this(new Person { PersonId = string.Empty }, reportId)
+        public VerbalisantViewModel(ObservableCollection<Person> persons, string reportId) : this(new Person { PersonId = DateTime.Now.ToLongTimeString() }, reportId)
         {
             InvolvedPersons = new ObservableCollection<Person>(persons.Where(x => Constants.ReportDetails.Any(xy => xy.PersonId.Equals(x.PersonId) && !xy.IsHeard)));
             InvolvedPersons.Add(dummyPerson);

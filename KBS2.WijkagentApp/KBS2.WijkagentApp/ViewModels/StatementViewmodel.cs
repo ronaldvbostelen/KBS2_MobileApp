@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Windows.Input;
-using Android.App;
 using KBS2.WijkagentApp.Assets;
 using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.ViewModels.Commands;

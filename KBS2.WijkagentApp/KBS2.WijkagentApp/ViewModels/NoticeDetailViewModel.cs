@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
-using Android;
-using Android.OS;
-using Android.Util;
 using KBS2.WijkagentApp.Assets;
 using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using KBS2.WijkagentApp.Views.Pages;
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
 using Debug = System.Diagnostics.Debug;
 
 namespace KBS2.WijkagentApp.ViewModels

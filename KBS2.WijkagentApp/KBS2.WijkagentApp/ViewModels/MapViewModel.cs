@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Input;
-using KBS2.WijkagentApp.Datamodels;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using Plugin.Geolocator;
 using Xamarin.Forms;
@@ -13,7 +11,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using KBS2.WijkagentApp.Assets;
 using KBS2.WijkagentApp.DataModels;
-using Xamarin.Forms.Internals;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
