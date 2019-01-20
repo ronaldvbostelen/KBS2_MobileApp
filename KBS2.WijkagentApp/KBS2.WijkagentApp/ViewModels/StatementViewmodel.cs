@@ -51,10 +51,11 @@ namespace KBS2.WijkagentApp.ViewModels
             await Application.Current.MainPage.Navigation.PopModalAsync();
         }
 
-        private void SaveStatement()
+        private async void SaveStatement()
         {
             reportDetails.Statement = tempStatement = Statement;
             UpdateCommands();
+            await Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens opgeslagen", "Ok");
         }
 
         private bool DeleteStatement()
@@ -71,7 +72,8 @@ namespace KBS2.WijkagentApp.ViewModels
             {
                 if (DeleteStatement())
                 {
-                    await Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens verwijderd", "Ok");
+                    Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens verwijderd", "Ok");
+                    await Application.Current.MainPage.Navigation.PopModalAsync();
                 }
             };
         }

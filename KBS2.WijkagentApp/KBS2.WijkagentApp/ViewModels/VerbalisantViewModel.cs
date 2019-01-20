@@ -147,8 +147,8 @@ namespace KBS2.WijkagentApp.ViewModels
         {
             //some stupid way that i found (only) working to reset the selected person in different situations
             if (SelectedInvolvedIndex != InvolvedPersons.IndexOf(dummyPerson)) SelectedInvolvedIndex = InvolvedPersons.IndexOf(dummyPerson);
-            
-            Verbalisant = new Person { PersonId = string.Empty };
+
+            Verbalisant = new Person { PersonId = DateTime.Now.ToLongTimeString() };
             tempPerson = CreateTempPersonBasedOn(Verbalisant);
             selectedInvolvedPerson = null;
             SelectedGender = SelectedPerson = null;
@@ -203,9 +203,19 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private bool DeleteVerbalisant(Person verbalisant)
         {
-            ResetValues();
-            InvolvedPersons.Remove(verbalisant);
-            return Constants.Persons.Remove(verbalisant);
+            try
+            {
+                var reportDetails = Constants.ReportDetails.First(x => x.PersonId.Equals(verbalisant.PersonId) && x.ReportId.Equals(reportId));
+                reportDetails.IsHeard = false;
+                reportDetails.Statement = string.Empty;
+                OnDatabaseChanged();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
         
         private async void Cancel()
@@ -226,9 +236,15 @@ namespace KBS2.WijkagentApp.ViewModels
             {
                 if (DeleteVerbalisant(Verbalisant))
                 {
-                    await Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens verwijderd","Ok");
+                    Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens verwijderd","Ok");
+                    await Application.Current.MainPage.Navigation.PopModalAsync();
+                }
+                else
+                {
+                    Application.Current.MainPage.DisplayAlert("Mislukt", "Sorry, er ging iets mis. Probeer opnieuw", "Ok");
                 }
             };
+            
         }
 
         private void Save()
