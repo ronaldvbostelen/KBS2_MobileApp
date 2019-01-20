@@ -90,5 +90,21 @@ namespace KBS2.WijkagentApp.DataModels
                 }
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType()) return false;
+
+            OfficialReport report = (OfficialReport) obj;
+            
+            return officialReportId.Equals(report.OfficialReportId) && reportId.Equals(report.ReportId)
+                                                                    && reporterId.Equals(report.ReporterId)
+                                                                    && observation.Equals(report.Observation)
+                                                                    && time.Equals(report.Time)
+                                                                    && location.Equals(report.Location);
+
+        }
+
+        public override int GetHashCode() { return base.GetHashCode(); }
     }
 }

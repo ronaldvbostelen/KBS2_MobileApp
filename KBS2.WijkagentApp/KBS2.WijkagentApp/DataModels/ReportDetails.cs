@@ -12,6 +12,7 @@ namespace KBS2.WijkagentApp.DataModels
         private char type;
         private string description;
         private string statement;
+        private bool isHeard;
 
         public string ReportId
         {
@@ -93,5 +94,17 @@ namespace KBS2.WijkagentApp.DataModels
                 }
             }
         }
+
+        public bool IsHeard
+        {
+            get { return isHeard;}
+            set
+            {
+                if (value != isHeard)
+                {
+                    isHeard = value;
+                    NotifyPropertyChanged();
+                }
+            } }
     }
 }

@@ -24,16 +24,6 @@ namespace KBS2.WijkagentApp.ViewModels
         public ICommand ShowPinOnMapCommand => showPinOnMapCommand ?? (showPinOnMapCommand = new ActionCommand(report => ShowPinOnMap((Report)report)));
         
         public ICommand ItemTappedCommand => itemTappedCommand ?? (itemTappedCommand = new ActionCommand(eventArgs => ShowDetailPageOfReport((ItemTappedEventArgs)eventArgs)));
-
-        public PinsViewModel()
-        {
-            for (int i = 0; i < 5; i++)
-            {
-                HighReports.Add(HighReports[0]);
-                MidReports.Add(MidReports[0]);
-                LowReports.Add(LowReports[0]);
-            }
-        }
         
         /*
          * this method makes it possible that a double tap on a listitem a new modal with details will popup
@@ -46,16 +36,6 @@ namespace KBS2.WijkagentApp.ViewModels
             }
             else
             {
-//                //this is some (prolly unnecessary) complex linq to add the victim/suspect to the message
-//                var persons =
-//                    from person in Constants.Persons
-//                    where Constants.ReportDetails.Where(x => x.ReportId.Equals(((Report) eventArgs.Item).ReportId))
-//                        .Select(x => x.PersonId).Any(x => person.PersonId.Equals(x))
-//                    select person;
-//
-//                var victim = persons.First(x => x.Description == "Slachtoffer");
-//                var suspect = persons.First(x => x.Description == "Verdachte");
-
                 Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel((Report)eventArgs.Item)));
                 currentTappedReport = null;
             }

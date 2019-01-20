@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using KBS2.WijkagentApp.Assets;
 using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.Services;
 using KBS2.WijkagentApp.Services.Interfaces;
@@ -23,18 +25,14 @@ namespace KBS2.WijkagentApp
 
             CredentialsService = new CredentialsService();
 
-//            if (CredentialsService.DoCredentialsExist())
-//            {
-//                MainPage = new MainPage();
-//            }
-//            else
-//            {
-//                MainPage = new LoginPage();
-
-//            }
-            MainPage = new OfficalReportPage(new OfficalReportViewModel(new Report{ReportId = "fa336ca2-753b-4d17-875b-301ebc42ff18", Location = "zwollie"},new ObservableCollection<Person>()));
-//            MainPage = new VerbalisantPage();
-//            MainPage = new StatementPage(new StatementViewmodel(new Person{PersonId = "ID",FirstName = "jannes", LastName = "eikelboom", BirthDate = new DateTime(1950,10,10)}));
+            if (CredentialsService.DoCredentialsExist())
+            {
+                MainPage = new MainPage();
+            }
+            else
+            {
+                MainPage = new LoginPage();
+            }
         }
 
         protected override void OnStart()

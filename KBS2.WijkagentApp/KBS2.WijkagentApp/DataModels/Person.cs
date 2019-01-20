@@ -139,5 +139,29 @@ namespace KBS2.WijkagentApp.DataModels
                 }
             }
         }
+
+
+        //headache code, hope it will be obsolete when we have a database to compare against 
+        //  --------                                            --------
+        //   vvvvvv                                              vvvvvv
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType()) return false;
+
+            Person person = (Person) obj;
+            
+            return ReferenceEquals(personId, person.PersonId) 
+                       && socialSecurityNumber == person.SocialSecurityNumber
+                       && ReferenceEquals(firstName, person.FirstName) 
+                       && ReferenceEquals(lastName, person.LastName)
+                       && gender == person.Gender
+                       && birthDate == person.BirthDate
+                       && ReferenceEquals(phoneNumber, person.PhoneNumber)
+                       && ReferenceEquals(emailAddress, person.EmailAddress)
+                       && ReferenceEquals(description, person.Description);
+        }
+
+        public override int GetHashCode() { return base.GetHashCode(); }
+        
     }
 }

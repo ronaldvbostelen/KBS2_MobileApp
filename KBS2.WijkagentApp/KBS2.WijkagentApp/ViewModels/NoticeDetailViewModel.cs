@@ -1,12 +1,18 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using Android;
+using Android.OS;
+using Android.Util;
 using KBS2.WijkagentApp.Assets;
 using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using KBS2.WijkagentApp.Views.Pages;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
+using Debug = System.Diagnostics.Debug;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
@@ -51,12 +57,18 @@ namespace KBS2.WijkagentApp.ViewModels
 
             //so only when the report is active or the procced officer is the user the swich is enabled
             SwitchToggleIsEnabled = report.Status == 'A' || report.ProcessedBy.Equals(App.CredentialsService.Id);
+            
+            try
+            {
+                Victim = InvolvedPersons.First(x => x.Description.Equals("Slachtoffer"));
+                Suspect = InvolvedPersons.First(x => x.Description.Equals("Verdachte"));
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message + " " + e.StackTrace);
+                Victim = Suspect = null;
+            }
 
-            //@Karen persoonlijk zou ik dit schrappen (suspect en victim) en er een listview van maken. tableview biedt geen itemtemplate aan en kan je dus niet dynamisch vullen.
-            //Als er bijv al meerdere personen bij een melding betrokken zijn zou je die hier niet (kunnen) tonen. als je het dynamisch maakt wordt alles getoond
-            //maar jij hebt het gemaakt dus hoe jij het bedacht hebt, alleen fyi.
-            Victim = InvolvedPersons.First(x => x.Description.Equals("Slachtoffer"));
-            Suspect = InvolvedPersons.First(x => x.Description.Equals("Verdachte"));
         }
 
         //update record when officer decides to process notice
@@ -87,6 +99,6 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private bool CanGoToReportPage() => SwitchToggle;
 
-        private void GoToReportPage(Report report) => Application.Current.MainPage.Navigation.PushModalAsync(new OfficalReportPage(new OfficalReportViewModel(report, InvolvedPersons)));
+        private void GoToReportPage(Report report) => Application.Current.MainPage.Navigation.PushModalAsync(new OfficalReportPage(new OfficalReportViewModel(report)));
     }
 }
