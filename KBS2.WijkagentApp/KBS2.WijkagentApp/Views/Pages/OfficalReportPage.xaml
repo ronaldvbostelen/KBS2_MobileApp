@@ -58,8 +58,7 @@
                             <Label
                                 HorizontalTextAlignment="Center"
                                 VerticalTextAlignment="Center"
-                                Text="{Binding Report.ReportId, StringFormat='{0:N}'}" FontSize="6" 
-                                />
+                                Text="{Binding Report.ReportId, StringFormat='{0:N}'}" FontSize="6" />
                         </StackLayout>
                     </StackLayout>
                     <ContentView 
