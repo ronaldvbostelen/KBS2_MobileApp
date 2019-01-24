@@ -9,6 +9,7 @@
         <ResourceDictionary>
             <Converters:TextToBoolConverter x:Key="TextToBoolConverter" />
             <Converters:IntToBoolConverter x:Key="IntToBoolConverter" />
+            <Converters:NullableIntToStringConverter x:Key="NullableIntToStringConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
@@ -134,7 +135,8 @@
                         <Entry
                             x:Name="Entry4"
                             Placeholder="{Binding Text, Source={x:Reference Label3}}"
-                            Text="{Binding Verbalisant.SocialSecurityNumber}"
+                            Text="{Binding Verbalisant.SocialSecurityNumber, 
+                            Converter={StaticResource NullableIntToStringConverter}}"
                             Keyboard="Numeric">
                             <Entry.Behaviors>
                                 <Behavior:EventToCommandBehavior EventName="TextChanged"
