@@ -1,53 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class Socials : BaseDataModel
+    public partial class Socials
     {
-        private string socialsId;
-        private string personId;
-        private Uri profile;
+        public Guid socialsId { get; set; }
+        public Guid personId { get; set; }
+        public string profile { get; set; }
 
-        public string SocialsId
-        {
-            get { return socialsId; }
-            set
-            {
-                if (value != socialsId)
-                {
-                    socialsId = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public string PersonId
-        {
-            get { return personId; }
-            set
-            {
-                if (value != personId)
-                {
-                    personId = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-
-        public Uri Profile
-        {
-            get { return profile; }
-            set
-            {
-                if (value != profile)
-                {
-                    profile = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+        public virtual Person person { get; set; }
     }
 }

@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using KBS2.WijkagentApp.Datamodels.Enums;
-using KBS2.WijkagentApp.Views.Pages;
-using Xamarin.Forms;
-using KBS2.WijkagentApp.DataModels;
+﻿using System.Collections.ObjectModel;
 using TK.CustomMap;
 
-namespace KBS2.WijkagentApp.Datamodels
+namespace KBS2.WijkagentApp.DataModels
 {
     /*
      * Class containing the notices displayed on the map
@@ -18,12 +11,12 @@ namespace KBS2.WijkagentApp.Datamodels
      */
     public class Notice : BaseDataModel
     {
-        public Report Report { get; set; }
+        public old.Report Report { get; set; }
         public TKCustomMapPin Pin { get; set; }
-        public ObservableCollection<ReportDetails> ReportDetails { get; set; }
-        public ObservableCollection<Person> Persons { get; set; }
+        public ObservableCollection<old.ReportDetails> ReportDetails { get; set; }
+        public ObservableCollection<old.Person> Persons { get; set; }
 
-        public Notice(Report report)
+        public Notice(old.Report report)
         {
             Report = report;
         }

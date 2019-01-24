@@ -1,114 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class PushMessage : BaseDataModel
+    public partial class PushMessage
     {
-        private string pushMessageId;
-        private string officerId;
-        private string content;
-        private string location;
-        private decimal longitude;
-        private decimal latitude;
+        public Guid pushMessageId { get; set; }
+        public Guid officerId { get; set; }
+        public string content { get; set; }
+        public TimeSpan? time { get; set; }
+        public string location { get; set; }
+        public decimal? longitude { get; set; }
+        public decimal? latitude { get; set; }
 
-        public string PushMessageId
-        {
-            get { return pushMessageId; }
-            set
-            {
-                if (value != pushMessageId)
-                {
-                    pushMessageId = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-
-        public string OfficerId
-        {
-            get { return officerId; }
-            set
-            {
-                if (value != officerId)
-                {
-                    officerId = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-
-        public string Content
-        {
-            get { return content; }
-            set
-            {
-                if (value != content)
-                {
-                    content = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private TimeSpan time;
-
-        public TimeSpan Time
-        {
-            get { return time; }
-            set
-            {
-                if (value != time)
-                {
-                    time = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-
-        public string Location
-        {
-            get { return location; }
-            set
-            {
-                if (value != location)
-                {
-                    location = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-
-        public decimal Longitude
-        {
-            get { return longitude; }
-            set
-            {
-                if (value != longitude)
-                {
-                    longitude = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-
-        public decimal Latitude
-        {
-            get { return latitude; }
-            set
-            {
-                if (value != latitude)
-                {
-                    latitude = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+        public virtual Officer officer { get; set; }
     }
 }

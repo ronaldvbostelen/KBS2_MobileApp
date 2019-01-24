@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using KBS2.WijkagentApp.Assets;
-using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.DataModels.old;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using KBS2.WijkagentApp.Views.Pages;
 using Xamarin.Forms;
@@ -27,87 +27,23 @@ namespace KBS2.WijkagentApp.ViewModels
         private ICommand cameraCommand;
         private ICommand audioCommand;
 
-        public Report Report
-        {
-            get { return report; }
-            set
-            {
-                if (value != report)
-                {
-                    report = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public OfficialReport OfficialReport
-        {
-            get { return officialReport; }
-            set
-            {
-                if (value != officialReport)
-                {
-                    officialReport = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public ObservableCollection<Person> Verbalisants
-        {
-            get { return verbalisants; }
-            set
-            {
-                if (value != verbalisants)
-                {
-                    verbalisants = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public ICommand AddVerbalisantCommand => addVerbalisantCommand ??
-                                                 (addVerbalisantCommand =
-                                                     new ActionCommand(x => GoToAddVerbalisatPage()));
-
-        public ICommand EditPersonCommand => editPersonCommand ?? (editPersonCommand =
-                                                 new ActionCommand(x => EditPerson((Person) x),
-                                                     x => PersonExists((Person) x)));
-
-        public ICommand StatementCommand => statementCommand ?? (statementCommand =
-                                                new ActionCommand(x => GoToStatementPage((Person) x),
-                                                    x => PersonExists((Person) x)));
-
+        public ICommand AddVerbalisantCommand => addVerbalisantCommand ?? (addVerbalisantCommand = new ActionCommand(x => GoToAddVerbalisatPage())); 
+        public ICommand EditPersonCommand => editPersonCommand ?? (editPersonCommand = new ActionCommand(x => EditPerson((Person) x), x => PersonExists((Person) x))); 
+        public ICommand StatementCommand => statementCommand ?? (statementCommand = new ActionCommand(x => GoToStatementPage((Person) x), x => PersonExists((Person) x))); 
         public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => Save(), x => CanSave()));
-
-        public ICommand DeleteCommand =>
-            deleteCommand ?? (deleteCommand = new ActionCommand(x => Delete(), x => CanDelete()));
-
+        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(x => Delete(), x => CanDelete()));
         public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => Cancel()));
         public ICommand CameraCommand => cameraCommand ?? (cameraCommand = new ActionCommand(x => OpenCamera()));
         public ICommand AudioCommand => audioCommand ?? (audioCommand = new ActionCommand(x => OpenRecorder()));
+        public ICommand ValidateCanSaveCommand { get { return new ActionCommand(x => ((ActionCommand) SaveCommand).RaiseCanExecuteChanged()); } }
 
-        public ICommand ValidateCanSaveCommand
-        {
-            get { return new ActionCommand(x => ((ActionCommand) SaveCommand).RaiseCanExecuteChanged()); }
-        }
 
-        //temp to simulate DB
-        private OfficialReport tempreport;
+        public Report Report { get { return report; } set { if (value != report) { report = value; NotifyPropertyChanged(); } } }
 
-        public OfficialReport TempOfficialReport
-        {
-            get { return tempreport; }
-            set
-            {
-                if (!value.Equals(tempreport))
-                {
-                    tempreport = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+        public OfficialReport OfficialReport { get { return officialReport; } set { if (value != officialReport) { officialReport = value; NotifyPropertyChanged(); } } }
 
+        public ObservableCollection<Person> Verbalisants { get { return verbalisants; } set { if (value != verbalisants) { verbalisants = value; NotifyPropertyChanged(); } } }
+        
         public OfficalReportViewModel(Report report)
         {
             this.report = report;
@@ -142,9 +78,9 @@ namespace KBS2.WijkagentApp.ViewModels
         {
             var newRecord = new OfficialReport
             {
-                OfficialReportId = "123213-324324-DSFDSFDSF-@#$$#@",
+                OfficialReportId = Guid.NewGuid(),
                 ReportId = report.ReportId,
-                ReporterId = App.CredentialsService.Id,
+                ReporterId = App.CredentialsService.Guid,
                 Time = DateTime.Now.TimeOfDay,
                 Location = report.Location,
                 Observation = string.Empty
@@ -206,8 +142,7 @@ namespace KBS2.WijkagentApp.ViewModels
             Application.Current.MainPage.Navigation.PushModalAsync(new VerbalisantPage(vm));
         }
 
-        private void GoToStatementPage(Person person) =>
-            Application.Current.MainPage.Navigation.PushModalAsync(new StatementPage(new StatementViewmodel(person)));
+        private void GoToStatementPage(Person person) => Application.Current.MainPage.Navigation.PushModalAsync(new StatementPage(new StatementViewmodel(person)));
 
         private bool PersonExists(Person person) => Verbalisants.Contains(person);
 
@@ -280,5 +215,22 @@ namespace KBS2.WijkagentApp.ViewModels
                 Time = report.Time
             };
         }
+
+        //temp to simulate DB
+        private OfficialReport tempreport;
+
+        public OfficialReport TempOfficialReport
+        {
+            get { return tempreport; }
+            set
+            {
+                if (!value.Equals(tempreport))
+                {
+                    tempreport = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
     }
 }

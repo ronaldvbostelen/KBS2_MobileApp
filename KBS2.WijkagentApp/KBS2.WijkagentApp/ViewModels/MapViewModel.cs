@@ -10,7 +10,7 @@ using TK.CustomMap;
 using System.Collections.ObjectModel;
 using System.Linq;
 using KBS2.WijkagentApp.Assets;
-using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.DataModels.old;
 
 namespace KBS2.WijkagentApp.ViewModels
 {

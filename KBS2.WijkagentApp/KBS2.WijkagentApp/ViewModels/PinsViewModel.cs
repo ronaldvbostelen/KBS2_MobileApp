@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows.Input;
 using KBS2.WijkagentApp.Assets;
-using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.DataModels.old;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using KBS2.WijkagentApp.Views.Pages;
 using TK.CustomMap;
