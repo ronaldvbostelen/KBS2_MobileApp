@@ -1,54 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class Officer : BaseDataModel
+    public partial class Officer
     {
-        private string officerId;
-        private string userName;
-        private string password;
-
-        public string OfficerId
+        public Officer()
         {
-            get { return officerId; }
-            set
-            {
-                if (value != officerId)
-                {
-                    officerId = value;
-                    NotifyPropertyChanged();
-                }
-            }
+            Emergency = new HashSet<Emergency>();
+            OfficialReport = new HashSet<OfficialReport>();
+            PushMessage = new HashSet<PushMessage>();
         }
 
+        public Guid officerId { get; set; }
+        public string userName { get; set; }
+        public string passWord { get; set; }
 
-        public string UserName
-        {
-            get { return userName; }
-            set
-            {
-                if (value != userName)
-                {
-                    userName = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-
-        public string Password
-        {
-            get { return password; }
-            set
-            {
-                if (value != password)
-                {
-                    password = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+        public virtual ICollection<Emergency> Emergency { get; set; }
+        public virtual ICollection<OfficialReport> OfficialReport { get; set; }
+        public virtual ICollection<PushMessage> PushMessage { get; set; }
     }
 }

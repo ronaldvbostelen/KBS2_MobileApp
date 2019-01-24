@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Windows.Input;
 using KBS2.WijkagentApp.Assets;
-using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.DataModels.old;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using Application = Xamarin.Forms.Application;
 

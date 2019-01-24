@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using KBS2.WijkagentApp.Assets;
-using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.DataModels.old;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using Xamarin.Forms;
 
@@ -14,13 +14,13 @@ namespace KBS2.WijkagentApp.ViewModels
     {
         private string selectedGender;
         private string selectedPerson;
-        private string reportId;
+        private Guid reportId;
         private int selectedInvolvedIndex = -1;
         private int selectedPersonIndex;
         private int selectedGenderIndex;
         private Person verbalisant;
         private Person selectedInvolvedPerson;
-        private Person dummyPerson = new Person{FirstName = "[Keuze ongedaan maken]"};
+        private Person dummyPerson = new Person{PersonId = Guid.NewGuid(), FirstName = "[Keuze ongedaan maken]"};
 
         private ICommand saveCommand;
         private ICommand deleteCommand;
@@ -101,7 +101,7 @@ namespace KBS2.WijkagentApp.ViewModels
         public Person tempPerson { get; set; }
         //----
 
-        public VerbalisantViewModel(Person verbalisant, string reportId)
+        public VerbalisantViewModel(Person verbalisant, Guid reportId)
         {
             this.reportId = reportId;
             Verbalisant = verbalisant;
@@ -109,29 +109,29 @@ namespace KBS2.WijkagentApp.ViewModels
             SetPickers(Verbalisant);
             UpdateCommands();
         }
-
-        public VerbalisantViewModel(ObservableCollection<Person> persons, string reportId) : this(new Person { PersonId = DateTime.Now.ToLongTimeString() }, reportId)
+        
+        public VerbalisantViewModel(ObservableCollection<Person> persons, Guid reportId) : this(new Person { PersonId = Guid.NewGuid(), BirthDate = new DateTime(1950,01,01) }, reportId)
         {
             InvolvedPersons = new ObservableCollection<Person>(persons.Where(x => Constants.ReportDetails.Any(xy => xy.PersonId.Equals(x.PersonId) && !xy.IsHeard)));
             InvolvedPersons.Add(dummyPerson);
         }
 
-        private int GenderCharToIndex(char chr)
+        private int GenderCharToIndex(string chr)
         {
-            if (chr == 'M') return 0;
-            if (chr == 'V') return 1;
-            if (chr == 'A') return 2;
+            if (chr == "M") return 0;
+            if (chr == "V") return 1;
+            if (chr == "A") return 2;
             return -1;
             
         }
 
-        private char SetGender(string value)
+        private string SetGender(string value)
         {
-            if (GenderList[0] == value) return 'M';
-            if (GenderList[1] == value) return 'V';
-            if (GenderList[2] == value) return 'A';
+            if (GenderList[0] == value) return "M";
+            if (GenderList[1] == value) return "V";
+            if (GenderList[2] == value) return "A";
 
-            return '\0';
+            return string.Empty;
         }
 
         private void SetPickers(Person person)
@@ -148,7 +148,7 @@ namespace KBS2.WijkagentApp.ViewModels
             //some stupid way that i found (only) working to reset the selected person in different situations
             if (SelectedInvolvedIndex != InvolvedPersons.IndexOf(dummyPerson)) SelectedInvolvedIndex = InvolvedPersons.IndexOf(dummyPerson);
 
-            Verbalisant = new Person { PersonId = DateTime.Now.ToLongTimeString() };
+            Verbalisant = new Person { PersonId = Guid.NewGuid() };
             tempPerson = CreateTempPersonBasedOn(Verbalisant);
             selectedInvolvedPerson = null;
             SelectedGender = SelectedPerson = null;

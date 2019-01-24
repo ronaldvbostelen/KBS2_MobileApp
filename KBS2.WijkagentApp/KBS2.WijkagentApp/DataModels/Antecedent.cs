@@ -1,99 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class Antecedent : BaseDataModel
+    public partial class Antecedent
     {
-        private string antecedentId;
-        private string personId;
-        private string type;
-        private string verdict;
-        private string crime;
-        private string description;
+        public Guid antecedentId { get; set; }
+        public Guid personId { get; set; }
+        public string type { get; set; }
+        public string verdict { get; set; }
+        public string crime { get; set; }
+        public string description { get; set; }
 
-
-        public string AntecedentId
-        {
-            get { return antecedentId; }
-            set
-            {
-                if (value != antecedentId)
-                {
-                    antecedentId = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-
-        public string PersonId
-        {
-            get { return personId; }
-            set
-            {
-                if (value != personId)
-                {
-                    personId = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-
-        public string Type
-        {
-            get { return type; }
-            set
-            {
-                if (value != type)
-                {
-                    type = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-
-        public string Verdict
-        {
-            get { return verdict; }
-            set
-            {
-                if (value != verdict)
-                {
-                    verdict = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public string Crime
-        {
-            get { return crime; }
-            set
-            {
-                if (value != crime)
-                {
-                    crime = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-
-        public string Description
-        {
-            get { return description; }
-            set
-            {
-                if (value != description)
-                {
-                    description = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+        public virtual Person person { get; set; }
     }
 }

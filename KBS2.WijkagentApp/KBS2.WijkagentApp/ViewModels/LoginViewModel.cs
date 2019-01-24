@@ -1,6 +1,7 @@
-﻿using System.Windows.Input;
+﻿using System.Linq;
+using System.Windows.Input;
 using KBS2.WijkagentApp.Assets;
-using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.DataModels.old;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using Xamarin.Forms;
 
@@ -26,7 +27,7 @@ namespace KBS2.WijkagentApp.ViewModels
             {
                 if (!App.CredentialsService.DoCredentialsExist())
                 {
-                    App.CredentialsService.SaveCredentials(Constants.User.OfficerId, officer.UserName, officer.Password);
+                    App.CredentialsService.SaveCredentials(App.WijkagentDb.Officer.Where(x => x.passWord.Equals(officer.Password) && x.userName.Equals(officer.UserName)).Select(x => x.officerId).First(), officer.UserName, officer.Password);
                 }
 
                 Application.Current.MainPage = new MainPage();
@@ -40,6 +41,6 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private bool CanLogin() => !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password);
 
-        private bool AreCredentialsCorrect(string username, string password) => username == Constants.User.UserName && password == Constants.User.Password;
+        private bool AreCredentialsCorrect(string username, string password) => App.WijkagentDb.Officer.Any(x => x.passWord.Equals(password) && x.userName.Equals(username));
     }
 }

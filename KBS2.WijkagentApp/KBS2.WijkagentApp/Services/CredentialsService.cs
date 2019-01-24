@@ -10,6 +10,8 @@ namespace KBS2.WijkagentApp.Services
 {
     class CredentialsService : ICredentialsService
     {
+        public Guid Guid { get; }
+
         public string Id
         {
             get
@@ -37,7 +39,8 @@ namespace KBS2.WijkagentApp.Services
             }
         }
 
-        public void SaveCredentials(string iD, string userName, string password)
+        
+        public void SaveCredentials(Guid iD, string userName, string password)
         {
             if (!string.IsNullOrWhiteSpace(userName) && !string.IsNullOrWhiteSpace(password))
             {
@@ -45,11 +48,10 @@ namespace KBS2.WijkagentApp.Services
                 {
                     Username = userName
                 };
-                account.Properties.Add("Id", iD);
+                account.Properties.Add("Id", iD.ToString());
                 account.Properties.Add("Password", password);
                 AccountStore.Create().Save(account, App.AppName);
             }
-
         }
 
         public void DeleteCredentials()

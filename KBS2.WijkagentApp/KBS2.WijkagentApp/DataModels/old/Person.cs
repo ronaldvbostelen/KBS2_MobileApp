@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using KBS2.WijkagentApp.DataModels.old;
 
-namespace KBS2.WijkagentApp.DataModels
+namespace KBS2.WijkagentApp.DataModels.old
 {
-    public partial class Person : BaseDataModel
+    public class Person : BaseDataModel
     {
         private Guid personId;
         private int? socialSecurityNumber;
@@ -15,20 +14,6 @@ namespace KBS2.WijkagentApp.DataModels
         private string phoneNumber;
         private string emailAddress;
         private string description;
-
-        public Person()
-        {
-            Antecedent = new HashSet<Antecedent>();
-            Report = new HashSet<Report>();
-            ReportDetails = new HashSet<ReportDetails>();
-            Socials = new HashSet<Socials>();
-        }
-
-        public virtual Address Address { get; set; }
-        public virtual ICollection<Antecedent> Antecedent { get; set; }
-        public virtual ICollection<Report> Report { get; set; }
-        public virtual ICollection<ReportDetails> ReportDetails { get; set; }
-        public virtual ICollection<Socials> Socials { get; set; }
 
         public Guid PersonId
         {
@@ -152,6 +137,20 @@ namespace KBS2.WijkagentApp.DataModels
                 }
             }
         }
+
+        public Person()
+        {
+            Antecedent = new HashSet<DataModels.Antecedent>();
+            Report = new HashSet<DataModels.Report>();
+            ReportDetails = new HashSet<DataModels.ReportDetails>();
+            Socials = new HashSet<DataModels.Socials>();
+        }
+        
+        public virtual DataModels.Address Address { get; set; }
+        public virtual ICollection<DataModels.Antecedent> Antecedent { get; set; }
+        public virtual ICollection<DataModels.Report> Report { get; set; }
+        public virtual ICollection<DataModels.ReportDetails> ReportDetails { get; set; }
+        public virtual ICollection<DataModels.Socials> Socials { get; set; }
         
         //headache code, hope it will be obsolete when we have a database to compare against 
         //  --------                                            --------
@@ -160,13 +159,13 @@ namespace KBS2.WijkagentApp.DataModels
         {
             if (obj == null || GetType() != obj.GetType()) return false;
 
-            Person person = (Person)obj;
-
-            return ReferenceEquals(PersonId, person.PersonId)
+            Person person = (Person) obj;
+            
+            return PersonId == person.PersonId
                        && socialSecurityNumber == person.SocialSecurityNumber
-                       && ReferenceEquals(firstName, person.FirstName)
+                       && ReferenceEquals(firstName, person.FirstName) 
                        && ReferenceEquals(lastName, person.LastName)
-                       && gender == person.Gender
+                       && ReferenceEquals(gender, person.Gender)
                        && birthDate == person.BirthDate
                        && ReferenceEquals(phoneNumber, person.PhoneNumber)
                        && ReferenceEquals(emailAddress, person.EmailAddress)
@@ -174,6 +173,6 @@ namespace KBS2.WijkagentApp.DataModels
         }
 
         public override int GetHashCode() { return base.GetHashCode(); }
-
+        
     }
 }

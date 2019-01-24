@@ -1,25 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
-using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.DataModels.old;
 
 namespace KBS2.WijkagentApp.Assets
 {
     class Constants
     {
         // mockupdata
-
-        public static readonly Officer User = new Officer
-        {
-            OfficerId = "dae61b02-df6a-4173-b7bc-0bcecd9f9b2f",
-            UserName = "Agent1",
-            Password = "1234"
-        };
+//
+//        public static readonly Officer User = new Officer
+//        {
+//            OfficerId = Guid.NewGuid(),
+//            UserName = "Agent1",
+//            Password = "1234"
+//        };
 
         public static Person PoliceOfficer = new Person
         {
-            PersonId = User.OfficerId,
+            PersonId = Guid.NewGuid(),
             BirthDate = new DateTime(1950 - 01 - 01),
             FirstName = "Oom",
             LastName = "Agent",
@@ -28,7 +26,7 @@ namespace KBS2.WijkagentApp.Assets
 
         public static Person PoliceOfficer01 = new Person
         {
-            PersonId = "fa336ca2-753b-4d17-875b-301ebc42ff18",
+            PersonId = Guid.NewGuid(),
             Description = "Agent"   
         };
 
@@ -37,38 +35,38 @@ namespace KBS2.WijkagentApp.Assets
             new Person
             {
                 BirthDate = new DateTime(1985,05,15),
-                PersonId = "08f06840-8107-4bd3-97aa-1455eeadacfb",
+                PersonId = Guid.NewGuid(),
                 FirstName = "Karen",
                 LastName = "Bosch",
                 Description = "Verdachte",
-                Gender = 'V'
+                Gender = "V"
             },
             new Person
             {
                 BirthDate = new DateTime(1985,05,15),
-                PersonId = "fd7f5586-4246-4774-8d64-14956c23cd26",
+                PersonId = Guid.NewGuid(),
                 FirstName = "Sake",
                 LastName = "Elfring",
                 Description = "Slachtoffer",
-                Gender = 'M'
+                Gender = "M"
             },
             new Person
             {
                 BirthDate = new DateTime(1985,05,15),
-                PersonId = "f595ec57-2299-4f8c-b0d9-19cd0db00d93",
+                PersonId = Guid.NewGuid(),
                 FirstName = "Joost",
                 LastName = "Reijmer",
                 Description = "Slachtoffer",
-                Gender = 'M'
+                Gender = "M"
             },
             new Person
             {
                 BirthDate = new DateTime(1985,05,15),
-                PersonId = "fa336ca2-753b-4d17-875b-301ebc42ff18",
+                PersonId = Guid.NewGuid(),
                 FirstName = "Ronald",
                 LastName = "van Bostelen",
                 Description = "Slachtoffer",
-                Gender = 'M'
+                Gender = "M"
             }
         };
 
@@ -76,7 +74,7 @@ namespace KBS2.WijkagentApp.Assets
         {
             new Report
             {
-                ReportId = "d3fdcd26-553e-4f4d-9f3f-4df2d34fae8a",
+                ReportId = Guid.NewGuid(),
                 ReporterId = PoliceOfficer01.PersonId,
                 Type = "Zware mishandeling",
                 Time = DateTime.Now.TimeOfDay,
@@ -89,7 +87,7 @@ namespace KBS2.WijkagentApp.Assets
             },
             new Report
             {
-                ReportId = "07b888e6-784f-43d5-a2e6-714db3a99471",
+                ReportId = Guid.NewGuid(),
                 ReporterId = PoliceOfficer01.PersonId,
                 Type = "Poging tot doodslag",
                 Time = DateTime.Now.TimeOfDay,
@@ -102,7 +100,7 @@ namespace KBS2.WijkagentApp.Assets
             },
             new Report
             {
-                ReportId = "4e3d9a10-ac81-40a6-8173-83dc581c28aa",
+                ReportId = Guid.NewGuid(),
                 ReporterId = PoliceOfficer01.PersonId,
                 Type = "Moord",
                 Time = DateTime.Now.TimeOfDay,
