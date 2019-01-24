@@ -28,7 +28,7 @@
                 WidthRequest="500"
                 HorizontalOptions="CenterAndExpand"
                 Grid.Row="0"
-                Style="{StaticResource MinimalStack}">
+                Margin="{StaticResource MarginLeftRightTop}">
                 <StackLayout
                     Orientation="Horizontal">
                     <ContentView 
@@ -40,8 +40,7 @@
                             Command="{Binding CameraCommand}"/>
                     </ContentView>
                     <StackLayout
-                        HorizontalOptions="CenterAndExpand"
-                        Style="{StaticResource MinimalStack}">
+                        HorizontalOptions="CenterAndExpand">
                         <Label
                             Margin="0"
                             Text="Proces-verbaal"
@@ -75,8 +74,8 @@
             </StackLayout>
 
             <StackLayout
-                Grid.Row="1"
-                Style="{StaticResource MinimalStack}">
+                Margin="{StaticResource MarginLeftRight}"
+                Grid.Row="1">
                 <Label
                     x:Name="Label1"
                     Style="{StaticResource SmallInfoLabel}"
@@ -94,8 +93,8 @@
             </StackLayout>
 
             <StackLayout
-                Grid.Row="2"
-                Style="{StaticResource MinimalStack}">
+                Margin="{StaticResource MarginLeftRight}"
+                Grid.Row="2">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -127,8 +126,8 @@
             </StackLayout>
 
             <StackLayout
-                Grid.Row="3"
-                Style="{StaticResource MinimalStack}">
+                Margin="{StaticResource MarginLeftRight}"
+                Grid.Row="3">
                 <Label
                     x:Name="Label3"
                     Style="{StaticResource SmallInfoLabel}"
@@ -157,8 +156,8 @@
             </StackLayout>
 
             <StackLayout
-                Grid.Row="4"
-                Style="{StaticResource MinimalStack}">
+                Margin="{StaticResource MarginLeftRight}"
+                Grid.Row="4">
                 <Grid
                     VerticalOptions="FillAndExpand">
                     <Grid.ColumnDefinitions>
@@ -221,6 +220,7 @@
             </StackLayout>
             
             <Grid
+                Margin="{StaticResource MarginLeftRight}"
                 Grid.Row="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
