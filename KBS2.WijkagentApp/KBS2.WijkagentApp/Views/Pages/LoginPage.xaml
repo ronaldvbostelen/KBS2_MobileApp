@@ -7,16 +7,19 @@
         <viewModels:LoginViewModel/>
     </ContentPage.BindingContext>
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Login Portal" FontSize="25" 
+        <StackLayout
+            Margin="{StaticResource MarginLeftRightTop}">
+            <Label Text="WijkagentApp" FontSize="25" 
                    VerticalOptions="Start" HorizontalTextAlignment="Center"/>
-            <StackLayout Margin="20" VerticalOptions="CenterAndExpand">
-                <Label Text="Username" />
-                <Entry Placeholder="username" Text="{Binding UserName}"/>
-                <Label Text="Password" />
-                <Entry IsPassword="true" Text="{Binding Password}" ReturnCommand="{Binding LoginCommand}" Placeholder="password"/>
-                <Button Text="Login" Command="{Binding LoginCommand}" />
-                <Label Text="{Binding LoginMessage}" />
+            <StackLayout VerticalOptions="CenterAndExpand">
+                <Label Text="Gebruikersnaam" />
+                <Entry Placeholder="Gebruikersnaam" Text="{Binding UserName}"/>
+                <Label Text="Wachtwoord" />
+                <Entry IsPassword="true" Text="{Binding Password}" ReturnCommand="{Binding LoginCommand}" Placeholder="Wachtwoord"/>
+                <Button Text="Login" Command="{Binding LoginCommand}" Style="{StaticResource BlueButton}" />
+                <Frame Style="{StaticResource ErrorMessageStack}" IsVisible="{Binding ErrorMessageIsVisible}">
+                    <Label Text="{Binding LoginMessage}" Style="{StaticResource ErrorMessage}" />
+                </Frame>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>
