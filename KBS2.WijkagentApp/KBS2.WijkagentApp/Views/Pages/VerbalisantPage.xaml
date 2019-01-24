@@ -13,7 +13,7 @@
     </ContentPage.Resources>
     <ContentPage.Content>
         <StackLayout
-            Style="{StaticResource MinimalStack}">
+            Margin="{StaticResource MarginLeftRightTop}">
             <Label
                 Text="Persoonsgegevens verbalisant"
                 HorizontalTextAlignment="Center"
@@ -30,8 +30,7 @@
             </Picker>
 
             <StackLayout
-                VerticalOptions="CenterAndExpand"
-                Style="{StaticResource MinimalStack}">
+                VerticalOptions="CenterAndExpand">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -39,8 +38,7 @@
                     </Grid.ColumnDefinitions>
                     <StackLayout
                         HorizontalOptions="FillAndExpand"
-                        Grid.Column="0"
-                        Style="{StaticResource MinimalStack}">
+                        Grid.Column="0">
                         <Label
                             x:Name="Label1"
                             Style="{StaticResource SmallInfoLabel}"
@@ -60,8 +58,7 @@
                     </StackLayout>
                     <StackLayout
                         HorizontalOptions="FillAndExpand"
-                        Grid.Column="1"
-                        Style="{StaticResource MinimalStack}">
+                        Grid.Column="1">
                         <Label
                             x:Name="Label2"
                             Style="{StaticResource SmallInfoLabel}"
@@ -88,8 +85,7 @@
                     </Grid.ColumnDefinitions>
                     <StackLayout
                         HorizontalOptions="FillAndExpand"
-                        Grid.Column="0"
-                        Style="{StaticResource MinimalStack}">
+                        Grid.Column="0">
                         <Label Text="Geboortedatum"
                                Style="{StaticResource SmallInfoLabel}" />
                         <DatePicker
@@ -102,8 +98,7 @@
                     </StackLayout>
                     <StackLayout
                         HorizontalOptions="FillAndExpand"
-                        Grid.Column="1"
-                        Style="{StaticResource MinimalStack}">
+                        Grid.Column="1">
                         <Label
                             Text="Geslacht"
                             Style="{StaticResource SmallInfoLabel}"
@@ -131,8 +126,7 @@
                     </Grid.ColumnDefinitions>
                     <StackLayout
                         HorizontalOptions="FillAndExpand"
-                        Grid.Column="0"
-                        Style="{StaticResource MinimalStack}">
+                        Grid.Column="0">
                         <Label x:Name="Label3"
                                Text="Burgerservicenummer"
                                Style="{StaticResource SmallInfoLabel}"
@@ -150,8 +144,7 @@
                     </StackLayout>
                     <StackLayout
                         HorizontalOptions="FillAndExpand"
-                        Grid.Column="1"
-                        Style="{StaticResource MinimalStack}">
+                        Grid.Column="1">
                         <Label
                             x:Name="Label4"
                             Text="Telefoonnummer"
@@ -170,8 +163,7 @@
                         </Entry>
                     </StackLayout>
                 </Grid>
-                <StackLayout
-                    Style="{StaticResource MinimalStack}">
+                <StackLayout>
                     <Label
                         x:Name="Label6"
                         Text="E-mailadres"
@@ -188,8 +180,7 @@
                     </Entry>
                 </StackLayout>
 
-                <StackLayout
-                    Style="{StaticResource MinimalStack}">
+                <StackLayout>
                     <Label
                         x:Name="Label5"
                         Text="Selecteer persoonsbeschrijving"
@@ -208,7 +199,8 @@
                     </Picker>
                 </StackLayout>
             </StackLayout>
-            <Grid>
+            <Grid
+                Margin="{StaticResource MarginLeftRight}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -217,10 +209,10 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Button Text="Annuleer" Style="{StaticResource BlueButton}" Command="{Binding CancelCommand}" />
-                <Button Grid.Column="1" Text="Verwijder" Style="{StaticResource BlueButton}"
+                <Button Text="Annuleer" Style="{StaticResource BlueButtonSmall}" Command="{Binding CancelCommand}" />
+                <Button Grid.Column="1" Text="Verwijder" Style="{StaticResource BlueButtonSmall}"
                         Command="{Binding DeleteCommand}" />
-                <Button Grid.Column="2" Text="Opslaan" Style="{StaticResource BlueButton}"
+                <Button Grid.Column="2" Text="Opslaan" Style="{StaticResource BlueButtonSmall}"
                         Command="{Binding SaveCommand}" />
             </Grid>
         </StackLayout>
