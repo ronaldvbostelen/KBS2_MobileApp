@@ -10,12 +10,14 @@ namespace KBS2.WijkagentApp.ViewModels
     class LoginViewModel : BaseViewModel
     {
         private string loginMessage;
+        private bool errorMessageIsVisible;
         private Officer officer;
         private ICommand loginCommand;
 
         public string UserName { get { return officer.UserName; } set { if (value != officer.UserName) { officer.UserName = value; NotifyPropertyChanged(); ((ActionCommand)LoginCommand).RaiseCanExecuteChanged();} } }
         public string Password { get { return officer.Password; } set { if (value != officer.Password) { officer.Password = value; NotifyPropertyChanged(); ((ActionCommand)LoginCommand).RaiseCanExecuteChanged();} } }
-        public string LoginMessage { get { return loginMessage; } set { if (value != loginMessage) { loginMessage = value; NotifyPropertyChanged();} } }
+        public string LoginMessage { get { return loginMessage; } set { if (value != loginMessage) { loginMessage = value; NotifyPropertyChanged(); } } }
+        public bool ErrorMessageIsVisible { get { return errorMessageIsVisible; } set { if (value != errorMessageIsVisible) { errorMessageIsVisible = value; NotifyPropertyChanged(); } } }
 
         public LoginViewModel() { officer = new Officer(); }
 
@@ -30,11 +32,14 @@ namespace KBS2.WijkagentApp.ViewModels
                     App.CredentialsService.SaveCredentials(App.WijkagentDb.Officer.Where(x => x.passWord.Equals(officer.Password) && x.userName.Equals(officer.UserName)).Select(x => x.officerId).First(), officer.UserName, officer.Password);
                 }
 
+                ErrorMessageIsVisible = false;
+
                 Application.Current.MainPage = new MainPage();
             }
             else
             {
-                LoginMessage = "Login failed";
+                LoginMessage = "Helaas, de ingevulde gegevens komen niet voor in ons systeem";
+                ErrorMessageIsVisible = true;
                 Password = string.Empty;
             }
         }
