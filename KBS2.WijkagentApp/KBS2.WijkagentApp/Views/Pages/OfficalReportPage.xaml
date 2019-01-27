@@ -219,11 +219,15 @@
             </StackLayout>
             
             <Grid
+                Margin="{StaticResource MarginLeftRight}"
                 Grid.Row="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Button Text="Annuleer" Style="{StaticResource BlueButtonSmall}" Command="{Binding CancelCommand}" />
                 <Button Grid.Column="1" Text="Verwijder" Style="{StaticResource BlueButtonSmall}" Command="{Binding DeleteCommand}" />
