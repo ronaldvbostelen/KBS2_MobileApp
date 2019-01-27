@@ -17,7 +17,7 @@ namespace KBS2.WijkagentApp.ViewModels
         public string UserName { get { return officer.UserName; } set { if (value != officer.UserName) { officer.UserName = value; NotifyPropertyChanged(); ((ActionCommand)LoginCommand).RaiseCanExecuteChanged();} } }
         public string Password { get { return officer.Password; } set { if (value != officer.Password) { officer.Password = value; NotifyPropertyChanged(); ((ActionCommand)LoginCommand).RaiseCanExecuteChanged();} } }
         public string LoginMessage { get { return loginMessage; } set { if (value != loginMessage) { loginMessage = value; NotifyPropertyChanged(); } } }
-        public bool ErrorMessageIsVisible { get { return errorMessageIsVisible; } set { errorMessageIsVisible = value; NotifyPropertyChanged(); } }
+        public bool ErrorMessageIsVisible { get { return errorMessageIsVisible; } set { if (value != errorMessageIsVisible) { errorMessageIsVisible = value; NotifyPropertyChanged(); } } }
 
         public LoginViewModel() { officer = new Officer(); }
 
