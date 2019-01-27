@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KBS2.WijkagentApp.Views.Pages.AntecedentsInvestigationPage"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.Content>
+        <StackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <Label Text="Melding zoeken"
+                       Margin="{StaticResource MarginLeftRightTop}"
+                       Style="{StaticResource Title}"
+                       Grid.Row="0" />
+                
+                <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" Grid.Row="1">
+                    <SearchBar x:Name="srcNotice" 
+                           Margin="{StaticResource MarginLeftRight}"
+                           SearchCommand="{Binding SearchCommand}" 
+                           SearchCommandParameter="{Binding Text, Source={x:Reference srcNotice}}" />
+                    
+                    <ListView IsPullToRefreshEnabled="True" x:Name="lvwSearchResult">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextCell Text="{Binding NoticeTitle}" Detail="{Binding NoticeDetails}"> <!-- Needs to be filled dynamically later -->
+
+                                </TextCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackLayout>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
