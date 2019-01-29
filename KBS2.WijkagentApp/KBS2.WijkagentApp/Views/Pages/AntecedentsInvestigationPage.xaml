@@ -1,18 +1,16 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:KBS2.WijkagentApp.ViewModels;assembly=KBS2.WijkagentApp"
              x:Class="KBS2.WijkagentApp.Views.Pages.AntecedentsInvestigationPage"
              NavigationPage.HasNavigationBar="False">
+    <ContentPage.BindingContext>
+        <viewModels:AntecedentsInvestigationViewModel/>
+    </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout>
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
@@ -22,7 +20,11 @@
                        Style="{StaticResource Title}"
                        Grid.Row="0" />
                 
-                <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" Grid.Row="1">
+                <StackLayout 
+                    Orientation="Vertical" 
+                    HorizontalOptions="FillAndExpand" 
+                    Grid.Row="1">
+
                     <SearchBar x:Name="srcNotice" 
                            Margin="{StaticResource MarginLeftRight}"
                            SearchCommand="{Binding SearchCommand}" 
