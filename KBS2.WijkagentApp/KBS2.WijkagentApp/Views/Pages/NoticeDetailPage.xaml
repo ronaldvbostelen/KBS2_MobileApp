@@ -5,101 +5,78 @@
              x:Class="KBS2.WijkagentApp.Views.Pages.NoticeDetailPage"
              Title="Detail melding">
     <ContentPage.Content>
-        <StackLayout
-            Style="{StaticResource MinimalStack}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="70" />
-                    <RowDefinition Height="auto" />
-                </Grid.RowDefinitions>
+        <StackLayout Style="{StaticResource MinimalStack}">
+            <StackLayout Margin="16,8,16,0">
+                <Label Text="Melding"
+                       FontAttributes="Bold" />
 
-                <Label FontAttributes="Bold" Margin="{StaticResource MarginLeftRight}" Grid.Row="1">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text="Melding: " />
-                            <Span Text="{Binding Report.Type}" />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
+                <Label Text="{Binding Report.Type}" />
 
                 <Label Text="Locatie"
-                       Margin="{StaticResource MarginLeftRight}"
-                       Grid.Row="2"
                        FontAttributes="Bold" />
 
-                <Label Text="{Binding Report.Location}"
-                       Margin="{StaticResource MarginLeftRight}"
-                       Grid.Row="3" />
+                <Label Text="{Binding Report.Location}" />
 
                 <Label Text="Beschrijving"
-                       Margin="{StaticResource MarginLeftRight}"
-                       Grid.Row="4"
                        FontAttributes="Bold" />
 
-                <Label Text="{Binding Report.Comment}"
-                       Margin="{StaticResource MarginLeftRight}"
-                       Grid.Row="5" />
+                <Label Text="{Binding Report.Comment}" />
+            </StackLayout>
 
-                <StackLayout Grid.Row="6">
-                    <BoxView Grid.Column="0" BackgroundColor="{StaticResource BluePolice}" HeightRequest="1"
+            <StackLayout>
+                <BoxView Margin="0,25,0,0"
+                    BackgroundColor="{StaticResource BluePolice}" HeightRequest="1"
                              VerticalOptions="End" HorizontalOptions="FillAndExpand" />
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="28" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="150" />
-                        </Grid.ColumnDefinitions>
-                        <BoxView Grid.Column="0" Grid.ColumnSpan="8" Grid.RowSpan="1"
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="28" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
+                    </Grid.ColumnDefinitions>
+                    <BoxView Grid.Column="0" Grid.ColumnSpan="8" Grid.RowSpan="1"
                                  BackgroundColor="{StaticResource BluePolice}" HeightRequest="1" VerticalOptions="End"
                                  HorizontalOptions="FillAndExpand" />
-                        <Label Text="Betrokkenen" FontAttributes="Bold" Grid.Column="1" />
-                        <Label Text="Soort" FontAttributes="Bold" Grid.Column="2" />
-                    </Grid>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="28" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="150" />
-                        </Grid.ColumnDefinitions>
-                        <BoxView Grid.Column="0" Grid.ColumnSpan="8" Grid.RowSpan="1"
+                    <Label Text="Betrokkenen" FontAttributes="Bold" Grid.Column="1" />
+                    <Label Text="Soort" FontAttributes="Bold" Grid.Column="2" />
+                </Grid>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="28" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
+                    </Grid.ColumnDefinitions>
+                    <BoxView Grid.Column="0" Grid.ColumnSpan="8" Grid.RowSpan="1"
                                  BackgroundColor="{StaticResource BluePolice}" HeightRequest="1" VerticalOptions="End"
                                  HorizontalOptions="FillAndExpand" />
-                        <Label Text="{Binding Suspect.FullName}" Grid.Column="1" />
-                        <Label Text="Verdachte" Grid.Column="2" />
-                    </Grid>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="28" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="150" />
-                        </Grid.ColumnDefinitions>
-                        <BoxView Grid.Column="0" Grid.ColumnSpan="8" Grid.RowSpan="1"
+                    <Label Text="{Binding Suspect.FullName}" Grid.Column="1" />
+                    <Label Text="{Binding Suspect.Description}" Grid.Column="2" />
+                </Grid>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="28" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
+                    </Grid.ColumnDefinitions>
+                    <BoxView Grid.Column="0" Grid.ColumnSpan="8" Grid.RowSpan="1"
                                  BackgroundColor="{StaticResource BluePolice}" HeightRequest="1" VerticalOptions="End"
                                  HorizontalOptions="FillAndExpand" />
-                        <Label Text="{Binding Victim.FullName}" Grid.Column="1" />
-                        <Label Text="Slachtoffer" Grid.Column="2" />
-                    </Grid>
-                </StackLayout>
-            </Grid>
+                    <Label Text="{Binding Victim.FullName}" Grid.Column="1" />
+                    <Label Text="{Binding Victim.Description}" Grid.Column="2" />
+                </Grid>
+            </StackLayout>
 
             <StackLayout
-                Margin="{StaticResource MarginLeftRight}"
-                VerticalOptions="EndAndExpand"
-                Grid.Row="7">
+                Margin="16,8,16,0"
+                VerticalOptions="EndAndExpand">
                 <StackLayout
                     Orientation="Horizontal">
                     <Label Text="In behandeling nemen" VerticalTextAlignment="Center" />

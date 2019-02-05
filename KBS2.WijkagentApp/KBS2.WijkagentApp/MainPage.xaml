@@ -8,7 +8,7 @@
         <NavigationPage Title="Map">
             <NavigationPage.Icon>
                 <OnPlatform x:TypeArguments="FileImageSource">
-                    <On Platform="Android" Value="target_with_circle.png" />
+                    <On Platform="Android" Value="map_target_icon.png" />
                 </OnPlatform>
             </NavigationPage.Icon>
             <x:Arguments>
@@ -19,7 +19,7 @@
         <NavigationPage Title="Pins">
             <NavigationPage.Icon>
                 <OnPlatform x:TypeArguments="FileImageSource">
-                    <On Platform="Android" Value="big_map_placeholder.png" />
+                    <On Platform="Android" Value="map_pin_icon.png" />
                 </OnPlatform>
             </NavigationPage.Icon>
             <x:Arguments>
@@ -30,7 +30,7 @@
         <NavigationPage Title="Stars">
             <NavigationPage.Icon>
                 <OnPlatform x:TypeArguments="FileImageSource">
-                    <On Platform="Android" Value="star_point.png" />
+                    <On Platform="Android" Value="star_icon.png" />
                 </OnPlatform>
             </NavigationPage.Icon>
             <x:Arguments>
@@ -41,7 +41,7 @@
         <NavigationPage Title="Messages">
             <NavigationPage.Icon>
                 <OnPlatform x:TypeArguments="FileImageSource">
-                    <On Platform="Android" Value="error_message.png" />
+                    <On Platform="Android" Value="error_msg_icon.png" />
                 </OnPlatform>
             </NavigationPage.Icon>
             <x:Arguments>

@@ -1,18 +1,127 @@
 ﻿using System;
+using System.Collections.Generic;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    public partial class OfficialReport
+    public partial class OfficialReport : BaseDataModel
     {
-        public Guid officialReportId { get; set; }
-        public Guid reporterId { get; set; }
-        public Guid? reportId { get; set; }
-        public string observation { get; set; }
-        public TimeSpan? time { get; set; }
-        public string location { get; set; }
+        private Guid reportId;
+        private Guid reporterId;
+        private string observation;
+        private string location;
+        private DateTime? time;
 
-        public virtual Officer reporter { get; set; }
-        public virtual Picture Picture { get; set; }
-        public virtual SoundRecord SoundRecord { get; set; }
+        [JsonProperty(PropertyName = "reportId")]
+        public Guid ReportId
+        {
+            get { return reportId; }
+            set
+            {
+                if (value != reportId)
+                {
+                    reportId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "reporterId")]
+        public Guid ReporterId
+        {
+            get { return reporterId; }
+            set
+            {
+                if (value != reporterId)
+                {
+                    reporterId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "observation")]
+        public string Observation
+        {
+            get { return observation; }
+            set
+            {
+                if (value != observation)
+                {
+                    observation = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "location")]
+        public string Location
+        {
+            get { return location; }
+            set
+            {
+                if (value != location)
+                {
+                    location = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "time")]
+        public DateTime? Time
+        {
+            get { return time; }
+            set
+            {
+                if (value != time)
+                {
+                    time = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public TimeSpan ReportTime
+        {
+            get { return Time.Value.TimeOfDay; }
+            set {
+                if (value != Time.Value.TimeOfDay)
+                {
+                    Time = new DateTime(Time.Value.Year, Time.Value.Month, Time.Value.Day, value.Hours, value.Minutes, value.Seconds, value.Milliseconds);
+                    NotifyPropertyChanged(nameof(Time), nameof(ReportTime));
+                }
+            }
+
+        }
+
+        public DateTime ReportDate
+        {
+            get { return Time.Value.Date; }
+            set
+            {
+                if (value != Time.Value.Date)
+                {
+                    Time = new DateTime(value.Year,value.Month,value.Day,Time.Value.Hour, Time.Value.Minute, Time.Value.Second, Time.Value.Millisecond);
+                    NotifyPropertyChanged(nameof(Time), nameof(ReportDate));
+                }
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType()) return false;
+
+            OfficialReport report = (OfficialReport)obj;
+
+            return id.Equals(report.id) && reportId.Equals(report.ReportId)
+                                        && reporterId.Equals(report.ReporterId)
+                                        && observation.Equals(report.Observation)
+                                        && time.Equals(report.Time)
+                                        && location.Equals(report.Location);
+        }
+
+        public override int GetHashCode() { return base.GetHashCode(); }
     }
 }

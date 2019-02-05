@@ -2,7 +2,13 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:KBS2.WijkagentApp.ViewModels;assembly=KBS2.WijkagentApp"
+             xmlns:Converters="clr-namespace:KBS2.WijkagentApp.Views.Converters"
              x:Class="KBS2.WijkagentApp.Views.Pages.LoginPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Converters:TextToBoolConverter x:Key="TextToBoolConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.BindingContext>
         <viewModels:LoginViewModel/>
     </ContentPage.BindingContext>
@@ -15,10 +21,19 @@
                 <Frame Style="{StaticResource ErrorMessageStack}" IsVisible="{Binding ErrorMessageIsVisible}">
                     <Label Text="{Binding LoginMessage}" Style="{StaticResource ErrorMessage}" />
                 </Frame>
-                <Label Text="Gebruikersnaam" />
-                <Entry Placeholder="Gebruikersnaam" Text="{Binding UserName}"/>
-                <Label Text="Wachtwoord" />
-                <Entry IsPassword="true" Text="{Binding Password}" ReturnCommand="{Binding LoginCommand}" Placeholder="Wachtwoord"/>
+                <Frame Style="{StaticResource LoginAttemptMessageStack}" IsVisible="{Binding LoginAttemptMessageIsVisible}">
+                    <Label Text="{Binding LoginAttemptMessage}" Style="{StaticResource LoginAttemptMessage}" />
+                </Frame>
+                <Label Text="Gebruikersnaam" 
+                       IsVisible="{Binding Text, Source={x:Reference UserNameEntry}, Converter={StaticResource TextToBoolConverter}}"/>
+                <Entry 
+                    x:Name="UserNameEntry"
+                    Placeholder="Gebruikersnaam" Text="{Binding UserName}"/>
+                <Label Text="Wachtwoord" 
+                       IsVisible="{Binding Text, Source={x:Reference PasswordEntry}, Converter={StaticResource TextToBoolConverter}}"/>
+                <Entry 
+                    x:Name="PasswordEntry"
+                    IsPassword="true" Text="{Binding Password}" ReturnCommand="{Binding LoginCommand}" Placeholder="Wachtwoord"/>
                 <Button Text="Login" Command="{Binding LoginCommand}" Style="{StaticResource BlueButton}" />
             </StackLayout>
         </StackLayout>

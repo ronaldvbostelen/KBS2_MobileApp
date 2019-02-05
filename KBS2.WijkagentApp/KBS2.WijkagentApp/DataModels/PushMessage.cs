@@ -1,17 +1,130 @@
 ﻿using System;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    public partial class PushMessage
+    public partial class PushMessage : BaseDataModel
     {
-        public Guid pushMessageId { get; set; }
-        public Guid officerId { get; set; }
-        public string content { get; set; }
-        public TimeSpan? time { get; set; }
-        public string location { get; set; }
-        public decimal? longitude { get; set; }
-        public decimal? latitude { get; set; }
+        private Guid pushMessageId;
+        private Guid officerId;
+        private string message;
+        public DateTime? time { get; set; }
+        private string location;
+        private decimal? longitude;
+        private decimal? latitude;
+        private string status;
 
-        public virtual Officer officer { get; set; }
+        [JsonProperty(PropertyName = "pushMessageId")]
+        public Guid PushMessageId
+        {
+            get { return pushMessageId; }
+            set
+            {
+                if (value != pushMessageId)
+                {
+                    pushMessageId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "officerId")]
+        public Guid OfficerId
+        {
+            get { return officerId; }
+            set
+            {
+                if (value != officerId)
+                {
+                    officerId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "message")]
+        public string Message
+        {
+            get { return message; }
+            set
+            {
+                if (value != message)
+                {
+                    message = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "time")]
+        public DateTime? Time
+        {
+            get { return time; }
+            set
+            {
+                if (value != time)
+                {
+                    time = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "location")]
+        public string Location
+        {
+            get { return location; }
+            set
+            {
+                if (value != location)
+                {
+                    location = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "longitude")]
+        public decimal? Longitude
+        {
+            get { return longitude; }
+            set
+            {
+                if (value != longitude)
+                {
+                    longitude = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "latitude")]
+        public decimal? Latitude
+        {
+            get { return latitude; }
+            set
+            {
+                if (value != latitude)
+                {
+                    latitude = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "status")]
+        public string Status
+        {
+            get { return status; }
+            set
+            {
+                if (value != status)
+                {
+                    status = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
     }
 }

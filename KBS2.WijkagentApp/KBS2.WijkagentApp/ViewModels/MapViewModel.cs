@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using Plugin.Geolocator;
@@ -8,14 +9,15 @@ using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using TK.CustomMap;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
-using KBS2.WijkagentApp.Assets;
-using KBS2.WijkagentApp.DataModels.old;
+using KBS2.WijkagentApp.DataModels;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
     public class MapViewModel : BaseViewModel
     {
+        private List<Report> reports;
         private ObservableCollection<TKCustomMapPin> pins;
         private TKCustomMapPin selectedPin;
         private MapSpan mapRegion = MapSpan.FromCenterAndRadius(new Position(52.4996, 6.07895), Distance.FromKilometers(500)); //preventing nullpointerexception
@@ -32,13 +34,36 @@ namespace KBS2.WijkagentApp.ViewModels
         //creates a xamarin map instance and sets the currentlocation and loaded pins
         public MapViewModel()
         {
-            //create pinlist based on reports (DB entries, != D (D = Done))
-            Pins = new ObservableCollection<TKCustomMapPin>(Constants.Reports.Where(x => x.Status != 'D').Select(PinCreator));
+            FetchReports();
 
             MapType = MapType.Hybrid;
             RegionChangeAnimated = true;
             
             SetInitialLocation();
+        }
+
+        //get the reports (already filterd on != 'D'one)
+        private async void FetchReports()
+        {
+            try
+            {
+                reports = await App.DataController.ReportTable.ToListAsync();
+
+                //setting the id members
+                reports.ForEach(x => x.id = x.ReportId);
+
+                //we can only set the pin when the reports are fetched therefor creation is here
+                Pins = new ObservableCollection<TKCustomMapPin>(reports.Select(PinCreator));
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+
+                await Application.Current.MainPage.DisplayAlert("Ophalen meldingen mislukt", "Probeer later opnieuw " + e.Message, "OK");
+
+                //create empty list
+                reports = new List<Report>();
+            }
         }
         
         //async method to set the current location, this uses the permissionplugin to request the needed permission to get the GPS 
@@ -77,7 +102,7 @@ namespace KBS2.WijkagentApp.ViewModels
         private void CalloutClicked(object pin)
         {
             var clickedPin = (TKCustomMapPin) pin;
-            var clickedReport = Constants.Reports.First(x => x.Latitude.Equals(clickedPin.Position.Latitude) && x.Longitude.Equals(clickedPin.Position.Longitude));
+            var clickedReport = reports.First(x => x.Latitude.Equals(clickedPin.Position.Latitude) && x.Longitude.Equals(clickedPin.Position.Longitude));
             
             Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(clickedReport)));
         }
@@ -97,7 +122,7 @@ namespace KBS2.WijkagentApp.ViewModels
             return new TKCustomMapPin
             {
                 DefaultPinColor = pinColor,
-                Position = new Position(report.Latitude, report.Longitude),
+                Position = new Position(report.Latitude ?? 0, report.Longitude ?? 0),
                 Title = report.Location,
                 Subtitle = report.Type,
                 IsCalloutClickable = true,

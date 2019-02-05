@@ -1,18 +1,130 @@
 ﻿using System;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    public partial class Emergency
+    public partial class Emergency : BaseDataModel
     {
-        public Guid emergencyId { get; set; }
-        public Guid officerId { get; set; }
-        public string location { get; set; }
-        public TimeSpan? time { get; set; }
-        public string description { get; set; }
-        public decimal? longitude { get; set; }
-        public decimal? latitude { get; set; }
-        public string status { get; set; }
+        private Guid emergencyId;
+        private Guid officerId;
+        private string location;
+        private DateTime? time;
+        private string description;
+        private decimal? latitude;
+        private decimal? longitude;
+        private string status;
 
-        public virtual Officer officer { get; set; }
+        [JsonProperty(PropertyName = "emergencyId")]
+        public Guid EmergencyId
+        {
+            get { return emergencyId; }
+            set
+            {
+                if (value != emergencyId)
+                {
+                    emergencyId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "officerId")]
+        public Guid OfficerId
+        {
+            get { return officerId; }
+            set
+            {
+                if (value != officerId)
+                {
+                    officerId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "location")]
+        public string Location
+        {
+            get { return location; }
+            set
+            {
+                if (value != location)
+                {
+                    location = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "time")]
+        public DateTime? Time
+        {
+            get { return time; }
+            set
+            {
+                if (value != time)
+                {
+                    time = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "description")]
+        public string Description
+        {
+            get { return description; }
+            set
+            {
+                if (value != description)
+                {
+                    description = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "longitude")]
+        public decimal? Longitude
+        {
+            get { return longitude; }
+            set
+            {
+                if (value != longitude)
+                {
+                    longitude = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "latitude")]
+        public decimal? Latitude
+        {
+            get { return latitude; }
+            set
+            {
+                if (value != latitude)
+                {
+                    latitude = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "status")]
+        public string Status
+        {
+            get { return status; }
+            set
+            {
+                if (value != status)
+                {
+                    status = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
     }
 }

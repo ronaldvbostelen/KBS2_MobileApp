@@ -1,8 +1,10 @@
-﻿using System.Linq;
-using System.Windows.Input;
-using KBS2.WijkagentApp.Assets;
-using KBS2.WijkagentApp.DataModels.old;
+﻿using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.ViewModels.Commands;
+using System;
+using System.Diagnostics;
+using System.Net;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Application = Xamarin.Forms.Application;
 
 namespace KBS2.WijkagentApp.ViewModels
@@ -10,7 +12,7 @@ namespace KBS2.WijkagentApp.ViewModels
     class StatementViewmodel : BaseViewModel
     {
         private string statement;
-        private string tempStatement;
+        private string statementDbMirror;
         private ReportDetails reportDetails;
 
         public Person Verbalisant { get; }
@@ -24,25 +26,17 @@ namespace KBS2.WijkagentApp.ViewModels
         public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(x => Delete(), x => CanDelete()));
         public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => Cancel()));
 
-        public StatementViewmodel(Person verbalisant)
+        public StatementViewmodel(Person verbalisant, ReportDetails reportDetails)
         {
             Verbalisant = verbalisant;
-            reportDetails = GetReportDetails(verbalisant);
-            tempStatement = Statement = reportDetails.Statement ?? string.Empty;
+            this.reportDetails = reportDetails;
+
+            CreateStatementCopies();
         }
-
-        private ReportDetails GetReportDetails(Person verbalisant)
-        {
-            return 
-                (from  reportDetail in Constants.ReportDetails
-                 where reportDetail.PersonId.Equals(verbalisant.PersonId)
-                 select reportDetail).First();
-        }
-
-
+        
         private async void Cancel()
         {
-            if (Statement != tempStatement)
+            if (Statement != statementDbMirror)
             {
                 var result = await Application.Current.MainPage.DisplayAlert("Bevestig annuleren", "Gegevens zijn gewijzigd, gewijzigde gegevens opslaan?", "Ja", "Nee");
                 if (result) SaveStatement();
@@ -53,16 +47,46 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private async void SaveStatement()
         {
-            reportDetails.Statement = tempStatement = Statement;
-            UpdateCommands();
-            await Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens opgeslagen", "Ok");
+            try
+            {
+                reportDetails.Statement = Statement;
+                await App.DataController.UpdateSetAsync(reportDetails);
+
+                CreateStatementCopies();
+
+                UpdateCommands();
+
+                //ignore this warning
+                Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens opgeslagen", "Ok");
+
+                await Application.Current.MainPage.Navigation.PopModalAsync();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                await Application.Current.MainPage.DisplayAlert("Mislukt", "Er ging iets mis tijdens het opslaan van de gegevens. Probeer later opnieuw", "Ok");
+            }
+
         }
 
-        private bool DeleteStatement()
+        private async Task<bool> DeleteStatement()
         {
-            Statement = tempStatement = reportDetails.Statement = string.Empty;
-            UpdateCommands();
-            return true;
+            try
+            {
+                reportDetails.Statement = string.Empty;
+                var respons = await App.DataController.UpdateSetAsync(reportDetails);
+
+                CreateStatementCopies();
+                UpdateCommands();
+
+                return respons.Equals(HttpStatusCode.OK);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                await Application.Current.MainPage.DisplayAlert("Mislukt", "Er ging iets mis tijdens het opslaan van de gegevens. Probeer later opnieuw", "Ok");
+                return false;
+            }
         }
 
         private async void Delete()
@@ -70,9 +94,12 @@ namespace KBS2.WijkagentApp.ViewModels
             var result = await Application.Current.MainPage.DisplayAlert("Bevestig verwijderen", "Verklaring verwijderen?", "Ja", "Nee");
             if (result)
             {
-                if (DeleteStatement())
+                var confirmDelete = await DeleteStatement();
+                if (confirmDelete)
                 {
+                    //ignore this warning
                     Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens verwijderd", "Ok");
+
                     await Application.Current.MainPage.Navigation.PopModalAsync();
                 }
             };
@@ -80,7 +107,7 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private void Save() => SaveStatement();
 
-        private bool CanSave() => !Statement.Equals(tempStatement);
+        private bool CanSave() => !Statement.Equals(statementDbMirror);
 
         private bool CanDelete() => !string.IsNullOrEmpty(reportDetails.Statement);
 
@@ -89,5 +116,12 @@ namespace KBS2.WijkagentApp.ViewModels
             ((ActionCommand)SaveCommand).RaiseCanExecuteChanged();
             ((ActionCommand)DeleteCommand).RaiseCanExecuteChanged();
         }
+
+        private void CreateStatementCopies()
+        {
+            statementDbMirror = String.Copy(reportDetails.Statement ?? string.Empty);
+            Statement = String.Copy(reportDetails.Statement ?? string.Empty);
+        }
+        
     }
 }

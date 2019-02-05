@@ -51,7 +51,8 @@
             </StackLayout>
 
             <Grid
-                BindingContext="{Binding BindingContext, Source={x:Reference ThisPage}}">
+                BindingContext="{Binding BindingContext, Source={x:Reference ThisPage}}"
+                Margin="{StaticResource MarginLeftRight}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -60,9 +61,9 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Button Text="Annuleer" Style="{StaticResource BlueButton}" Command="{Binding CancelCommand}" />
-                <Button Grid.Column="1" Text="Verwijder" Style="{StaticResource BlueButton}" Command="{Binding DeleteCommand}" />
-                <Button Grid.Column="2" Text="Opslaan" Style="{StaticResource BlueButton}" Command="{Binding SaveCommand}" />
+                <Button Text="Annuleer" Style="{StaticResource BlueButtonSmall}" Command="{Binding CancelCommand}" />
+                <Button Grid.Column="1" Text="Verwijder" Style="{StaticResource BlueButtonSmall}" Command="{Binding DeleteCommand}" />
+                <Button Grid.Column="2" Text="Opslaan" Style="{StaticResource BlueButtonSmall}" Command="{Binding SaveCommand}" />
             </Grid>
 
         </StackLayout>

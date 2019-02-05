@@ -1,15 +1,86 @@
 ﻿using System;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    public partial class Address
+    public partial class Address : BaseDataModel
     {
-        public Guid personId { get; set; }
-        public string town { get; set; }
-        public string zipcode { get; set; }
-        public string street { get; set; }
-        public string number { get; set; }
+        private Guid personId;
+        public string town;
+        private string zipCode;
+        private string street;
+        private int number;
 
-        public virtual Person person { get; set; }
+        [JsonProperty(PropertyName = "personId")]
+        public Guid PersonId
+        {
+            get { return personId; }
+            set
+            {
+                if (value != personId)
+                {
+                    personId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "town")]
+        public string Town
+        {
+            get { return town; }
+            set
+            {
+                if (value != town)
+                {
+                    town = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "zipCode")]
+        public string ZipCode
+        {
+            get { return zipCode; }
+            set
+            {
+                if (value != zipCode)
+                {
+                    zipCode = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "street")]
+        public string Street
+        {
+            get { return street; }
+            set
+            {
+                if (value != street)
+                {
+                    street = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "number")]
+        public int Number
+        {
+            get { return number; }
+            set
+            {
+                if (value != number)
+                {
+                    number = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
     }
 }
+

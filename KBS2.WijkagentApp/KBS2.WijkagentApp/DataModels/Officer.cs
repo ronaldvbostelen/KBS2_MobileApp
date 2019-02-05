@@ -1,23 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    public partial class Officer
+    public partial class Officer : BaseDataModel
     {
-        public Officer()
+        private Guid officerId;
+        private Guid? personId;
+        private string userName;
+        private string password;
+
+        [JsonProperty(PropertyName = "officerId")]
+        public Guid OfficerId
         {
-            Emergency = new HashSet<Emergency>();
-            OfficialReport = new HashSet<OfficialReport>();
-            PushMessage = new HashSet<PushMessage>();
+            get { return officerId; }
+            set
+            {
+                if (value != officerId)
+                {
+                    officerId = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
-        public Guid officerId { get; set; }
-        public string userName { get; set; }
-        public string passWord { get; set; }
+        [JsonProperty(PropertyName = "personId")]
+        public Guid? PersonId
+        {
+            get { return personId; }
+            set
+            {
+                if (value != personId)
+                {
+                    personId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
-        public virtual ICollection<Emergency> Emergency { get; set; }
-        public virtual ICollection<OfficialReport> OfficialReport { get; set; }
-        public virtual ICollection<PushMessage> PushMessage { get; set; }
+        [JsonProperty(PropertyName = "userName")]
+        public string UserName
+        {
+            get { return userName; }
+            set
+            {
+                if (value != userName)
+                {
+                    userName = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "password")]
+        public string Password
+        {
+            get { return password; }
+            set
+            {
+                if (value != password)
+                {
+                    password = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
     }
 }

@@ -2,8 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using KBS2.WijkagentApp.Assets;
-using KBS2.WijkagentApp.DataModels.old;
+using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using KBS2.WijkagentApp.Views.Pages;
 using Xamarin.Forms;
@@ -19,7 +18,8 @@ namespace KBS2.WijkagentApp.ViewModels
         private bool switchToggleIsEnabled;
         private ICommand officalReportCommand;
         private ObservableCollection<Person> involvedPersons;
-        
+        private ObservableCollection<ReportDetails> reportDetails;
+
         public Report Report { get; }
         public Person Suspect { get { return suspect;} set { if (value != suspect) { suspect = value; NotifyPropertyChanged(); } } }
         public Person Victim { get { return victim;} set{ if (value != victim) { victim = value; NotifyPropertyChanged(); } } }
@@ -44,56 +44,94 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public NoticeDetailViewModel(Report report) 
         {
+            InvolvedPersons = new ObservableCollection<Person>();
+
             Report = report;
-            InvolvedPersons = CreatePersonsList(report);
+
+            SelectInvolvedPersons(report);
 
             //toggle is off when there's no processing officer
-            SwitchToggle = !string.IsNullOrEmpty(report.ProcessedBy);
+            SwitchToggle = report.ProcessedBy != null;
 
             //so only when the report is active or the procced officer is the user the swich is enabled
-            SwitchToggleIsEnabled = report.Status == 'A' || report.ProcessedBy.Equals(App.CredentialsService.Id);
-            
-            try
-            {
-                Victim = InvolvedPersons.First(x => x.Description.Equals("Slachtoffer"));
-                Suspect = InvolvedPersons.First(x => x.Description.Equals("Verdachte"));
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message + " " + e.StackTrace);
-                Victim = Suspect = null;
-            }
-
+            SwitchToggleIsEnabled = report.Status == "A" || report.ProcessedBy.Equals(User.Id);
         }
 
         //update record when officer decides to process notice
-        private void EditReport(bool value)
+        private async void EditReport(bool value)
         {
             if (value)
             {
-                Report.ProcessedBy = App.CredentialsService.Id;
-                Report.Status = 'P';
+                Report.ProcessedBy = User.Id;
+                Report.Status = "P";
             }
             else
             {
-                Report.ProcessedBy = string.Empty;
-                Report.Status = 'A';
+                Report.ProcessedBy = null;
+                Report.Status = "A";
             }
+
+            try
+            {
+                await App.DataController.ReportTable.UpdateAsync(Report);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                switchToggle = !value;
+                NotifyPropertyChanged(nameof(SwitchToggle));
+                await Application.Current.MainPage.DisplayAlert("Wijzigen mislukt", "Sorry, er ging iets mis tijdens het wijzigen van de meldingsgegevens. Probeer later opnieuw", "Ok");
+            }
+            
         }
 
         //select involved persons
-        private ObservableCollection<Person> CreatePersonsList(Report report)
+        private async void SelectInvolvedPersons(Report report)
         {
-            var involvedPersons =
-                from person in Constants.Persons
-                where Constants.ReportDetails.Where(x => x.ReportId.Equals(report.ReportId)).Any(x => x.PersonId.Equals(person.PersonId))
-                select person;
+            try
+            {
+                reportDetails = await App.DataController.FetchReportDetailsAsync(report.ReportId);
+                
+                foreach (var reportDetail in reportDetails)
+                {
+                    reportDetail.id = reportDetail.ReportDetailsId;
+                    try
+                    {
+                        var person = await App.DataController.PersonTable.LookupAsync(reportDetail.PersonId);
+                        person.id = person.PersonId;
+                        InvolvedPersons.Add(person);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                        await Application.Current.MainPage.DisplayAlert("Ophalen betrokkenen mislukt", "Probeer later opnieuw", "Ok");
+                    }
+                    
+                }
 
-            return new ObservableCollection<Person>(involvedPersons);
+                try
+                {
+                    Victim = InvolvedPersons.First(x => x.Description.Equals("Slachtoffer"));
+                    Suspect = InvolvedPersons.First(x => x.Description.Equals("Verdachte"));
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    await Application.Current.MainPage.DisplayAlert("Bepalen betrokkenen mislukt", "Probeer later opnieuw", "Ok");
+                    Victim = Suspect = null;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                await Application.Current.MainPage.DisplayAlert("Ophalen detailgegevens mislukt", "Probeer later opnieuw", "Ok");
+                reportDetails = new ObservableCollection<ReportDetails>();
+                Victim = Suspect = null;
+            }
         }
 
         private bool CanGoToReportPage() => SwitchToggle;
 
-        private void GoToReportPage(Report report) => Application.Current.MainPage.Navigation.PushModalAsync(new OfficalReportPage(new OfficalReportViewModel(report)));
+        private void GoToReportPage(Report report) => Application.Current.MainPage.Navigation.PushModalAsync(new OfficalReportPage(new OfficalReportViewModel(report, involvedPersons, reportDetails)));
     }
 }

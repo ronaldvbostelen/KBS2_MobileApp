@@ -201,8 +201,7 @@
                     </Picker>
                 </StackLayout>
             </StackLayout>
-            <Grid
-                Margin="{StaticResource MarginLeftRight}">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
