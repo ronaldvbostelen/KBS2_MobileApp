@@ -74,12 +74,12 @@ namespace KBS2.WijkagentApp.ViewModels
             try
             {
                 reportDetails.Statement = string.Empty;
-                var respons = await App.DataController.UpdateSetAsync(reportDetails);
+                var respons = App.DataController.UpdateSetAsync(reportDetails);
 
                 CreateStatementCopies();
                 UpdateCommands();
 
-                return respons.Equals(HttpStatusCode.OK);
+                return respons.Result.Equals(HttpStatusCode.OK);
             }
             catch (Exception e)
             {

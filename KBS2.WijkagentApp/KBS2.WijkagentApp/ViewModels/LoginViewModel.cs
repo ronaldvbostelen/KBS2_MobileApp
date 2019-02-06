@@ -45,8 +45,8 @@ namespace KBS2.WijkagentApp.ViewModels
             //credentials are correct
             if (apiRespons.IsSuccessStatusCode)
             {
-                var toString = await apiRespons.Content.ReadAsStringAsync();
-                var toObject = JsonConvert.DeserializeObject(toString, Type.GetType("KBS2.WijkagentApp.DataModels.Officer"));
+                var toString = apiRespons.Content.ReadAsStringAsync();
+                var toObject = JsonConvert.DeserializeObject(toString.Result, Type.GetType("KBS2.WijkagentApp.DataModels.Officer"));
 
                 User.Base = (Officer) toObject;
 
