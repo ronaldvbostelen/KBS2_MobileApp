@@ -61,7 +61,9 @@ namespace KBS2.WijkagentApp.ViewModels
         {
             return new ObservableCollection<Person>(
                        (from involvedPerson in involvedPersons
-                        where reportDetails.Any(x => x.ReportId.Equals(report.ReportId) && x.PersonId.Equals(involvedPerson.PersonId) && (x.IsHeard ?? false))
+                        where reportDetails.Any(x => x.ReportId.Equals(report.ReportId) 
+                                                     && x.PersonId.Equals(involvedPerson.PersonId) 
+                                                     && (x.IsHeard ?? false))
                         select involvedPerson));
         }
 
@@ -202,8 +204,7 @@ namespace KBS2.WijkagentApp.ViewModels
                 catch (Exception e)
                 {
                     Debug.WriteLine(e);
-                    await Application.Current.MainPage.DisplayAlert("Er ging iets mis..",
-                        "Verwijderen proces-verbaal mislukt", "Ok");
+                    await Application.Current.MainPage.DisplayAlert("Er ging iets mis..", "Verwijderen proces-verbaal mislukt", "Ok");
                 }
             }
         }
@@ -213,6 +214,7 @@ namespace KBS2.WijkagentApp.ViewModels
             SaveReport(OfficialReport);
 
             var result = await Application.Current.MainPage.DisplayAlert("Gelaagd", "Gegevens opgeslagen. Pagina sluiten?", "Ja", "Nee");
+            
             if (result) await Application.Current.MainPage.Navigation.PopModalAsync();
         }
         
@@ -229,7 +231,6 @@ namespace KBS2.WijkagentApp.ViewModels
                 Debug.WriteLine(e);
                 await Application.Current.MainPage.DisplayAlert("Er ging iets mis..", "Opslaan proces-verbaal mislukt", "Ok");
             }
-
         }
 
         private async void OpenCamera()

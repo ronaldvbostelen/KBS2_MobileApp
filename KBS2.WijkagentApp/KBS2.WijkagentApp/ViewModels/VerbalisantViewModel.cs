@@ -181,7 +181,7 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private async Task<Person> CreateNewVerbalisantEntry(Person verbalisant)
         {
-            await App.DataController.PersonTable.InsertAsync(verbalisant);
+            await App.DataController.InsertIntoAsync(verbalisant);
             verbalisant.id = verbalisant.PersonId;
             return verbalisant;
         }
@@ -274,7 +274,16 @@ namespace KBS2.WijkagentApp.ViewModels
             if (CanSave())
             {
                 var result = await Application.Current.MainPage.DisplayAlert("Bevestig annuleren", "Gegevens zijn gewijzigd, gewijzigde gegevens opslaan?", "Ja", "Nee");
-                if (result) await SaveVerbalisant(Verbalisant);
+
+                // ignore these warnings
+                if (result)
+                {
+                    SaveVerbalisant(Verbalisant); UpdateReportDetails(reportDetails);
+                }
+                else
+                {
+                    RestoreVerbalisantValues();
+                }
             }
 
             await Application.Current.MainPage.Navigation.PopModalAsync();
@@ -366,7 +375,7 @@ namespace KBS2.WijkagentApp.ViewModels
             try
             {
                 reportDetails.IsHeard = b;
-                await App.DataController.ReportDetailsTable.UpdateAsync(reportDetails);
+                await App.DataController.UpdateSetAsync(reportDetails);
                 OnDatabaseChanged();
             }
             catch (Exception e)
@@ -390,8 +399,20 @@ namespace KBS2.WijkagentApp.ViewModels
                 Gender = verbalisant.Gender,
                 LastName = verbalisant.LastName,
                 PhoneNumber = verbalisant.PhoneNumber,
-                SocialSecurityNumber = verbalisant.SocialSecurityNumber
+                SocialSecurityNumber = verbalisant.SocialSecurityNumber ?? 0
             };
+        }
+
+        private void RestoreVerbalisantValues()
+        {
+            Verbalisant.SocialSecurityNumber = verbalisantDbMirror.SocialSecurityNumber;
+            Verbalisant.EmailAddress = verbalisantDbMirror.EmailAddress;
+            Verbalisant.PhoneNumber = verbalisantDbMirror.PhoneNumber;
+            Verbalisant.BirthDate = verbalisantDbMirror.BirthDate;
+            Verbalisant.Description = verbalisantDbMirror.Description;
+            Verbalisant.FirstName = verbalisantDbMirror.FirstName;
+            Verbalisant.LastName = verbalisantDbMirror.LastName;
+            Verbalisant.Gender = verbalisantDbMirror.Gender;
         }
 
         protected virtual void OnDatabaseChanged()

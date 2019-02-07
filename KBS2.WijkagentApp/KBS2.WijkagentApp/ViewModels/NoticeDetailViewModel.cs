@@ -117,14 +117,17 @@ namespace KBS2.WijkagentApp.ViewModels
                 catch (Exception e)
                 {
                     Debug.WriteLine(e);
-                    await Application.Current.MainPage.DisplayAlert("Bepalen betrokkenen mislukt", "Probeer later opnieuw", "Ok");
                     Victim = Suspect = null;
+                    await Application.Current.MainPage.DisplayAlert("Bepalen betrokkenen mislukt", "Probeer later opnieuw", "Ok");
                 }
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                await Application.Current.MainPage.DisplayAlert("Ophalen detailgegevens mislukt", "Probeer later opnieuw", "Ok");
+
+                //ignore this warning
+                Application.Current.MainPage.DisplayAlert("Ophalen detailgegevens mislukt", "Probeer later opnieuw", "Ok");
+
                 reportDetails = new ObservableCollection<ReportDetails>();
                 Victim = Suspect = null;
             }
