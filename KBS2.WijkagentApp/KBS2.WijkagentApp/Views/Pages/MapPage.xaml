@@ -6,7 +6,7 @@
              x:Class="KBS2.WijkagentApp.Views.Pages.MapPage"
              NavigationPage.HasNavigationBar="False">
     <ContentPage.BindingContext>
-        <viewModels:MapViewModel />
+        <viewModels:MapViewModel/>
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <ContentView x:Name="MapLayout"

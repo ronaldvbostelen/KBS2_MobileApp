@@ -16,19 +16,21 @@ namespace KBS2.WijkagentApp.DataModels
         public static Guid? PersonId => Base.PersonId;
         public static string Name => Base.UserName;
 
-
-        public static async void FetchUserPersonRecord()
+        
+        public static async Task<Person> FetchUserPersonRecord()
         {
             try
             {
                 var person = await App.DataController.PersonTable.LookupAsync(PersonId);
                 Person = person;
+                return person;
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
                 await Application.Current.MainPage.DisplayAlert("Ophalen gebruiker mislukt", "Probeer later opnieuw",
                     "Ok");
+                return null;
             }
         }
     }
