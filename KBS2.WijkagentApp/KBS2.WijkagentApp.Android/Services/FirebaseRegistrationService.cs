@@ -24,7 +24,7 @@ namespace KBS2.WijkagentApp.Droid
             // Update notification hub registration
             Task.Run(async () =>
             {
-                await AzureNotificationHubService.RegisterAsync(TodoItemManager.DefaultManager.CurrentClient.GetPush(), token);
+                await AzureNotificationHubService.RegisterAsync(new MobileServiceClient("https://wijkagent.azurewebsites.net").GetPush(), token);
             });
         }
     }
