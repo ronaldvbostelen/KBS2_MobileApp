@@ -216,7 +216,7 @@
                                     <Label VerticalTextAlignment="Start" Grid.Row="0" Grid.Column="0"
                                            Text="{Binding FullName}" />
                                     <Label VerticalTextAlignment="End" Grid.Row="1" Grid.Column="0"
-                                           Text="{Binding BirthDate, StringFormat='{0:dd-MM-yyyy}'}" />
+                                           Text="{Binding BirthDate, StringFormat='{}{0:dd-MM-yyyy}'}" />
                                     <Button Grid.RowSpan="2" Grid.Column="1" Text="Pers. geg." FontSize="10"
                                             Style="{StaticResource BlueButton}"
                                             Command="{Binding BindingContext.EditPersonCommand, Source={x:Reference ThisPage}}"

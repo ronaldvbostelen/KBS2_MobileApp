@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Windows.Input;
@@ -8,7 +10,11 @@ using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using KBS2.WijkagentApp.Views.Pages;
 using Microsoft.WindowsAzure.MobileServices;
+using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
 using Xamarin.Forms;
+using AudioManager = KBS2.WijkagentApp.Managers.AudioManager;
+using CameraManager = KBS2.WijkagentApp.Managers.CameraManager;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
@@ -38,7 +44,7 @@ namespace KBS2.WijkagentApp.ViewModels
         public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(x => Delete(), x => CanDelete()));
         public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => Cancel()));
         public ICommand CameraCommand => cameraCommand ?? (cameraCommand = new ActionCommand(x => OpenCamera()));
-        public ICommand AudioCommand => audioCommand ?? (audioCommand = new ActionCommand(x => OpenRecorder()));
+        public ICommand AudioCommand => audioCommand ?? (audioCommand = new ActionCommand(x => StartRecorder()));
         public ICommand ValidateCanSaveCommand { get { return new ActionCommand(x => ((ActionCommand) SaveCommand).RaiseCanExecuteChanged()); } }
         
         public Report Report { get { return report; } set { if (value != report) { report = value; NotifyPropertyChanged(); } } }
@@ -233,14 +239,64 @@ namespace KBS2.WijkagentApp.ViewModels
             }
         }
 
+        private List<ImageSource> images = new List<ImageSource>();
+
+        private ImageSource image;
+        public ImageSource Image { get { return image;} set{ if (image != value) { image = value; NotifyPropertyChanged(); } } }
+
         private async void OpenCamera()
         {
-            await Application.Current.MainPage.DisplayAlert("KI-KA-BOE", "SMILE", "OK");
+            var photo = await new CameraManager().TakePhoto();
+            
+            if (photo != null)
+            {
+                await Application.Current.MainPage.DisplayAlert("Foto opgeslagen", $"locatie: {photo.AlbumPath}","OK");
+            }
         }
 
-        private async void OpenRecorder()
+        private async void StartRecorder()
         {
-            await Application.Current.MainPage.DisplayAlert("Test test", "1... 2... 3...... Is this mic on?", "OK");
+            var micStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Microphone);
+            var storageStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Storage);
+
+            if (micStatus != PermissionStatus.Granted)
+            {
+                var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Microphone);
+                micStatus = results[Permission.Microphone];
+            }
+            if (storageStatus != PermissionStatus.Granted)
+            {
+                var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Storage);
+                storageStatus = results[Permission.Storage];
+            }
+
+            if (micStatus == PermissionStatus.Granted && storageStatus == PermissionStatus.Granted)
+            {
+                var recorder = new AudioManager();
+                recorder.SetFileName(officialReport.ReportId.ToString());
+                
+                var recordTask = recorder.Start();
+
+                await Application.Current.MainPage.DisplayAlert("Audio-opname gestart", "Druk op STOP om opname te staken", "Stop");
+
+                recorder.Stop();
+
+                await recordTask;
+
+                if (recordTask.Result != null)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Audio-opname opgeslagen", $"locatie: {recordTask.Result}", "OK");
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Audio-opname gestopt", "Geen opname gemaakt\r\n(geen geluid)", "OK");
+
+                    //it will somehow still save the file, therefore we delete it (by code here)
+                    File.Delete(recorder.FilePath);
+                }
+
+            }
+            
         }
 
         private bool CanSave() => OfficialReport != null && !OfficialReport.Equals(officialReportDbEntryMirror);
