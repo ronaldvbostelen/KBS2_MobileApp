@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DataModels\Collections\" />
     <Folder Include="DataModels\Delegates\" />
     <Folder Include="DataModels\Interfaces\" />
     <Folder Include="Models\DataProviders\" />
@@ -37,6 +36,9 @@
     </Reference>
     <Reference Include="Plugin.Permissions">
       <HintPath>..\..\..\..\..\.nuget\packages\plugin.permissions\3.0.0.12\lib\monoandroid71\Plugin.Permissions.dll</HintPath>
+    </Reference>
+    <Reference Include="Validation">
+      <HintPath>..\..\..\..\..\.nuget\packages\validation\2.2.8\lib\dotnet\Validation.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
 using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.Extensions;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using KBS2.WijkagentApp.Views.Pages;
 using TK.CustomMap;
@@ -16,51 +16,65 @@ namespace KBS2.WijkagentApp.ViewModels
         private Report currentTappedReport;
         private ICommand showPinOnMapCommand;
         private ICommand itemTappedCommand;
-
-        //these objects will be filled with DB-entrys for not its the static data, with a select
-        public ObservableCollection<Report> HighReports { get; }
-        public ObservableCollection<Report> MidReports { get; }
-        public ObservableCollection<Report> LowReports { get; }
+        
+        public ObservableCollection<Report> HighReports { get; } = App.ReportsCollection.Reports.Where(x => x.Priority == 1).EnumerableToObservableCollection();
+        public ObservableCollection<Report> MidReports { get; } = App.ReportsCollection.Reports.Where(x => x.Priority == 2).EnumerableToObservableCollection();
+        public ObservableCollection<Report> LowReports { get; } = App.ReportsCollection.Reports.Where(x => x.Priority == 3).EnumerableToObservableCollection();
 
         public ICommand ShowPinOnMapCommand => showPinOnMapCommand ?? (showPinOnMapCommand = new ActionCommand(report => ShowPinOnMap((Report)report)));
         public ICommand ItemTappedCommand => itemTappedCommand ?? (itemTappedCommand = new ActionCommand(eventArgs => ShowDetailPageOfReport((ItemTappedEventArgs)eventArgs)));
 
         public PinsViewModel()
         {
-            HighReports = new ObservableCollection<Report>();
-            MidReports = new ObservableCollection<Report>();
-            LowReports = new ObservableCollection<Report>();
-
-            FillReportLists();
+            App.ReportsCollection.Reports.CollectionChanged += Reports_CollectionChanged;
         }
 
-        private async void FillReportLists()
+        private void Reports_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            try
+            if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                var reports = await App.DataController.ReportTable.ToEnumerableAsync();
-                foreach (var report in reports)
+                if (e.OldItems.Count > 0)
                 {
-                    report.id = report.ReportId;
-
-                    switch (report.Priority)
+                    var removedReport = (Report) e.OldItems[0];
+                    switch (removedReport.Priority)
                     {
                         case 1:
-                            HighReports.Add(report);
+                            HighReports.Remove(removedReport);
                             break;
                         case 2:
-                            MidReports.Add(report);
+                            MidReports.Remove(removedReport);
+                            break;
+                        case 3:
+                            LowReports.Remove(removedReport);
                             break;
                         default:
-                            LowReports.Add(report);
+                            Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Bijwerken meldingenlijst mislukt\r\n(verwijdering)", "OK");
                             break;
                     }
                 }
             }
-            catch (Exception e)
+
+            if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                Debug.WriteLine(e);
-                await Application.Current.MainPage.DisplayAlert("Ophalen meldingen mislukt", "Probeer later opnieuw " + e.Message, "OK");
+                if (e.NewItems.Count > 0)
+                {
+                    var addedReport = (Report)e.NewItems[0];
+                    switch (addedReport.Priority)
+                    {
+                        case 3:
+                            HighReports.Add(addedReport);
+                            break;
+                        case 2:
+                            MidReports.Add(addedReport);
+                            break;
+                        case 1:
+                            LowReports.Add(addedReport);
+                            break;
+                        default:
+                            Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Bijwerken meldingenlijst mislukt\r\n(toevoeging)", "OK");
+                            break;
+                    }
+                }
             }
         }
 

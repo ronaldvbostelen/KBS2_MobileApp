@@ -1,5 +1,4 @@
 ﻿using System;
-using KBS2.WijkagentApp.Models.Interfaces;
 using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
@@ -11,8 +10,8 @@ namespace KBS2.WijkagentApp.DataModels
         private string message;
         public DateTime? time { get; set; }
         private string location;
-        private decimal? longitude;
-        private decimal? latitude;
+        private double? longitude;
+        private double? latitude;
         private string status;
 
         [JsonProperty(PropertyName = "pushMessageId")]
@@ -86,7 +85,7 @@ namespace KBS2.WijkagentApp.DataModels
         }
 
         [JsonProperty(PropertyName = "longitude")]
-        public decimal? Longitude
+        public double? Longitude
         {
             get { return longitude; }
             set
@@ -100,7 +99,7 @@ namespace KBS2.WijkagentApp.DataModels
         }
 
         [JsonProperty(PropertyName = "latitude")]
-        public decimal? Latitude
+        public double? Latitude
         {
             get { return latitude; }
             set

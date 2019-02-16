@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using KBS2.WijkagentApp.DataModels;
+﻿using KBS2.WijkagentApp.DataModels.Collections;
 using KBS2.WijkagentApp.Models.DataControllers;
-using KBS2.WijkagentApp.ViewModels;
 using KBS2.WijkagentApp.Views.Pages;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -13,13 +10,15 @@ namespace KBS2.WijkagentApp
     public partial class App : Application
     {
         public static DataController DataController;
+        public static ReportsCollection ReportsCollection;
 
         public App()
         {
             InitializeComponent();
 
-            DataController = new DataController();
             MainPage = new LoginPage();
+            DataController = new DataController();
+            ReportsCollection = new ReportsCollection();
         }
 
         protected override void OnStart()

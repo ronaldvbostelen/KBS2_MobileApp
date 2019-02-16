@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using KBS2.WijkagentApp.DataModels;
@@ -62,7 +60,7 @@ namespace KBS2.WijkagentApp.ViewModels
         public EmergencyViewModel()
         {
             SetFullName();
-            Emergency = new Emergency {Status = "A", Time = DateTime.Now, OfficerId = User.Id, Latitude = Convert.ToDecimal(MapRegion.Center.Latitude), Longitude = Convert.ToDecimal(MapRegion.Center.Longitude) };
+            Emergency = new Emergency {Status = "A", Time = DateTime.Now, OfficerId = User.Id, Latitude = MapRegion.Center.Latitude, Longitude = MapRegion.Center.Longitude};
             MapType = MapType.Hybrid;
             RegionChangeAnimated = true;
             SetInitialLocation();
