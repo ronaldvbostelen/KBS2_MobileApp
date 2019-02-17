@@ -1,110 +1,62 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Input;
+using Android.App;
+using Android.App.Admin;
 using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.Services.Dependecies;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using Plugin.Geolocator;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using TK.CustomMap;
 using Xamarin.Forms;
+using Application = Xamarin.Forms.Application;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
     class EmergencyViewModel : BaseViewModel
     {
-        private ICommand mainPageCommand;
-        public ICommand MainPageCommand => mainPageCommand ?? (mainPageCommand = new ActionCommand(x => GoToMapPage()));
+        public string FullName { get; set; }
+
+        private Emergency emergency;
+        public Emergency Emergency { get { return emergency; } set { if (value != emergency) { emergency = value; NotifyPropertyChanged(); } } }
 
         private ICommand emergencyTriggerCommand;
         public ICommand EmergencyTriggerCommand => emergencyTriggerCommand ?? (emergencyTriggerCommand = new ActionCommand(x => EmergencyTrigger()));
 
-        private async void EmergencyTrigger()
-        {
-            await App.DataController.EmergencyTable.InsertAsync(Emergency);
-
-            GoToMapPage();
-        }
-
-        private Emergency emergency;
-
-        public Emergency Emergency
-        {
-            get { return emergency; }
-            set
-            {
-                if (value != emergency)
-                {
-                    emergency = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public string FullName { get; set; }
-
-        private ObservableCollection<TKCustomMapPin> pins;
-        private TKCustomMapPin selectedPin;
-        private MapSpan mapRegion = MapSpan.FromCenterAndRadius(new Position(52.4996, 6.07895), Distance.FromMeters(100)); //preventing nullpointerexception
-        private bool showingUser;
-
-        public ObservableCollection<TKCustomMapPin> Pins { get { return pins; } private set { if (value != pins) pins = value; NotifyPropertyChanged(); } }
-        public TKCustomMapPin SelectedPin { get { return selectedPin; } set { if (value != selectedPin) selectedPin = value; NotifyPropertyChanged(); } }
-        public MapSpan MapRegion { get { return mapRegion; } set { if (value != mapRegion) mapRegion = value; NotifyPropertyChanged(); } }
-
-        public MapType MapType { get; }
-        public bool RegionChangeAnimated { get; }
-        public bool ShowingUser { get { return showingUser; } set { if (value != showingUser) showingUser = value; NotifyPropertyChanged(); } }
-
-        //creates a xamarin map instance and sets the currentlocation and loaded pins
         public EmergencyViewModel()
         {
-            SetFullName();
-            Emergency = new Emergency {Status = "A", Time = DateTime.Now, OfficerId = User.Id, Latitude = MapRegion.Center.Latitude, Longitude = MapRegion.Center.Longitude};
-            MapType = MapType.Hybrid;
-            RegionChangeAnimated = true;
-            SetInitialLocation();
+            FullName = User.Person.FullName;
+            Emergency = SetEmergency();
         }
 
-        private async void SetFullName()
-        {
-            var person = await User.FetchUserPersonRecord();
-            FullName = person.FullName;
-            NotifyPropertyChanged(nameof(FullName));
-        }
-    
+        private Emergency SetEmergency() => new Emergency { Status = "A", OfficerId = User.Id, Time = DateTime.Now };
 
-        //async method to set the current location, this uses the permissionplugin to request the needed permission to get the GPS 
-        async void SetInitialLocation()
+        private async void EmergencyTrigger()
         {
+            var alert = DependencyService.Get<IDisplayAlert>();
+            alert?.DisplayAlert();
+
+            var locator = CrossGeolocator.Current;
+            var position = await locator.GetPositionAsync();
+            Emergency.Latitude = position.Latitude;
+            Emergency.Longitude = position.Longitude;
+            Emergency.Time = DateTime.Now;
             try
             {
-                var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location);
-
-                if (status != PermissionStatus.Granted)
-                {
-                    var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Location);
-                    status = results[Permission.Location];
-                }
-
-                if (status == PermissionStatus.Granted)
-                {
-                    var locator = CrossGeolocator.Current;
-                    var position = await locator.GetPositionAsync();
-                    MapRegion = MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMeters(125));
-                    ShowingUser = true;
-                }
+                await App.DataController.EmergencyTable.InsertAsync(Emergency);
+                alert?.CloseAlert();
+                await Application.Current.MainPage.DisplayAlert("Geslaagd", "Noodbericht verstuurd", "OK");
+                Emergency = SetEmergency();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Console.Write("Error: " + ex);
+                Debug.WriteLine(e);
+                alert?.CloseAlert();
+                await Application.Current.MainPage.DisplayAlert("Mislukt", "Probeer opnieuw", "OK");
             }
-        }
-
-        public void GoToMapPage()
-        {
-            var mainpage = (TabbedPage)Application.Current.MainPage;
-            mainpage.CurrentPage = mainpage.Children[0];
         }
     }
 }

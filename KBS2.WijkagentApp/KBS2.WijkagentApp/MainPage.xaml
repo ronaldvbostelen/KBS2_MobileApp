@@ -48,16 +48,5 @@
                 <pages:MessagePage />
             </x:Arguments>
         </NavigationPage>
-
-        <NavigationPage Title="Emergency">
-            <NavigationPage.Icon>
-                <OnPlatform x:TypeArguments="FileImageSource">
-                    <On Platform="Android" Value="alarm.png" />
-                </OnPlatform>
-            </NavigationPage.Icon>
-            <x:Arguments>
-                <pages:EmergencyPage/>
-            </x:Arguments>
-        </NavigationPage>
     </TabbedPage.Children>
 </TabbedPage>

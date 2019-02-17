@@ -38,3 +38,4 @@ using KBS2.WijkagentApp.Droid;
 
 [assembly: Xamarin.Forms.Dependency(typeof(CloseApplication))]
 [assembly: Xamarin.Forms.Dependency(typeof(PublicPathManager))]
+[assembly: Xamarin.Forms.Dependency(typeof(SendDialog))]

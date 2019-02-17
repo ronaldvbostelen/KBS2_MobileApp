@@ -21,16 +21,14 @@ namespace KBS2.WijkagentApp.DataModels
         {
             try
             {
-                var person = await App.DataController.PersonTable.LookupAsync(PersonId);
-                Person = person;
-                return person;
+                return await App.DataController.PersonTable.LookupAsync(PersonId);
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
                 await Application.Current.MainPage.DisplayAlert("Ophalen gebruiker mislukt", "Probeer later opnieuw",
                     "Ok");
-                return null;
+                return new Person{FirstName = string.Empty, LastName = string.Empty};
             }
         }
     }

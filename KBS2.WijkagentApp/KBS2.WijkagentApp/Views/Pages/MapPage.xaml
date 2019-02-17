@@ -1,18 +1,90 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:KBS2.WijkagentApp.ViewModels;assembly=KBS2.WijkagentApp"
              x:Class="KBS2.WijkagentApp.Views.Pages.MapPage"
              NavigationPage.HasNavigationBar="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <viewModels:EmergencyViewModel x:Key="EmergencyViewModel" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.BindingContext>
-        <viewModels:MapViewModel/>
+        <viewModels:MapViewModel />
     </ContentPage.BindingContext>
     <ContentPage.Content>
-        <ContentView x:Name="MapLayout"
-                     VerticalOptions="FillAndExpand"
-                     HorizontalOptions="FillAndExpand"
-                     Padding="0"
-                     Margin="0" />
+        <AbsoluteLayout
+            AbsoluteLayout.LayoutBounds="1,1,1,1">
+            <ContentView
+                AbsoluteLayout.LayoutBounds="0,0,1,0.96"
+                AbsoluteLayout.LayoutFlags="All"
+                x:Name="MapLayout"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand"
+                Padding="0"
+                Margin="0" />
+            
+            <StackLayout
+                BindingContext="{StaticResource EmergencyViewModel}"
+                x:Name="EmergencyPanel"
+                BackgroundColor="#003366"
+                AbsoluteLayout.LayoutBounds="1,1,1,0.04"
+                AbsoluteLayout.LayoutFlags="All">
+                <Label Text="Emergency" TextColor="White" HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center" />
+                <Grid
+                    BackgroundColor="#2196F3"
+                    ColumnSpacing="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                           Text="Verstuurd noodoproep. Uw collega-agenten ontvangen een bericht en u krijgt z.s.m. versterking."
+                           HorizontalOptions="EndAndExpand" Margin="16,0" />
+
+                    <Label Grid.Row="1" Grid.Column="0" Text="Melder:" HorizontalOptions="EndAndExpand" Margin="16,0" />
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding FullName}" HorizontalOptions="EndAndExpand"
+                           Margin="16,0" />
+
+                    <Label Grid.Row="2" Grid.Column="0" Text="Tijdstip:" HorizontalOptions="EndAndExpand" Margin="16,0" />
+                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding Emergency.Time, StringFormat=' {0:HH:mm:ss}'}"
+                           HorizontalOptions="EndAndExpand" Margin="16,0" />
+
+                    <Label Grid.Row="3" Grid.Column="0" Text="Locatie:" HorizontalOptions="EndAndExpand" Margin="16,0" />
+                    <Entry Grid.Row="3" Grid.Column="1" Text="{Binding Emergency.Location}" BackgroundColor="White"
+                           Margin="16,0" />
+
+                    <Label Grid.Row="4" Grid.Column="0" Text="Omschrijving:" HorizontalOptions="EndAndExpand"
+                           Margin="16,0" />
+                    <Entry Grid.Row="4" Grid.Column="1" Text="{Binding Emergency.Description}" BackgroundColor="White"
+                           Margin="16,0" />
+                    <ContentView Grid.Row="5" Grid.Column="0" Margin="15,0,15,0">
+                        <Button 
+                            Text="Sluit"
+                            Style="{StaticResource BlueButtonSmall}"
+                            Clicked="OnClicked"/>
+                    </ContentView>
+                    <ContentView Grid.Row="5" Grid.Column="1" Margin="15,0,15,0">
+                        <Button
+                            Text="Verstuur"
+                            Style="{StaticResource BlueButtonSmall}"
+                            Command="{Binding EmergencyTriggerCommand}"/>
+                    </ContentView>
+                </Grid>
+                <StackLayout.GestureRecognizers>
+                    <PanGestureRecognizer PanUpdated="PanUpdated" />
+                </StackLayout.GestureRecognizers>
+            </StackLayout>
+        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>
