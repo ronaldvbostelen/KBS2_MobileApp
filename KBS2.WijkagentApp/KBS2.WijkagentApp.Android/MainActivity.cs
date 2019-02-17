@@ -20,7 +20,7 @@ using Android.Util;
 namespace KBS2.WijkagentApp.Droid
 {
     //MainLauncher false: splashscreen will be used
-    [Activity(Label = "KBS2.WijkagentApp", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = false, LaunchMode  = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "Wijkagent App", Icon = "@drawable/politie_embleem", Theme = "@style/MainTheme", MainLauncher = false, LaunchMode  = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public static string CHANNEL_ID = "default";
