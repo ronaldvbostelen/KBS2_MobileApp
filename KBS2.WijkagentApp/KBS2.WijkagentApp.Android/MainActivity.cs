@@ -23,10 +23,8 @@ namespace KBS2.WijkagentApp.Droid
     [Activity(Label = "KBS2.WijkagentApp", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        public static MobileServiceClient MobileService =
-            new MobileServiceClient(
-                "https://wijkagent.azurewebsites.net"
-            );
+        public static string CHANNEL_ID = "default";
+        public static int NOTIFY_ID;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -34,7 +32,7 @@ namespace KBS2.WijkagentApp.Droid
 
             CrossCurrentActivity.Current.Init(this, savedInstanceState);
             CrossCurrentActivity.Current.Activity = this;
-
+            
             base.OnCreate(savedInstanceState);
 
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -42,12 +40,29 @@ namespace KBS2.WijkagentApp.Droid
 
             Forms.Init(this, savedInstanceState);
             TKGoogleMaps.Init(this, savedInstanceState);
-
+            CreateNotificationChannel();
             LoadApplication(new App());
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+        private void CreateNotificationChannel()
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            {
+                return;
+            }
+
+            var channel = new NotificationChannel(CHANNEL_ID, "Push Notifications", NotificationImportance.High)
+            {
+                Description = "Push notifications appear in this channel"
+            };
+
+            var notificationManager = (NotificationManager)GetSystemService(NotificationService);
+            notificationManager.CreateNotificationChannel(channel);
+            NOTIFY_ID = channel.JniIdentityHashCode;
         }
     }
 }

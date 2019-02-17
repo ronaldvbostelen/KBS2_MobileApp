@@ -4,6 +4,7 @@ using Android.Media;
 using Android.Support.V4.App;
 using Android.Util;
 using Firebase.Messaging;
+using Java.Lang;
 
 namespace KBS2.WijkagentApp.Droid.Services
 {
@@ -18,30 +19,36 @@ namespace KBS2.WijkagentApp.Droid.Services
             Log.Debug(TAG, "From: " + message.From);
 
             // Pull message body out of the template
-            var messageBody = message.Data["message"];
-            if (string.IsNullOrWhiteSpace(messageBody))
-                return;
+            var title = message.Data["title"];
+            if (string.IsNullOrWhiteSpace(title)) title = "title dummy";
 
-            Log.Debug(TAG, "Notification message body: " + messageBody);
-            SendNotification(messageBody);
+            var messageBody = message.Data["message"];
+            if (string.IsNullOrWhiteSpace(messageBody)) messageBody = "messagebody dummy";
+            
+            Log.Debug(TAG,"title: " + title +  " Notification message body: " + messageBody);
+            SendNotification(title, messageBody);
         }
 
-        void SendNotification(string messageBody)
+        void SendNotification(string title, string messageBody)
         {
             var intent = new Intent(this, typeof(MainActivity));
             intent.AddFlags(ActivityFlags.ClearTop);
-            var pendingIntent = PendingIntent.GetActivity(this, 0, intent, PendingIntentFlags.OneShot);
 
-            var notificationBuilder = new NotificationCompat.Builder(this)
-                .SetSmallIcon(Resource.Drawable.navigation_empty_icon)
-                .SetContentTitle("Test")
+            var pendingIntent = PendingIntent.GetActivity(this,
+                1,
+                intent,
+                PendingIntentFlags.OneShot);
+            
+            var notificationBuilder = new Notification.Builder(Application.Context, MainActivity.CHANNEL_ID)
+                .SetSmallIcon(Resource.Drawable.error_message)
+                .SetContentTitle(title)
                 .SetContentText(messageBody)
+                .SetAutoCancel(true)
                 .SetContentIntent(pendingIntent)
-                .SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification))
-                .SetAutoCancel(true);
-
-            var notificationManager = NotificationManager.FromContext(this);
-            notificationManager.Notify(0, notificationBuilder.Build());
+                .SetChannelId(MainActivity.CHANNEL_ID);
+            
+            var notificationManager = NotificationManagerCompat.From(this);
+            notificationManager.Notify(MainActivity.NOTIFY_ID, notificationBuilder.Build());
         }
     }
 }
