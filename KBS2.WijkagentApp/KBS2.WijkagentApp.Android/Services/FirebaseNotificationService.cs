@@ -35,7 +35,7 @@ namespace KBS2.WijkagentApp.Droid.Services
             intent.AddFlags(ActivityFlags.ClearTop);
 
             var pendingIntent = PendingIntent.GetActivity(this,
-                1,
+                0,
                 intent,
                 PendingIntentFlags.OneShot);
             
