@@ -12,6 +12,10 @@ using Xamarin;
 using Xamarin.Forms;
 using TK.CustomMap.Droid;
 using Microsoft.WindowsAzure.MobileServices;
+using Android.Gms.Common;
+using Firebase.Messaging;
+using Firebase.Iid;
+using Android.Util;
 
 namespace KBS2.WijkagentApp.Droid
 {
