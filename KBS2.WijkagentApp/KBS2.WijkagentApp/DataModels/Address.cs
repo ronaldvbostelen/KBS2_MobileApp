@@ -1,19 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class Address : BaseDataModel
+    public partial class Address : BaseDataModel
     {
-        private string personId;
-        private string town;
+        private Guid personId;
+        public string town;
         private string zipCode;
         private string street;
         private int number;
 
-
-        public string PersonId
+        [JsonProperty(PropertyName = "personId")]
+        public Guid PersonId
         {
             get { return personId; }
             set
@@ -26,7 +26,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "town")]
         public string Town
         {
             get { return town; }
@@ -40,7 +40,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "zipCode")]
         public string ZipCode
         {
             get { return zipCode; }
@@ -54,7 +54,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "street")]
         public string Street
         {
             get { return street; }
@@ -68,7 +68,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "number")]
         public int Number
         {
             get { return number; }
@@ -83,3 +83,4 @@ namespace KBS2.WijkagentApp.DataModels
         }
     }
 }
+

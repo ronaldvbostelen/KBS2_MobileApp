@@ -12,12 +12,55 @@
         <Setter Property="FontSize" Value="Medium" />
         <Setter Property="FontAttributes" Value="Bold" />
     </Style>
+  
+    <Style x:Key="ErrorMessage" TargetType="Label">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextColor" Value="#721c24" />
+        <Setter Property="HorizontalTextAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="LoginAttemptMessage" TargetType="Label">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextColor" Value=" #004466" />
+        <Setter Property="HorizontalTextAlignment" Value="Center"/>
+    </Style>
+
+  <Style x:Key="ErrorMessageStack" TargetType="Frame">
+        <Setter Property="BackgroundColor" Value="#f8d7da" />
+        <Setter Property="Padding" Value="10, 5, 5, 10" />
+        <Setter Property="CornerRadius" Value="8" />
+    </Style>
+
+    <Style x:Key="LoginAttemptMessageStack" TargetType="Frame">
+        <Setter Property="BackgroundColor" Value="#cceeff" />
+        <Setter Property="Padding" Value="10, 5, 5, 10" />
+        <Setter Property="CornerRadius" Value="8" />
+    </Style>
 
     <Style x:Key="BlueButton" TargetType="Button">
         <Setter Property="BackgroundColor" Value="{StaticResource BluePolice}"/>
         <Setter Property="TextColor" Value="#fff"/>
         <Setter Property="Padding" Value="5,0,5,0"/>
-        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Margin" Value="0, 0, 0, 5"/>
     </Style>
-    
+
+    <Style x:Key="BlueButtonSmall" TargetType="Button">
+      <Setter Property="BackgroundColor" Value="{StaticResource BluePolice}"/>
+      <Setter Property="TextColor" Value="#fff"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Padding" Value="5,0,5,0"/>
+      <Setter Property="Margin" Value="0, 0, 0, 5"/>
+    </Style>
+
+    <Style x:Key="SmallInfoLabel" TargetType="Label">
+        <Setter Property="Margin" Value="4, 0, 0, -10"/>
+        <Setter Property="FontSize" Value="9"/>
+    </Style>
+
+    <Style x:Key="MinimalStack" TargetType="StackLayout">
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Spacing" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+
 </ResourceDictionary>

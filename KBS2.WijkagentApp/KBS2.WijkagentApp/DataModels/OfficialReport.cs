@@ -1,30 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class OfficialReport : BaseDataModel
+    public partial class OfficialReport : BaseDataModel
     {
-        private string officialReportId;
-        private string reporterId;
+        private Guid reportId;
+        private Guid reporterId;
         private string observation;
+        private string location;
+        private DateTime? time;
 
-        public string OfficialReportId
+        [JsonProperty(PropertyName = "reportId")]
+        public Guid ReportId
         {
-            get { return officialReportId; }
+            get { return reportId; }
             set
             {
-                if (value != officialReportId)
+                if (value != reportId)
                 {
-                    officialReportId = value;
+                    reportId = value;
                     NotifyPropertyChanged();
                 }
             }
         }
 
-
-        public string ReportId
+        [JsonProperty(PropertyName = "reporterId")]
+        public Guid ReporterId
         {
             get { return reporterId; }
             set
@@ -37,7 +41,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "observation")]
         public string Observation
         {
             get { return observation; }
@@ -50,5 +54,74 @@ namespace KBS2.WijkagentApp.DataModels
                 }
             }
         }
+
+        [JsonProperty(PropertyName = "location")]
+        public string Location
+        {
+            get { return location; }
+            set
+            {
+                if (value != location)
+                {
+                    location = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "time")]
+        public DateTime? Time
+        {
+            get { return time; }
+            set
+            {
+                if (value != time)
+                {
+                    time = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public TimeSpan ReportTime
+        {
+            get { return Time.Value.TimeOfDay; }
+            set {
+                if (value != Time.Value.TimeOfDay)
+                {
+                    Time = new DateTime(Time.Value.Year, Time.Value.Month, Time.Value.Day, value.Hours, value.Minutes, value.Seconds, value.Milliseconds);
+                    NotifyPropertyChanged(nameof(Time), nameof(ReportTime));
+                }
+            }
+
+        }
+
+        public DateTime ReportDate
+        {
+            get { return Time.Value.Date; }
+            set
+            {
+                if (value != Time.Value.Date)
+                {
+                    Time = new DateTime(value.Year,value.Month,value.Day,Time.Value.Hour, Time.Value.Minute, Time.Value.Second, Time.Value.Millisecond);
+                    NotifyPropertyChanged(nameof(Time), nameof(ReportDate));
+                }
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType()) return false;
+
+            OfficialReport report = (OfficialReport)obj;
+
+            return id.Equals(report.id) && reportId.Equals(report.ReportId)
+                                        && reporterId.Equals(report.ReporterId)
+                                        && observation.Equals(report.Observation)
+                                        && time.Equals(report.Time)
+                                        && location.Equals(report.Location);
+        }
+
+        public override int GetHashCode() { return base.GetHashCode(); }
     }
 }

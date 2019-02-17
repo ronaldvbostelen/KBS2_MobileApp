@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class Socials : BaseDataModel
+    public partial class Socials : BaseDataModel
     {
-        private string socialsId;
-        private string personId;
-        private Uri profile;
+        private Guid socialsId;
+        private Guid personId;
+        private string profile;
 
-        public string SocialsId
+        [JsonProperty(PropertyName = "socialsId")]
+        public Guid SocialsId
         {
             get { return socialsId; }
             set
@@ -23,7 +25,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-        public string PersonId
+        [JsonProperty(PropertyName = "personId")]
+        public Guid PersonId
         {
             get { return personId; }
             set
@@ -36,8 +39,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public Uri Profile
+        [JsonProperty(PropertyName = "profile")]
+        public string Profile
         {
             get { return profile; }
             set

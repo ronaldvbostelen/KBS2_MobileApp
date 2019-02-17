@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
@@ -10,8 +10,11 @@ namespace KBS2.WijkagentApp.DataModels
     * Baseclass for datamodels
     * Implements INotifyPropertyChanged
     */
-    public class BaseDataModel : INotifyPropertyChanged
+    public class BaseDataModel : IDatabaseObject, INotifyPropertyChanged
     {
+        public Guid id { get; set; }
+
+        #region NotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
         //basic method with implementation of [CallerMemberName]
@@ -31,5 +34,6 @@ namespace KBS2.WijkagentApp.DataModels
                 }
             }
         }
+        #endregion
     }
 }

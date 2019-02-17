@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class Antecedent : BaseDataModel
+    public partial class Antecedent : BaseDataModel
     {
-        private string antecedentId;
-        private string personId;
+        private Guid antecedentId;
+        private Guid personId;
         private string type;
         private string verdict;
         private string crime;
         private string description;
 
-
-        public string AntecedentId
+        [JsonProperty(PropertyName = "antecedentId")]
+        public Guid AntecedentId
         {
             get { return antecedentId; }
             set
@@ -27,8 +27,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public string PersonId
+        [JsonProperty(PropertyName = "personId")]
+        public Guid PersonId
         {
             get { return personId; }
             set
@@ -41,7 +41,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "type")]
         public string Type
         {
             get { return type; }
@@ -55,7 +55,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "verdict")]
         public string Verdict
         {
             get { return verdict; }
@@ -69,6 +69,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
+        [JsonProperty(PropertyName = "crime")]
         public string Crime
         {
             get { return crime; }
@@ -82,7 +83,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "description")]
         public string Description
         {
             get { return description; }

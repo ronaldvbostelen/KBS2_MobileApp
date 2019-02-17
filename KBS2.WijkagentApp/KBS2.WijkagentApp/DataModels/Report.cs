@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    public class Report : BaseDataModel
+    public partial class Report : BaseDataModel
     {
-        private string reportId;
-        private string reporterId;
+        private Guid reporterId;
+        private Guid reportId;
+        private Guid? processedBy;
         private string type;
-        private TimeSpan time;
+        private DateTime? time;
         private string location;
-        private char status;
-        private int priority;
+        private string status;
+        private int? priority;
         private string comment;
-        private double longitude;
-        private double latitude;
+        private double? longitude;
+        private double? latitude;
 
-        public string ReportId
+        [JsonProperty(PropertyName = "reportId")]
+        public Guid ReportId
         {
             get { return reportId; }
             set
@@ -30,8 +33,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public string ReporterId
+        [JsonProperty(PropertyName = "reporterId")]
+        public Guid ReporterId
         {
             get { return reporterId; }
             set
@@ -44,7 +47,21 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
+        [JsonProperty(PropertyName = "processedBy")]
+        public Guid? ProcessedBy
+        {
+            get { return processedBy; }
+            set
+            {
+                if (value != processedBy)
+                {
+                    processedBy = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
+        [JsonProperty(PropertyName = "type")]
         public string Type
         {
             get { return type; }
@@ -58,8 +75,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public TimeSpan Time
+        [JsonProperty(PropertyName = "time")]
+        public DateTime? Time
         {
             get { return time; }
             set
@@ -72,7 +89,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "location")]
         public string Location
         {
             get { return location; }
@@ -86,8 +103,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public char Status
+        [JsonProperty(PropertyName = "status")]
+        public string Status
         {
             get { return status; }
             set
@@ -100,8 +117,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public int Priority
+        [JsonProperty(PropertyName = "priority")]
+        public int? Priority
         {
             get { return priority; }
             set
@@ -114,7 +131,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "comment")]
         public string Comment
         {
             get { return comment; }
@@ -128,8 +145,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public double Longitude
+        [JsonProperty(PropertyName = "longitude")]
+        public double? Longitude
         {
             get { return longitude; }
             set
@@ -142,8 +159,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public double Latitude
+        [JsonProperty(PropertyName = "latitude")]
+        public double? Latitude
         {
             get { return latitude; }
             set

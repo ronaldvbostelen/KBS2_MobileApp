@@ -1,5 +1,6 @@
-﻿using System.Windows.Input;
-using KBS2.WijkagentApp.Assets;
+﻿using System;
+using System.Windows.Input;
+using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.Services.Dependecies;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using Xamarin.Forms;
@@ -8,8 +9,7 @@ namespace KBS2.WijkagentApp.ViewModels
 {
     public class MessageViewModel : BaseViewModel
     {
-        public string UserName { get; } = App.CredentialsService.UserName;
-        public string FullName { get; } = Constants.PoliceOfficer.FullName;
+        public string UserName { get; set; } = User.Name ?? String.Empty;
 
         public ICommand LogoutCommand
         {
@@ -18,7 +18,6 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private void Logout()
         {
-            App.CredentialsService.DeleteCredentials();
             var close = DependencyService.Get<ICloseApplication>();
             close?.CloseApp();
         }

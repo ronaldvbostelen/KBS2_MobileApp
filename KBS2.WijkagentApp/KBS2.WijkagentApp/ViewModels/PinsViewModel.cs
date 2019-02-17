@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
-using KBS2.WijkagentApp.Assets;
 using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.Extensions;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using KBS2.WijkagentApp.Views.Pages;
 using TK.CustomMap;
@@ -15,16 +16,68 @@ namespace KBS2.WijkagentApp.ViewModels
         private Report currentTappedReport;
         private ICommand showPinOnMapCommand;
         private ICommand itemTappedCommand;
-
-        //these objects will be filled with DB-entrys for not its the static data, with a select
-        public ObservableCollection<Report> HighReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 1 && x.Status == 'A'));
-        public ObservableCollection<Report> MidReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 2 && x.Status == 'A'));
-        public ObservableCollection<Report> LowReports { get; set; } = new ObservableCollection<Report>(Constants.Reports.Where(x => x.Priority == 3 && x.Status == 'A'));
+        
+        public ObservableCollection<Report> HighReports { get; } = App.ReportsCollection.Reports.Where(x => x.Priority == 1).EnumerableToObservableCollection();
+        public ObservableCollection<Report> MidReports { get; } = App.ReportsCollection.Reports.Where(x => x.Priority == 2).EnumerableToObservableCollection();
+        public ObservableCollection<Report> LowReports { get; } = App.ReportsCollection.Reports.Where(x => x.Priority == 3).EnumerableToObservableCollection();
 
         public ICommand ShowPinOnMapCommand => showPinOnMapCommand ?? (showPinOnMapCommand = new ActionCommand(report => ShowPinOnMap((Report)report)));
-        
         public ICommand ItemTappedCommand => itemTappedCommand ?? (itemTappedCommand = new ActionCommand(eventArgs => ShowDetailPageOfReport((ItemTappedEventArgs)eventArgs)));
-        
+
+        public PinsViewModel()
+        {
+            App.ReportsCollection.Reports.CollectionChanged += Reports_CollectionChanged;
+        }
+
+        private void Reports_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                if (e.OldItems.Count > 0)
+                {
+                    var removedReport = (Report) e.OldItems[0];
+                    switch (removedReport.Priority)
+                    {
+                        case 1:
+                            HighReports.Remove(removedReport);
+                            break;
+                        case 2:
+                            MidReports.Remove(removedReport);
+                            break;
+                        case 3:
+                            LowReports.Remove(removedReport);
+                            break;
+                        default:
+                            Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Bijwerken meldingenlijst mislukt\r\n(verwijdering)", "OK");
+                            break;
+                    }
+                }
+            }
+
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                if (e.NewItems.Count > 0)
+                {
+                    var addedReport = (Report)e.NewItems[0];
+                    switch (addedReport.Priority)
+                    {
+                        case 3:
+                            HighReports.Add(addedReport);
+                            break;
+                        case 2:
+                            MidReports.Add(addedReport);
+                            break;
+                        case 1:
+                            LowReports.Add(addedReport);
+                            break;
+                        default:
+                            Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Bijwerken meldingenlijst mislukt\r\n(toevoeging)", "OK");
+                            break;
+                    }
+                }
+            }
+        }
+
         /*
          * this method makes it possible that a double tap on a listitem a new modal with details will popup
          */
@@ -36,17 +89,7 @@ namespace KBS2.WijkagentApp.ViewModels
             }
             else
             {
-                //this is some (prolly unnecessary) complex linq to add the victim/suspect to the message
-                var persons =
-                    from person in Constants.Persons
-                    where Constants.ReportDetails.Where(x => x.ReportId.Equals(((Report) eventArgs.Item).ReportId))
-                        .Select(x => x.PersonId).Any(x => person.PersonId.Equals(x))
-                    select person;
-
-                var victim = persons.First(x => x.Description == "Slachtoffer");
-                var suspect = persons.First(x => x.Description == "Verdachte");
-
-                Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel((Report)eventArgs.Item, suspect, victim)));
+                Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel((Report)eventArgs.Item)));
                 currentTappedReport = null;
             }
         }
@@ -62,9 +105,9 @@ namespace KBS2.WijkagentApp.ViewModels
             NavigationPage mappage = (NavigationPage) tabbed.Children[0];
             var mapPage = mappage.CurrentPage;
             MapViewModel mapPageMapViewModel = (MapViewModel) mapPage.BindingContext;
-            mapPageMapViewModel.SelectedPin = mapPageMapViewModel.Pins.First(x => x.Position.Equals(new Position(report.Latitude,report.Longitude)));
+            mapPageMapViewModel.SelectedPin = mapPageMapViewModel.Pins.First(x => x.Position.Equals(new Position((report.Latitude ?? 0),(report.Longitude ?? 0))));
             mapPageMapViewModel.MapRegion = MapSpan.FromCenterAndRadius(mapPageMapViewModel.SelectedPin.Position, Distance.FromMeters(35));
             tabbed.CurrentPage = tabbed.Children[0];
-        } 
+        }
     }
 }

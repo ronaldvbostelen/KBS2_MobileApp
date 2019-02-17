@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:Converters="clr-namespace:KBS2.WijkagentApp.Views.Converters"
+             x:Class="KBS2.WijkagentApp.Views.Pages.StatementPage"
+             x:Name="ThisPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Converters:TextToBoolConverter x:Key="TextToBoolConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout
+            BindingContext="{Binding Verbalisant}"
+            Style="{StaticResource MinimalStack}">
+            <Label
+                Margin="0"
+                HorizontalTextAlignment="Center"
+                Text="Verklaring"
+                Style="{StaticResource Title}" />
+            <StackLayout
+                HorizontalOptions="CenterAndExpand"
+                Orientation="Horizontal">
+                <Label Text="Naam:"/>
+                <Label Text="{Binding FullName}"/>
+            </StackLayout>
+            <StackLayout
+                HorizontalOptions="CenterAndExpand"
+                Orientation="Horizontal">
+                <Label Text="Geboortedatum:"/>
+                <Label Text="{Binding BirthDate, StringFormat='{0:dd-MM-yyyy}'}"/>
+            </StackLayout>
+
+            <StackLayout
+                VerticalOptions="CenterAndExpand"
+                Style="{StaticResource MinimalStack}">
+                <Label 
+                    x:Name="Label1"
+                    Style="{StaticResource SmallInfoLabel}"
+                    Text="Verklaring van betrokkene"
+                    IsVisible="{Binding Text, Source={x:Reference Editor1}, Converter={StaticResource TextToBoolConverter}}"/>
+                <ScrollView>
+                    <Editor
+                        x:Name="Editor1"
+                        HeightRequest="500"
+                        VerticalOptions="FillAndExpand"
+                        AutoSize="TextChanges"
+                        Placeholder="{Binding Text, Source={x:Reference Label1}}"
+                        Text="{Binding BindingContext.Statement, Source={x:Reference ThisPage}}"/>
+                </ScrollView>
+            </StackLayout>
+
+            <Grid
+                BindingContext="{Binding BindingContext, Source={x:Reference ThisPage}}"
+                Margin="{StaticResource MarginLeftRight}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button Text="Annuleer" Style="{StaticResource BlueButtonSmall}" Command="{Binding CancelCommand}" />
+                <Button Grid.Column="1" Text="Verwijder" Style="{StaticResource BlueButtonSmall}" Command="{Binding DeleteCommand}" />
+                <Button Grid.Column="2" Text="Opslaan" Style="{StaticResource BlueButtonSmall}" Command="{Binding SaveCommand}" />
+            </Grid>
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

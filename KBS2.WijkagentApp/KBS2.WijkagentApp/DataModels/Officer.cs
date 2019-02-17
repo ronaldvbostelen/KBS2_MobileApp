@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class Officer : BaseDataModel
+    public partial class Officer : BaseDataModel
     {
-        private string officerId;
+        private Guid officerId;
+        private Guid? personId;
         private string userName;
         private string password;
 
-        public string OfficerId
+        [JsonProperty(PropertyName = "officerId")]
+        public Guid OfficerId
         {
             get { return officerId; }
             set
@@ -23,7 +26,21 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
+        [JsonProperty(PropertyName = "personId")]
+        public Guid? PersonId
+        {
+            get { return personId; }
+            set
+            {
+                if (value != personId)
+                {
+                    personId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
+        [JsonProperty(PropertyName = "userName")]
         public string UserName
         {
             get { return userName; }
@@ -37,7 +54,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "password")]
         public string Password
         {
             get { return password; }

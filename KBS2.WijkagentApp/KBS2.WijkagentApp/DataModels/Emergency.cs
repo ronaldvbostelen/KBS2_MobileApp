@@ -1,20 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class Emergency : BaseDataModel
+    public partial class Emergency : BaseDataModel
     {
-        private string emergencyId;
-        private string officerId;
+        private Guid emergencyId;
+        private Guid officerId;
         private string location;
-        private TimeSpan time;
+        private DateTime? time;
         private string description;
-        private decimal latitude;
-        private char status;
+        private double? latitude;
+        private double? longitude;
+        private string status;
 
-        public string EmergencyId
+        [JsonProperty(PropertyName = "emergencyId")]
+        public Guid EmergencyId
         {
             get { return emergencyId; }
             set
@@ -27,8 +28,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public string OfficerId
+        [JsonProperty(PropertyName = "officerId")]
+        public Guid OfficerId
         {
             get { return officerId; }
             set
@@ -41,7 +42,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "location")]
         public string Location
         {
             get { return location; }
@@ -55,8 +56,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public TimeSpan Time
+        [JsonProperty(PropertyName = "time")]
+        public DateTime? Time
         {
             get { return time; }
             set
@@ -69,6 +70,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
+        [JsonProperty(PropertyName = "description")]
         public string Description
         {
             get { return description; }
@@ -82,9 +84,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-        private decimal longitude;
-
-        public decimal Longitude
+        [JsonProperty(PropertyName = "longitude")]
+        public double? Longitude
         {
             get { return longitude; }
             set
@@ -93,12 +94,12 @@ namespace KBS2.WijkagentApp.DataModels
                 {
                     longitude = value;
                     NotifyPropertyChanged();
-                }   
+                }
             }
         }
 
-
-        public decimal Latitude
+        [JsonProperty(PropertyName = "latitude")]
+        public double? Latitude
         {
             get { return latitude; }
             set
@@ -111,9 +112,10 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-        public char Status
+        [JsonProperty(PropertyName = "status")]
+        public string Status
         {
-            get { return status;}
+            get { return status; }
             set
             {
                 if (value != status)

@@ -1,22 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
+using Xamarin.Forms;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    public class Person : BaseDataModel
+    public partial class Person : BaseDataModel
     {
-        private string personId;
-        private int socialSecurityNumber;
+        private Guid personId;
+        private int? socialSecurityNumber;
         private string firstName;
         private string lastName;
-        private char gender;
-        private DateTime birthDate;
+        private string gender;
+        private DateTime? birthDate;
         private string phoneNumber;
         private string emailAddress;
         private string description;
-
-        public string PersonId
+        
+        [JsonProperty(PropertyName = "personId")]
+        public Guid PersonId
         {
             get { return personId; }
             set
@@ -29,8 +31,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public int SocialSecurityNumber
+        [JsonProperty(PropertyName = "socialSecurityNumber")]
+        public int? SocialSecurityNumber
         {
             get { return socialSecurityNumber; }
             set
@@ -43,7 +45,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "firstName")]
         public string FirstName
         {
             get { return firstName; }
@@ -57,7 +59,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "lastName")]
         public string LastName
         {
             get { return lastName; }
@@ -73,7 +75,8 @@ namespace KBS2.WijkagentApp.DataModels
 
         public string FullName { get { return FirstName + " " + LastName; } }
 
-        public char Gender
+        [JsonProperty(PropertyName = "gender")]
+        public string Gender
         {
             get { return gender; }
             set
@@ -86,8 +89,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public DateTime BirthDate
+        [JsonProperty(PropertyName = "birthDate")]
+        public DateTime? BirthDate
         {
             get { return birthDate; }
             set
@@ -100,6 +103,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
+        [JsonProperty(PropertyName = "phoneNumber")]
         public string PhoneNumber
         {
             get { return phoneNumber; }
@@ -113,6 +117,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
+        [JsonProperty(PropertyName = "emailAddress")]
         public string EmailAddress
         {
             get { return emailAddress; }
@@ -126,7 +131,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "description")]
         public string Description
         {
             get { return description; }
@@ -139,5 +144,94 @@ namespace KBS2.WijkagentApp.DataModels
                 }
             }
         }
+        
+        //headache code, hope it will be obsolete when we have a database to compare against (EVEN MORE HEADACHE CODE WITH API MODELS)
+        //  --------                                            --------                                                     ---------
+        //   vvvvvv                                              vvvvvv                                                        vvvvvv
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType()) return false;
+
+            Person person = (Person)obj;
+
+            if (!PersonId.Equals(person.PersonId)) return false;
+            
+            if (FirstName != null && person.FirstName != null)
+            {
+                if (!FirstName.Equals(person.FirstName)) return false;
+            }
+            else
+            {
+                if (!ReferenceEquals(FirstName, person.FirstName)) return false;
+            }
+
+            if (LastName != null && person.LastName != null)
+            {
+                if (!LastName.Equals(person.LastName)) return false;
+            }
+            else
+            {
+                if (!ReferenceEquals(LastName, person.LastName)) return false;
+            }
+
+            if (Gender != null && person.Gender != null)
+            {
+                if (!Gender.Equals(person.Gender)) return false;
+            }
+            else
+            {
+                if (!ReferenceEquals(Gender, person.Gender)) return false;
+            }
+
+            if (PhoneNumber != null && person.PhoneNumber != null)
+            {
+                if (!PhoneNumber.Equals(person.PhoneNumber)) return false;
+            }
+            else
+            {
+                if (!ReferenceEquals(PhoneNumber, person.PhoneNumber)) return false;
+            }
+
+            if (EmailAddress != null && person.EmailAddress != null)
+            {
+                if (!EmailAddress.Equals(person.EmailAddress)) return false;
+            }
+            else
+            {
+                if (!ReferenceEquals(EmailAddress, person.EmailAddress)) return false;
+            }
+
+            if (Description != null && person.Description != null)
+            {
+                if (!Description.Equals(person.Description)) return false;
+            }
+            else
+            {
+                if (!ReferenceEquals(Description, person.Description)) return false;
+            }
+
+            if (SocialSecurityNumber != null && person.SocialSecurityNumber != null)
+            {
+                if (!SocialSecurityNumber.Equals(person.SocialSecurityNumber)) return false;
+            }
+            else
+            {
+                if (!ReferenceEquals(SocialSecurityNumber, person.SocialSecurityNumber)) return false;
+            }
+
+            if (BirthDate != null && person.BirthDate != null)
+            {
+                if (!BirthDate.Equals(person.BirthDate)) return false;
+            }
+            else
+            {
+                if (!ReferenceEquals(BirthDate, person.BirthDate)) return false;
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode() { return base.GetHashCode(); }
+
     }
 }

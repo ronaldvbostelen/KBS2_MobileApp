@@ -1,19 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class PushMessage : BaseDataModel
+    public partial class PushMessage : BaseDataModel
     {
-        private string pushMessageId;
-        private string officerId;
-        private string content;
+        private Guid pushMessageId;
+        private Guid officerId;
+        private string message;
+        public DateTime? time { get; set; }
         private string location;
-        private decimal longitude;
-        private decimal latitude;
+        private double? longitude;
+        private double? latitude;
+        private string status;
 
-        public string PushMessageId
+        [JsonProperty(PropertyName = "pushMessageId")]
+        public Guid PushMessageId
         {
             get { return pushMessageId; }
             set
@@ -26,8 +28,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public string OfficerId
+        [JsonProperty(PropertyName = "officerId")]
+        public Guid OfficerId
         {
             get { return officerId; }
             set
@@ -40,23 +42,22 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public string Content
+        [JsonProperty(PropertyName = "message")]
+        public string Message
         {
-            get { return content; }
+            get { return message; }
             set
             {
-                if (value != content)
+                if (value != message)
                 {
-                    content = value;
+                    message = value;
                     NotifyPropertyChanged();
                 }
             }
         }
 
-        private TimeSpan time;
-
-        public TimeSpan Time
+        [JsonProperty(PropertyName = "time")]
+        public DateTime? Time
         {
             get { return time; }
             set
@@ -69,7 +70,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "location")]
         public string Location
         {
             get { return location; }
@@ -83,8 +84,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public decimal Longitude
+        [JsonProperty(PropertyName = "longitude")]
+        public double? Longitude
         {
             get { return longitude; }
             set
@@ -97,8 +98,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public decimal Latitude
+        [JsonProperty(PropertyName = "latitude")]
+        public double? Latitude
         {
             get { return latitude; }
             set
@@ -106,6 +107,20 @@ namespace KBS2.WijkagentApp.DataModels
                 if (value != latitude)
                 {
                     latitude = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "status")]
+        public string Status
+        {
+            get { return status; }
+            set
+            {
+                if (value != status)
+                {
+                    status = value;
                     NotifyPropertyChanged();
                 }
             }

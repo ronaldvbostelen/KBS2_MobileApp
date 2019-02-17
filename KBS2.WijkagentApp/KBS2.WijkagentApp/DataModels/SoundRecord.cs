@@ -1,18 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class SoundRecord : BaseDataModel
+    public partial class SoundRecord : BaseDataModel
     {
-        private string officialReportId;
-        private Uri url;
+        private Guid soundRecordId;
+        private Guid officialReportId;
+        private string url;
 
-        public string OfficialReportId
+        [JsonProperty(PropertyName = "soundRecordId")]
+        public Guid SoundRecordId
+        {
+            get { return soundRecordId; }
+            set
+            {
+                if (value != soundRecordId)
+                {
+                    soundRecordId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "officialReportId")]
+        public Guid OfficialReportId
         {
             get { return officialReportId; }
-            set {
+            set
+            {
                 if (value != officialReportId)
                 {
                     officialReportId = value;
@@ -20,11 +37,13 @@ namespace KBS2.WijkagentApp.DataModels
                 }
             }
         }
-        
-        public Uri Url
+
+        [JsonProperty(PropertyName = "URL")]
+        public string Url
         {
             get { return url; }
-            set {
+            set
+            {
                 if (value != url)
                 {
                     url = value;
@@ -32,7 +51,5 @@ namespace KBS2.WijkagentApp.DataModels
                 }
             }
         }
-
-
     }
 }

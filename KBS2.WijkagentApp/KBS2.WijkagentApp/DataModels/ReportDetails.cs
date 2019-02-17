@@ -1,18 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    public class ReportDetails : BaseDataModel
+    public partial class ReportDetails : BaseDataModel
     {
-        private string reportId;
-        private string personId;
-        private char type;
+        private Guid reportDetailsId;
+        private Guid reportId;
+        private Guid personId;
+        private string type;
         private string description;
         private string statement;
+        private bool? isHeard;
 
-        public string ReportId
+        [JsonProperty(PropertyName = "reportDetailsId")]
+        public Guid ReportDetailsId
+        {
+            get { return reportDetailsId; }
+            set
+            {
+                if (value != reportDetailsId)
+                {
+                    reportDetailsId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "reportId")]
+        public Guid ReportId
         {
             get { return reportId; }
             set
@@ -25,8 +42,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public string PersonId
+        [JsonProperty(PropertyName = "personId")]
+        public Guid PersonId
         {
             get { return personId; }
             set
@@ -39,8 +56,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
-        public char Type
+        [JsonProperty(PropertyName = "type")]
+        public string Type
         {
             get { return type; }
             set
@@ -53,7 +70,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "description")]
         public string Description
         {
             get { return description; }
@@ -67,7 +84,7 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-
+        [JsonProperty(PropertyName = "statement")]
         public string Statement
         {
             get { return statement; }
@@ -76,6 +93,20 @@ namespace KBS2.WijkagentApp.DataModels
                 if (value != statement)
                 {
                     statement = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "isHeard")]
+        public bool? IsHeard
+        {
+            get { return isHeard; }
+            set
+            {
+                if (value != isHeard)
+                {
+                    isHeard = value;
                     NotifyPropertyChanged();
                 }
             }

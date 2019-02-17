@@ -33,5 +33,9 @@ using KBS2.WijkagentApp.Droid;
 // Add some common permissions, these can be removed if not needed
 [assembly: UsesPermission(Android.Manifest.Permission.Internet)]
 [assembly: UsesPermission(Android.Manifest.Permission.WriteExternalStorage)]
+[assembly: UsesFeature("android.hardware.camera", Required = false)]
+[assembly: UsesFeature("android.hardware.camera.autofocus", Required = false)]
 
 [assembly: Xamarin.Forms.Dependency(typeof(CloseApplication))]
+[assembly: Xamarin.Forms.Dependency(typeof(PublicPathManager))]
+[assembly: Xamarin.Forms.Dependency(typeof(SendDialog))]

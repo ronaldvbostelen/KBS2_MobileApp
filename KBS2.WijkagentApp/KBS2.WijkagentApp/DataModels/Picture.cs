@@ -1,15 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using KBS2.WijkagentApp.Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {
-    class Picture : BaseDataModel
+    public partial class Picture : BaseDataModel
     {
-        private string officialReportId;
-        private Uri url;
+        private Guid pictureId;
+        private Guid officialReportId;
+        private string url;
 
-        public string OfficialReportId
+        [JsonProperty(PropertyName = "pictureId")]
+        public Guid PictureId
+        {
+            get { return pictureId; }
+            set
+            {
+                if (value != pictureId)
+                {
+                    pictureId = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        [JsonProperty(PropertyName = "officialReportId")]
+        public Guid OfficialReportId
         {
             get { return officialReportId; }
             set
@@ -22,7 +38,8 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-        public Uri Url
+        [JsonProperty(PropertyName = "URL")]
+        public string Url
         {
             get { return url; }
             set
