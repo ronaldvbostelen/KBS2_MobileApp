@@ -1,10 +1,10 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Media;
 using Android.Support.V4.App;
 using Android.Util;
 using Firebase.Messaging;
-using Java.Lang;
+using KBS2.WijkagentApp.DataModels;
+using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.Droid.Services
 {
@@ -17,16 +17,28 @@ namespace KBS2.WijkagentApp.Droid.Services
         public override void OnMessageReceived(RemoteMessage message)
         {
             Log.Debug(TAG, "From: " + message.From);
-
-            // Pull message body out of the template
-            var title = message.Data["title"];
-            if (string.IsNullOrWhiteSpace(title)) title = "title dummy";
-
-            var messageBody = message.Data["message"];
-            if (string.IsNullOrWhiteSpace(messageBody)) messageBody = "messagebody dummy";
             
-            Log.Debug(TAG,"title: " + title +  " Notification message body: " + messageBody);
-            SendNotification(title, messageBody);
+            // the pushed report will be added to the central list
+            if (message.Data["key"] == "report")
+            {
+                var newReport = JsonConvert.DeserializeObject<Report>(message.Data["content"]);
+                
+                // if its from the same user the report is already added to the list
+                if (newReport.ReporterId != User.Id)
+                {
+                    newReport.id = newReport.ReportId;
+                    App.ReportsCollection.Reports.Add(newReport);
+                }
+            }
+
+            // create notification (no usecase atm)
+            if (message.Data["key"] == "notification")
+            {
+                var title = "dummy";
+                var messageBody = "dummy";
+
+                SendNotification(title, messageBody);
+            }
         }
 
         void SendNotification(string title, string messageBody)
@@ -34,10 +46,7 @@ namespace KBS2.WijkagentApp.Droid.Services
             var intent = new Intent(this, typeof(MainActivity));
             intent.AddFlags(ActivityFlags.ClearTop);
 
-            var pendingIntent = PendingIntent.GetActivity(this,
-                0,
-                intent,
-                PendingIntentFlags.OneShot);
+            var pendingIntent = PendingIntent.GetActivity(this, 0, intent, PendingIntentFlags.OneShot);
             
             var notificationBuilder = new Notification.Builder(Application.Context, MainActivity.CHANNEL_ID)
                 .SetSmallIcon(Resource.Drawable.error_message)
@@ -51,4 +60,5 @@ namespace KBS2.WijkagentApp.Droid.Services
             notificationManager.Notify(MainActivity.NOTIFY_ID, notificationBuilder.Build());
         }
     }
+    
 }

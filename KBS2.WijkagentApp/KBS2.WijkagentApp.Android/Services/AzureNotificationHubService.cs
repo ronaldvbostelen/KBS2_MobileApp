@@ -14,15 +14,13 @@ namespace KBS2.WijkagentApp.Droid
         {
             try
             {
-                const string templateBody = "{\"data\":{\"message\":\"$(messageParam)\"}}";
-                JObject templates = new JObject();
-                templates["genericMessage"] = new JObject
-                {
-                    {"body", templateBody}
-                };
+                // template can be empty =D (so we dont bother)
+                JObject template = new JObject();
 
-                await push.RegisterAsync(token, templates);
+                await push.RegisterAsync(token, template);
+
                 Log.Info("Push Installation Id: ", push.InstallationId.ToString());
+
             }
             catch (Exception ex)
             {

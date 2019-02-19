@@ -23,7 +23,7 @@ namespace KBS2.WijkagentApp.Droid
     [Activity(Label = "Wijkagent App", Icon = "@drawable/politie_embleem", Theme = "@style/MainTheme", MainLauncher = false, LaunchMode  = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        public static string CHANNEL_ID = "default";
+        public static string CHANNEL_ID = "notify";
         public static int NOTIFY_ID;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -59,6 +59,10 @@ namespace KBS2.WijkagentApp.Droid
             {
                 Description = "Push notifications appear in this channel"
             };
+            channel.EnableLights(true);
+            channel.EnableVibration(true);
+            channel.SetVibrationPattern(new long[] {0, 1000, 500, 1000});
+            channel.ShouldShowLights();
 
             var notificationManager = (NotificationManager)GetSystemService(NotificationService);
             notificationManager.CreateNotificationChannel(channel);
