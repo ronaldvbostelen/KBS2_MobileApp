@@ -3,7 +3,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0"
           package="com.companyname.Wijkagent_App">
   <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="27" />
-  <application android:label="KBS2.WijkagentApp.Android">
+  <application android:label="Wijkagent App">
     <meta-data android:name="com.google.android.maps.v2.API_KEY"
                android:value="AIzaSyCRz3fE0BEIPYYvrS8L9sAznIzk3WvUFbw" />
     <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />

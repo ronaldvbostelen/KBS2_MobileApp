@@ -11,7 +11,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using KBS2.WijkagentApp.DataModels;
-using Debug = System.Diagnostics.Debug;
+using System.Diagnostics;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
