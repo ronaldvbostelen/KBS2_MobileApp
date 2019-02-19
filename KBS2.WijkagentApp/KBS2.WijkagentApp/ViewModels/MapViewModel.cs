@@ -9,9 +9,9 @@ using Plugin.Permissions.Abstractions;
 using TK.CustomMap;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Linq;
 using KBS2.WijkagentApp.DataModels;
+using Debug = System.Diagnostics.Debug;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
@@ -53,7 +53,12 @@ namespace KBS2.WijkagentApp.ViewModels
                 {
                     var removedItem = (Report) e.OldItems[0];
                     // so we search in the pinslist for the removed items coordinates so we can assume that pin/report is deleted
-                    Pins.Remove(Pins.First(x => x.Position.Equals(new Position(removedItem.Latitude ?? 0, removedItem.Longitude ?? 0))));
+
+                    // UI change, therefore we need the Mainthread
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        Pins.Remove(Pins.First(x => x.Position.Equals(new Position(removedItem.Latitude ?? 0, removedItem.Longitude ?? 0))));
+                    });
                 }
             }
 
@@ -63,7 +68,12 @@ namespace KBS2.WijkagentApp.ViewModels
                 if (e.NewItems.Count > 0)
                 {
                     var newReport = (Report) e.NewItems[0];
-                    Pins.Add(PinCreator(newReport));
+                    // UI change, therefore we need the Mainthread
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        Pins.Add(PinCreator(newReport));
+                    });
+                    
                 }
             }
         }

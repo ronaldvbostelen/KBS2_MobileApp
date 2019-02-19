@@ -1,4 +1,6 @@
-﻿using Android.App;
+﻿using System;
+using System.Linq;
+using Android.App;
 using Android.Content;
 using Android.Support.V4.App;
 using Android.Util;
@@ -19,7 +21,7 @@ namespace KBS2.WijkagentApp.Droid.Services
             Log.Debug(TAG, "From: " + message.From);
             
             // the pushed report will be added to the central list
-            if (message.Data["key"] == "report")
+            if (message.Data["key"] == "addReport")
             {
                 var newReport = JsonConvert.DeserializeObject<Report>(message.Data["content"]);
                 
@@ -28,6 +30,18 @@ namespace KBS2.WijkagentApp.Droid.Services
                 {
                     newReport.id = newReport.ReportId;
                     App.ReportsCollection.Reports.Add(newReport);
+                }
+            }
+
+            if (message.Data["key"] == "deleteReport")
+            {
+                var reportId = new Guid(message.Data["content"]);
+                var removeRapport = App.ReportsCollection.Reports.Where(x => x.ReportId.Equals(reportId)).ToArray();
+                
+                //prevents removing nonexisting report
+                if (removeRapport.Any())
+                {
+                    App.ReportsCollection.Reports.Remove(removeRapport[0]);
                 }
             }
 
