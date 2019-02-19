@@ -9,6 +9,7 @@ namespace KBS2.WijkagentApp.ViewModels
 {
     public class MessageViewModel : BaseViewModel
     {
+        public string FullName { get; set; } = User.Person.FullName ?? String.Empty;
         public string UserName { get; set; } = User.Name ?? String.Empty;
 
         public ICommand LogoutCommand
