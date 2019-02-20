@@ -26,8 +26,7 @@ namespace KBS2.WijkagentApp.DataModels
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                await Application.Current.MainPage.DisplayAlert("Ophalen gebruiker mislukt", "Probeer later opnieuw",
-                    "Ok");
+                await Application.Current.MainPage.DisplayAlert("Ophalen gebruiker mislukt", "Probeer later opnieuw", "Ok");
                 return new Person{FirstName = string.Empty, LastName = string.Empty};
             }
         }

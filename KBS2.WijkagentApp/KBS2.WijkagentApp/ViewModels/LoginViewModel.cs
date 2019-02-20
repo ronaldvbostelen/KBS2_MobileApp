@@ -47,8 +47,8 @@ namespace KBS2.WijkagentApp.ViewModels
             {
                 var toString = apiRespons.Content.ReadAsStringAsync();
                 var toObject = JsonConvert.DeserializeObject(toString.Result, Type.GetType("KBS2.WijkagentApp.DataModels.Officer"));
-
                 User.Base = (Officer) toObject;
+
                 //task is awaited cause we need the credentials (if fetching fails we still initiate the user)
                 User.Person = await User.FetchUserPersonRecord();
 

@@ -89,6 +89,33 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
+        public TimeSpan ReportTime
+        {
+            get { return Time.Value.TimeOfDay; }
+            set
+            {
+                if (value != Time.Value.TimeOfDay)
+                {
+                    Time = new DateTime(Time.Value.Year, Time.Value.Month, Time.Value.Day, value.Hours, value.Minutes, value.Seconds, value.Milliseconds);
+                    NotifyPropertyChanged(nameof(Time), nameof(ReportTime));
+                }
+            }
+
+        }
+
+        public DateTime ReportDate
+        {
+            get { return Time.Value.Date; }
+            set
+            {
+                if (value != Time.Value.Date)
+                {
+                    Time = new DateTime(value.Year, value.Month, value.Day, Time.Value.Hour, Time.Value.Minute, Time.Value.Second, Time.Value.Millisecond);
+                    NotifyPropertyChanged(nameof(Time), nameof(ReportDate));
+                }
+            }
+        }
+
         [JsonProperty(PropertyName = "location")]
         public string Location
         {

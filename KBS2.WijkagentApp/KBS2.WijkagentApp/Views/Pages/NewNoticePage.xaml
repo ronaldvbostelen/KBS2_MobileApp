@@ -1,88 +1,115 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewModels="clr-namespace:KBS2.WijkagentApp.ViewModels;assembly=KBS2.WijkagentApp"
+             xmlns:converters="clr-namespace:KBS2.WijkagentApp.Views.Converters"
+             xmlns:behavior="clr-namespace:KBS2.WijkagentApp.Views.Behaviors"
              x:Class="KBS2.WijkagentApp.Views.Pages.NewNoticePage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:TextToBoolConverter x:Key="TextToBoolConverter" />
+            <converters:IntToBoolConverter x:Key="IntToBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
-        <!--<Label Text="{Binding Longitude}"/>
-        <Label Text="{Binding Latitude}"/>-->
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="100" />
-                <RowDefinition Height="auto" />
-            </Grid.RowDefinitions>
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <Label Text="Nieuwe melding"
-                   Margin="{StaticResource MarginLeftRightTop}"
-                   Style="{StaticResource Title}"
-                   Grid.Row="0"
-                   Grid.Column="0" />
-
-            <Label Text="Naam melding" 
-                   Margin="{StaticResource MarginLeftRightTop}"
-                   Grid.Row="1"
-                   Grid.Column="0" />
-            
-            <Entry x:Name="etrName" 
-                   Margin="{StaticResource MarginLeftRight}"
-                   Grid.Row="2"
-                   Grid.Column="0" />
-
-            <Label Text="Locatie" 
-                   Margin="{StaticResource MarginLeftRight}"
-                   Grid.Row="3"
-                   Grid.Column="0" />
-            
-            <Entry x:Name="etrLocation" 
-                   Margin="{StaticResource MarginLeftRight}"
-                   Grid.Row="4"
-                   Grid.Column="0" />
-
-            <Label Text="Soort delict" 
-                   Margin="{StaticResource MarginLeftRight}"
-                   Grid.Row="5"
-                   Grid.Column="0" />
-
-            <Picker x:Name="pkrOffense"
-                    Title="Selecteer een delictsoort" 
-                    Margin="{StaticResource MarginLeftRight}"
-                    Grid.Row="6" 
-                    Grid.Column="0">
-                        <Picker.Items>
-                            <x:String>Huiselijk geweld</x:String>
-                            <x:String>Mishandeling</x:String>
-                            <x:String>Vandalisme</x:String>
-                            <x:String>Kat in de boom</x:String>
-                        </Picker.Items>
-            </Picker>
-
-            <Label Text="Extra informatie" 
-                   Margin="{StaticResource MarginLeftRight}"
-                   Grid.Row="7"
-                   Grid.Column="0" />
-
-            <Editor x:Name="edtrDescription"
-                    Margin="{StaticResource MarginLeftRight}"
-                    Grid.Row="8"
-                    Grid.Column="0" />
-
-            <Button Text="Toevoegen" 
-                    Style="{StaticResource BlueButton}"
-                    Margin="{StaticResource MarginLeftRight}"
-                    Grid.Row="9"
-                    Grid.Column="0" />
-        </Grid>
+        <StackLayout Margin="{StaticResource MarginLeftRightTop}">
+            <Label Text="{Binding FullName, StringFormat='Melder: {0:N}'}" />
+            <StackLayout>
+                <Label
+                    x:Name="Label1"
+                    Style="{StaticResource SmallInfoLabel}"
+                    Text="Naam melding"
+                    IsVisible="{Binding Text,
+                            Source={x:Reference Entry1},
+                            Converter={StaticResource TextToBoolConverter}}" />
+                <Entry Text="{Binding Report.Type}"
+                       VerticalOptions="EndAndExpand"
+                       Placeholder="{Binding Text, Source={x:Reference Label1}}"
+                       x:Name="Entry1">
+                    <Entry.Behaviors>
+                        <behavior:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateCanSaveCommand}"/>
+                    </Entry.Behaviors>
+                </Entry>
+            </StackLayout>
+            <StackLayout>
+                <Label
+                    x:Name="Label2"
+                    Style="{StaticResource SmallInfoLabel}"
+                    Text="Locatie"
+                    IsVisible="{Binding Text,
+                            Source={x:Reference Entry2},
+                            Converter={StaticResource TextToBoolConverter}}" />
+                <Entry Text="{Binding Report.Location}"
+                       VerticalOptions="EndAndExpand"
+                       Placeholder="{Binding Text, Source={x:Reference Label2}}"
+                       x:Name="Entry2">
+                    <Entry.Behaviors>
+                        <behavior:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateCanSaveCommand}"/>
+                    </Entry.Behaviors>
+                </Entry>
+            </StackLayout>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label Grid.Column="0"
+                       Text="Tijdstip"
+                       Style="{StaticResource SmallInfoLabel}" />
+                <TimePicker Grid.Column="0" Time="{Binding Report.ReportTime}" />
+                <Label Grid.Column="1"
+                       Text="Datum"
+                       Style="{StaticResource SmallInfoLabel}" />
+                <DatePicker Grid.Column="1" Format="dd-MM-yyyy" Date="{Binding Report.ReportDate}" />
+            </Grid>
+            <StackLayout>
+                <Label
+                    Style="{StaticResource SmallInfoLabel}"
+                    Text="{Binding Title, Source={x:Reference PrioPicker}}"
+                    IsVisible="{Binding SelectedIndex,
+                            Source={x:Reference PrioPicker},
+                            Converter={StaticResource IntToBoolConverter}}" />
+                <Picker 
+                    SelectedItem="{Binding SelectedPriority}"
+                    x:Name="PrioPicker"    
+                    Title="Prioriteit melding"
+                    ItemsSource="{Binding Priorities}">
+                    <Picker.Behaviors>
+                        <behavior:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding ValidateCanSaveCommand}"/>
+                    </Picker.Behaviors>
+                    </Picker>
+            </StackLayout>
+            <StackLayout>
+                <Label x:Name="Label4" Text="Extra informatie" Style="{StaticResource SmallInfoLabel}"
+                       IsVisible="{Binding Text, Source={x:Reference Editor1}, Converter={StaticResource TextToBoolConverter}}" />
+                <ScrollView>
+                    <Editor HeightRequest="500"
+                            VerticalOptions="FillAndExpand"
+                            AutoSize="TextChanges"
+                            x:Name="Editor1"
+                            Placeholder="{Binding Text, Source={x:Reference Label4}}"
+                            Text="{Binding Report.Comment}" />
+                </ScrollView>
+            </StackLayout>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Button Text="Annuleren"
+                        Style="{StaticResource BlueButtonSmall}" 
+                        Command="{Binding CancelCommand}"/>
+                <Button Grid.Column="1"
+                        Text="Toevoegen"
+                        Style="{StaticResource BlueButtonSmall}" 
+                        Command="{Binding SaveCommand}"/>
+            </Grid>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

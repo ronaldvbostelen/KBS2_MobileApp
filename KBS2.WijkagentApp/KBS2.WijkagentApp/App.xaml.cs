@@ -16,9 +16,9 @@ namespace KBS2.WijkagentApp
         {
             InitializeComponent();
 
-            MainPage = new LoginPage();
             DataController = new DataController();
-            ReportsCollection = new ReportsCollection();
+
+            MainPage = new LoginPage();
         }
 
         protected override void OnStart()

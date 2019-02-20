@@ -61,13 +61,13 @@ namespace KBS2.WijkagentApp.ViewModels
                     var addedReport = (Report)e.NewItems[0];
                     switch (addedReport.Priority)
                     {
-                        case 3:
+                        case 1:
                             HighReports.Add(addedReport);
                             break;
                         case 2:
                             MidReports.Add(addedReport);
                             break;
-                        case 1:
+                        case 3:
                             LowReports.Add(addedReport);
                             break;
                         default:

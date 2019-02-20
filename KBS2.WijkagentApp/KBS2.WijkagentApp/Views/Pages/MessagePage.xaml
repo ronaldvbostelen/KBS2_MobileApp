@@ -10,8 +10,6 @@
     <ContentPage.Content>
         <StackLayout
             VerticalOptions="End">
-            <Button Command="{Binding AddCommand}" Text="ADD ONE"/>
-            <Button Command="{Binding DeleteCommand}" Text="DELETE ONE"/>
             <Label Text="Logged in as:"/>
             <Label Text="{Binding UserName, StringFormat='{}{0:N}'}"/>
             <Button Text="LOGOUT" Command="{Binding LogoutCommand}"/>

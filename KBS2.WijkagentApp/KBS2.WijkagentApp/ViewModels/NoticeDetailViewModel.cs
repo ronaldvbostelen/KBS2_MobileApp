@@ -12,8 +12,6 @@ namespace KBS2.WijkagentApp.ViewModels
 {
     public class NoticeDetailViewModel : BaseViewModel
     {
-        private Person suspect;
-        private Person victim;
         private bool switchToggle;
         private bool switchToggleIsEnabled;
         private ICommand officalReportCommand;
@@ -21,8 +19,6 @@ namespace KBS2.WijkagentApp.ViewModels
         private ObservableCollection<ReportDetails> reportDetails;
 
         public Report Report { get; }
-        public Person Suspect { get { return suspect;} set { if (value != suspect) { suspect = value; NotifyPropertyChanged(); } } }
-        public Person Victim { get { return victim;} set{ if (value != victim) { victim = value; NotifyPropertyChanged(); } } }
         public ObservableCollection<Person> InvolvedPersons { get { return involvedPersons;} set{ if (value != involvedPersons) { involvedPersons = value; NotifyPropertyChanged(); } } }
         public ICommand OfficialReportCommand => officalReportCommand ?? (officalReportCommand = new ActionCommand(report => GoToReportPage((Report)report), x => CanGoToReportPage()));
         public bool SwitchToggleIsEnabled { get { return switchToggleIsEnabled;} set{ if (value != switchToggleIsEnabled) { switchToggleIsEnabled = value; NotifyPropertyChanged(); } } }
@@ -109,16 +105,9 @@ namespace KBS2.WijkagentApp.ViewModels
                     
                 }
 
-                try
+                if (InvolvedPersons.Count == 0)
                 {
-                    Victim = InvolvedPersons.First(x => x.Description.Equals("Slachtoffer"));
-                    Suspect = InvolvedPersons.First(x => x.Description.Equals("Verdachte"));
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    Victim = Suspect = null;
-                    await Application.Current.MainPage.DisplayAlert("Bepalen betrokkenen mislukt", "Probeer later opnieuw", "Ok");
+                    await Application.Current.MainPage.DisplayAlert("Geen betrokkenen gevonden", "Voeg handmatig personen toe of probeer het later opnieuw", "Ok");
                 }
             }
             catch (Exception e)
@@ -129,7 +118,6 @@ namespace KBS2.WijkagentApp.ViewModels
                 Application.Current.MainPage.DisplayAlert("Ophalen detailgegevens mislukt", "Probeer later opnieuw", "Ok");
 
                 reportDetails = new ObservableCollection<ReportDetails>();
-                Victim = Suspect = null;
             }
         }
 
