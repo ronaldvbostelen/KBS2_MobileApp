@@ -1,5 +1,4 @@
 ﻿using System;
-using KBS2.WijkagentApp.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using TK.CustomMap;

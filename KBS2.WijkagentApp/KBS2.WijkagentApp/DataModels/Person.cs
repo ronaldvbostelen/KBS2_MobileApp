@@ -1,7 +1,5 @@
 ﻿using System;
-using KBS2.WijkagentApp.Models.Interfaces;
 using Newtonsoft.Json;
-using Xamarin.Forms;
 
 namespace KBS2.WijkagentApp.DataModels
 {

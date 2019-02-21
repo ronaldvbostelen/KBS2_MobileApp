@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
-using Android.App;
-using Android.App.Admin;
 using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.Services.Dependecies;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using Plugin.Geolocator;
-using Plugin.Permissions;
-using Plugin.Permissions.Abstractions;
-using TK.CustomMap;
 using Xamarin.Forms;
 using Application = Xamarin.Forms.Application;
 

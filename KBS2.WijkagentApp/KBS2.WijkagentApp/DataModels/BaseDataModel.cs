@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using KBS2.WijkagentApp.Models.Interfaces;
-using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels
 {

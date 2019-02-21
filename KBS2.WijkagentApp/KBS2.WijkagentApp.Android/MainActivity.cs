@@ -1,21 +1,10 @@
-﻿using System;
-using Android;
-using Android.App;
+﻿using Android.App;
 using Android.Content.PM;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Android.OS;
 using Plugin.CurrentActivity;
 using Plugin.Permissions;
-using Xamarin;
 using Xamarin.Forms;
 using TK.CustomMap.Droid;
-using Microsoft.WindowsAzure.MobileServices;
-using Android.Gms.Common;
-using Firebase.Messaging;
-using Firebase.Iid;
-using Android.Util;
 
 namespace KBS2.WijkagentApp.Droid
 {
@@ -34,6 +23,8 @@ namespace KBS2.WijkagentApp.Droid
             CrossCurrentActivity.Current.Activity = this;
             
             base.OnCreate(savedInstanceState);
+
+            var data = Intent?.Data?.EncodedAuthority;
 
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;

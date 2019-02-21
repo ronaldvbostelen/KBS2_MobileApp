@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using KBS2.WijkagentApp.Services.Dependecies;
 using Plugin.AudioRecorder;

@@ -7,6 +7,7 @@ using Android.Util;
 using Firebase.Messaging;
 using KBS2.WijkagentApp.DataModels;
 using Newtonsoft.Json;
+using Plugin.Geolocator;
 
 namespace KBS2.WijkagentApp.Droid.Services
 {
@@ -16,7 +17,7 @@ namespace KBS2.WijkagentApp.Droid.Services
     {
         const string TAG = "FirebaseNotificationService";
 
-        public override void OnMessageReceived(RemoteMessage message)
+        public override async void OnMessageReceived(RemoteMessage message)
         {
             Log.Debug(TAG, "From: " + message.From);
             
@@ -45,13 +46,22 @@ namespace KBS2.WijkagentApp.Droid.Services
                 }
             }
 
-            // create notification (no usecase atm)
-            if (message.Data["key"] == "notification")
+            if (message.Data["key"] == "emergency")
             {
-                var title = "dummy";
-                var messageBody = "dummy";
+                var emergency = JsonConvert.DeserializeObject<Emergency>(message.Data["content"]);
 
-                SendNotification(title, messageBody);
+                var locator = CrossGeolocator.Current;
+                var position = await locator.GetPositionAsync();
+
+                UriBuilder uriBuilder = new UriBuilder
+                {
+                    Scheme = "https:",
+                    Host = "www.google.com",
+                    Path = "maps/dir",
+                    Query = $"api=1&origin{position.Latitude},{position.Longitude}=&destination={emergency.Latitude},{emergency.Longitude}&travelmode=walking",
+                };
+
+                SendNotification("Emergency", $"{uriBuilder}");
             }
         }
 
@@ -70,6 +80,25 @@ namespace KBS2.WijkagentApp.Droid.Services
                 .SetContentIntent(pendingIntent)
                 .SetChannelId(MainActivity.CHANNEL_ID);
             
+            var notificationManager = NotificationManagerCompat.From(this);
+            notificationManager.Notify(MainActivity.NOTIFY_ID, notificationBuilder.Build());
+        }
+
+        void SendNotification(string title, string messageBody, Uri url)
+        {
+            var intent = new Intent(this, typeof(MainActivity));
+            intent.AddFlags(ActivityFlags.ClearTop);
+
+            var pendingIntent = PendingIntent.GetActivity(this, 0, intent, PendingIntentFlags.OneShot);
+
+            var notificationBuilder = new Notification.Builder(Application.Context, MainActivity.CHANNEL_ID)
+                .SetSmallIcon(Resource.Drawable.error_message)
+                .SetContentTitle(title)
+                .SetContentText(messageBody)
+                .SetAutoCancel(true)
+                .SetContentIntent(pendingIntent)
+                .SetChannelId(MainActivity.CHANNEL_ID);
+
             var notificationManager = NotificationManagerCompat.From(this);
             notificationManager.Notify(MainActivity.NOTIFY_ID, notificationBuilder.Build());
         }
