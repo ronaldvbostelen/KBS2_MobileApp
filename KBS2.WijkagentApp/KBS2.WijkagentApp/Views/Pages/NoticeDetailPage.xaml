@@ -2,8 +2,14 @@
 
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:Converters="clr-namespace:KBS2.WijkagentApp.Views.Converters"
              x:Class="KBS2.WijkagentApp.Views.Pages.NoticeDetailPage"
              Title="Detail melding">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Converters:TextToBoolConverter x:Key="TextToBoolConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
         <StackLayout Style="{StaticResource MinimalStack}">
             <StackLayout Margin="16,8,16,0">
@@ -66,6 +72,33 @@
             </StackLayout>
 
             <StackLayout
+                Margin="{StaticResource MarginLeftRight}"
+                Grid.Row="3">
+                <Label
+                    x:Name="Label3"
+                    Style="{StaticResource SmallInfoLabel}"
+                    Text="Aantekeningen"
+                    IsVisible="{Binding Text, Source={x:Reference Editor1}, Converter={StaticResource TextToBoolConverter}}"/>
+                <ScrollView
+                    Orientation="Vertical"
+                    VerticalScrollBarVisibility="Default">
+                    <ScrollView.Content>
+                        <StackLayout>
+                            <Editor
+                                Margin="0,5,0,0"
+                                x:Name="Editor1"
+                                HeightRequest="500"
+                                VerticalOptions="FillAndExpand"
+                                AutoSize="TextChanges"
+                                Text="{Binding Note}"
+                                Placeholder="{Binding Text, Source={x:Reference Label3}}">
+                            </Editor>
+                        </StackLayout>
+                    </ScrollView.Content>
+                </ScrollView>
+            </StackLayout>
+
+            <StackLayout
                 Margin="16,8,16,0"
                 VerticalOptions="EndAndExpand">
                 <StackLayout
@@ -75,11 +108,25 @@
                         IsEnabled="{Binding SwitchToggleIsEnabled}"
                         IsToggled="{Binding SwitchToggle}" />
                 </StackLayout>
-                <Button
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Button
+                    Text="Afsluiten melding"
+                    Command="{Binding CloseNoticeCommand}"
+                    Style="{StaticResource BlueButton}" />
+                    <Button
+                    Grid.Column="1"
                     Text="Opmaken proces-verbaal"
                     Command="{Binding OfficialReportCommand}"
                     CommandParameter="{Binding Report}"
                     Style="{StaticResource BlueButton}" />
+                </Grid>
             </StackLayout>
 
         </StackLayout>

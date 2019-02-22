@@ -192,7 +192,7 @@ namespace KBS2.WijkagentApp.ViewModels
             {
                 try
                 {
-                    var newReportDetails = new ReportDetails {ReportId = reportId, PersonId = Verbalisant.PersonId, IsHeard = true};
+                    var newReportDetails = new ReportDetails {ReportId = reportId, PersonId = Verbalisant.PersonId, IsHeard = true, Type = "S"};
                     var insertResult = await App.DataController.InsertIntoAsync(newReportDetails);
 
                     if (insertResult != HttpStatusCode.OK) throw new HttpRequestException(insertResult.ToString());
