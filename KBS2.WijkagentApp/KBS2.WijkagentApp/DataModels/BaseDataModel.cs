@@ -11,7 +11,7 @@ namespace KBS2.WijkagentApp.DataModels
     */
     public class BaseDataModel : IDatabaseObject, INotifyPropertyChanged
     {
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
 
         #region NotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;

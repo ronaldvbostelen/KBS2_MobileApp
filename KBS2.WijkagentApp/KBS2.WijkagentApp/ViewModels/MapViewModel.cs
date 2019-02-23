@@ -9,9 +9,10 @@ using Plugin.Permissions.Abstractions;
 using TK.CustomMap;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
-using KBS2.WijkagentApp.DataModels;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using KBS2.WijkagentApp.DataModels;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
@@ -27,59 +28,38 @@ namespace KBS2.WijkagentApp.ViewModels
         public MapSpan MapRegion { get { return mapRegion; } set { if (value != mapRegion) { mapRegion = value; NotifyPropertyChanged();} } }
         public bool ShowingUser { get { return showingUser; } set { if (value != showingUser) { showingUser = value; NotifyPropertyChanged(); } } }
 
-        public MapType MapType { get; }
-        public bool RegionChangeAnimated { get; }
-        
+        public MapType MapType { get; set; }
+        public bool RegionChangeAnimated { get; set; }
+
+        public ICommand CalloutClickedCommand { get { return new ActionCommand(x => CalloutClicked(x)); } }
+        public ICommand SelectedPinCommand { get { return new ActionCommand(pin => PinSelect(pin), pin => PinExists(pin)); } }
+        public ICommand MapLongPressCommand { get { return new ActionCommand(position => MapLongPress((Position)position)); } }
+
         //creates a xamarin map instance and sets the currentlocation and loaded pins
         public MapViewModel()
         {
             MapType = MapType.Hybrid;
             RegionChangeAnimated = true;
-            SetInitialLocation();
-
+            
+            var initTask = InitializeAsync();
+            
             //subscribe to collectionchanged event of central reportslist
-            App.ReportsCollection.Reports.CollectionChanged += Reports_CollectionChanged;
-
-            // set pins on map (based of central list)
-            Pins = new ObservableCollection<TKCustomMapPin>(App.ReportsCollection.Reports.Select(PinCreator));
+            App.ReportsCollection.Reports.CollectionChanged += ReportsCollectionChanged;
         }
 
-        private void Reports_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private async Task InitializeAsync()
         {
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                // little failsave =D
-                if (e.OldItems.Count > 0)
-                {
-                    var removedItem = (Report) e.OldItems[0];
-                    // so we search in the pinslist for the removed items coordinates so we can assume that pin/report is deleted
+            var currentPositionTask = GetCurrentLocationAsync();
+            
+            // set pins on map (based of central list)
+            Pins = new ObservableCollection<TKCustomMapPin>(App.ReportsCollection.Reports.Select(PinCreator));
 
-                    // UI change, therefore we need the Mainthread
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        Pins.Remove(Pins.First(x => x.Position.Equals(new Position(removedItem.Latitude ?? 0, removedItem.Longitude ?? 0))));
-                    });
-                }
-            }
-
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                // little failsave =D
-                if (e.NewItems.Count > 0)
-                {
-                    var newReport = (Report) e.NewItems[0];
-                    // UI change, therefore we need the Mainthread
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        Pins.Add(PinCreator(newReport));
-                    });
-                    
-                }
-            }
+            MapRegion = await currentPositionTask;
+            ShowingUser = MapRegion != null;
         }
 
         //async method to set the current location, this uses the permissionplugin to request the needed permission to get the GPS 
-        async void SetInitialLocation() 
+        async Task<MapSpan> GetCurrentLocationAsync() 
         {
             try
             {
@@ -89,26 +69,19 @@ namespace KBS2.WijkagentApp.ViewModels
                     var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Location);
                     status = results[Permission.Location];
                 }
-
                 if (status == PermissionStatus.Granted)
                 {
                     var locator = CrossGeolocator.Current;
                     var position = await locator.GetPositionAsync();
-                    MapRegion = MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMeters(125));
-                    ShowingUser = true;
+                    return MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMeters(125));
                 }
             }
             catch (Exception ex)
             {
-                Console.Write("Error: " + ex);
+                Debug.Write("Error: " + ex);
             }
+            return null;
         }
-
-        public ICommand CalloutClickedCommand { get { return new ActionCommand(x => CalloutClicked(x)); } }
-
-        public ICommand SelectedPinCommand { get { return new ActionCommand(pin => PinSelect(pin), pin => PinExists(pin)); } }
-
-        public ICommand MapLongPressCommand { get { return new ActionCommand(position => MapLongPress((Position)position)); } }
 
         //based on the pin-object it searches the report and then creates a NoticeDetailPage
         private void CalloutClicked(object pin)
@@ -126,7 +99,7 @@ namespace KBS2.WijkagentApp.ViewModels
         private bool PinExists(object pin) => Pins.Contains((TKCustomMapPin) pin);
 
         //creates a pin based on database entry
-        public TKCustomMapPin PinCreator(Report report)
+        private TKCustomMapPin PinCreator(Report report)
         {
             try
             {
@@ -148,6 +121,30 @@ namespace KBS2.WijkagentApp.ViewModels
                 Debug.WriteLine(e);
                 Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Weergeven map-pin(nen) mislukt. Probeer later opnieuw", "OK");
                 return null;
+            }
+        }
+
+        private void ReportsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                // little failsave =D
+                if (e.OldItems.Count > 0)
+                {
+                    var removedItem = (Report)e.OldItems[0];
+                    // so we search in the pinslist for the removed items coordinates so we can assume that pin/report is deleted
+                    Pins.Remove(Pins.First(x => x.Position.Equals(new Position(removedItem.Latitude ?? 0, removedItem.Longitude ?? 0))));
+                }
+            }
+
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                // little failsave =D
+                if (e.NewItems.Count > 0)
+                {
+                    var newReport = (Report)e.NewItems[0];
+                    Pins.Add(PinCreator(newReport));
+                }
             }
         }
     }

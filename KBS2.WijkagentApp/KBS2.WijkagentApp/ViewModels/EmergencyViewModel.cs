@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.Services.Dependecies;
@@ -7,6 +8,7 @@ using KBS2.WijkagentApp.ViewModels.Commands;
 using Plugin.Geolocator;
 using Xamarin.Forms;
 using Application = Xamarin.Forms.Application;
+using Position = Plugin.Geolocator.Abstractions.Position;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
@@ -18,7 +20,7 @@ namespace KBS2.WijkagentApp.ViewModels
         public Emergency Emergency { get { return emergency; } set { if (value != emergency) { emergency = value; NotifyPropertyChanged(); } } }
 
         private ICommand emergencyTriggerCommand;
-        public ICommand EmergencyTriggerCommand => emergencyTriggerCommand ?? (emergencyTriggerCommand = new ActionCommand(x => EmergencyTrigger()));
+        public ICommand EmergencyTriggerCommand => emergencyTriggerCommand ?? (emergencyTriggerCommand = new ActionCommand(x => EmergencyTriggerAsync()));
 
         public EmergencyViewModel()
         {
@@ -28,22 +30,25 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private Emergency SetEmergency() => new Emergency { Status = "A", OfficerId = User.Id, Time = DateTime.Now };
 
-        private async void EmergencyTrigger()
+        private async void EmergencyTriggerAsync()
         {
+            var currentPositionTask = GetCurrentPositionAsync();
+
             var alert = DependencyService.Get<IDisplayAlert>();
             alert?.DisplayAlert();
 
-            var locator = CrossGeolocator.Current;
-            var position = await locator.GetPositionAsync();
-            Emergency.Latitude = position.Latitude;
-            Emergency.Longitude = position.Longitude;
             Emergency.Time = DateTime.Now;
+
+            var currentPosition = await currentPositionTask;
+
+            Emergency.Latitude = currentPosition.Latitude;
+            Emergency.Longitude = currentPosition.Longitude;
+            
             try
             {
                 await App.DataController.EmergencyTable.InsertAsync(Emergency);
                 alert?.CloseAlert();
                 await Application.Current.MainPage.DisplayAlert("Geslaagd", "Noodbericht verstuurd", "OK");
-                Emergency = SetEmergency();
             }
             catch (Exception e)
             {
@@ -51,6 +56,10 @@ namespace KBS2.WijkagentApp.ViewModels
                 alert?.CloseAlert();
                 await Application.Current.MainPage.DisplayAlert("Mislukt", "Probeer opnieuw", "OK");
             }
+
+            Emergency = SetEmergency();
         }
+
+        private async Task<Position> GetCurrentPositionAsync() => await CrossGeolocator.Current.GetPositionAsync();
     }
 }

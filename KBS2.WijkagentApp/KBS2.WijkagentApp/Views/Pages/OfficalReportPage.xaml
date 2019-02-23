@@ -106,7 +106,7 @@
                         <Label Grid.Column="0"
                                Text="Tijdstip"
                                Style="{StaticResource SmallInfoLabel}" />
-                        <TimePicker Grid.Column="0" Time="{Binding OfficialReport.ReportTime}">
+                        <TimePicker Grid.Column="0" Time="{Binding OfficialReport.OfficialReportTime}">
                             <TimePicker.Behaviors>
                                 <Behavior:EventToCommandBehavior EventName="PropertyChanged" Command="{Binding ValidateCanSaveCommand}"/>
                             </TimePicker.Behaviors>
@@ -115,7 +115,7 @@
                                Text="Datum"
                                Style="{StaticResource SmallInfoLabel}" />
                         <DatePicker Grid.Column="1" Format="dd-MM-y"
-                                    Date="{Binding OfficialReport.ReportDate}">
+                                    Date="{Binding OfficialReport.OfficialReportDate}">
                             <DatePicker.Behaviors>
                                 <Behavior:EventToCommandBehavior EventName="PropertyChanged" Command="{Binding ValidateCanSaveCommand}"/>
                             </DatePicker.Behaviors>

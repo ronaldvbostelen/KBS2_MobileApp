@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.ViewModels.Commands;
@@ -13,6 +14,7 @@ using Microsoft.WindowsAzure.MobileServices;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 using AudioManager = KBS2.WijkagentApp.Managers.AudioManager;
 using CameraManager = KBS2.WijkagentApp.Managers.CameraManager;
 
@@ -40,74 +42,78 @@ namespace KBS2.WijkagentApp.ViewModels
         public ICommand AddVerbalisantCommand => addVerbalisantCommand ?? (addVerbalisantCommand = new ActionCommand(x => GoToAddVerbalisatPage())); 
         public ICommand EditPersonCommand => editPersonCommand ?? (editPersonCommand = new ActionCommand(x => EditPerson((Person) x))); 
         public ICommand StatementCommand => statementCommand ?? (statementCommand = new ActionCommand(x => GoToStatementPage((Person) x))); 
-        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => Save(), x => CanSave()));
-        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(x => Delete(), x => CanDelete()));
-        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => Cancel()));
-        public ICommand CameraCommand => cameraCommand ?? (cameraCommand = new ActionCommand(x => OpenCamera()));
-        public ICommand AudioCommand => audioCommand ?? (audioCommand = new ActionCommand(x => StartRecorder()));
+        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => SaveAsync(), x => CanSave()));
+        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(x => DeleteAsync(), x => CanDelete()));
+        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => CancelAsync()));
+        public ICommand CameraCommand => cameraCommand ?? (cameraCommand = new ActionCommand(x => Task.Run(OpenCameraAsync)));
+        public ICommand AudioCommand => audioCommand ?? (audioCommand = new ActionCommand(x => StartRecorderAsync()));
         public ICommand ValidateCanSaveCommand { get { return new ActionCommand(x => ((ActionCommand) SaveCommand).RaiseCanExecuteChanged()); } }
         
         public Report Report { get { return report; } set { if (value != report) { report = value; NotifyPropertyChanged(); } } }
         public OfficialReport OfficialReport { get { return officialReport; } set { if (value != officialReport) { officialReport = value; NotifyPropertyChanged();
-            ((ActionCommand)DeleteCommand).RaiseCanExecuteChanged(); ((ActionCommand)SaveCommand).RaiseCanExecuteChanged();} } }
+            ((ActionCommand)DeleteCommand).RaiseCanExecuteChanged(); ((ActionCommand)SaveCommand).RaiseCanExecuteChanged(); } } }
         public ObservableCollection<Person> Verbalisants { get { return verbalisants; } set { if (value != verbalisants) { verbalisants = value; NotifyPropertyChanged(); } } }
-        
-        public OfficalReportViewModel(Report report, ObservableCollection<Person> involvedPersons, ObservableCollection<ReportDetails> reportDetails)
+
+        public event EventHandler<Person> InvolvedPersonChanged;
+        public event EventHandler<OfficialReport> OfficialReportPropertyChanged;
+
+        public OfficalReportViewModel(Report report, OfficialReport officialReport, ObservableCollection<Person> involvedPersons, ObservableCollection<ReportDetails> reportDetails)
         {
             Report = report;
             this.involvedPersons = involvedPersons;
             this.reportDetails = reportDetails;
-            
-            Verbalisants = SelectHeardPersons();
-            
-            SelectOfficalReportRecord(report);
+            this.officialReport = officialReport;
+
+            var initTask = InitializeAsync();
         }
 
-        private ObservableCollection<Person> SelectHeardPersons()
+        private async Task InitializeAsync()
         {
-            return new ObservableCollection<Person>(
-                       (from involvedPerson in involvedPersons
-                        where reportDetails.Any(x => x.ReportId.Equals(report.ReportId) 
-                                                     && x.PersonId.Equals(involvedPerson.PersonId) 
-                                                     && (x.IsHeard ?? false))
-                        select involvedPerson));
+            // this defeats async benefits, but oh well.
+            if (officialReport == null) OfficialReport = await GetOfficalReportRecordAsync(report) ?? await CreateNewRecordAsync();
+            
+            OfficialReport.PropertyChanged += OnOfficialReportPropertyChanged;
+
+            Verbalisants = SelectHeardPersons();
+            officialReportDbEntryMirror = CreateMirrorRecord(OfficialReport);
+            UpdateCommands();
         }
 
-        private async void SelectOfficalReportRecord(Report report)
+        private async Task<OfficialReport> GetOfficalReportRecordAsync(Report report)
         {
             try
             {
-                OfficialReport = await App.DataController.OfficialeReportTable.LookupAsync(report.ReportId);
-                OfficialReport.id = OfficialReport.ReportId;
-                officialReportDbEntryMirror = CreateMirrorRecord(OfficialReport);
-                UpdateCommands();
+                var officaOfficialReport  = await App.DataController.OfficialeReportTable.LookupAsync(report.ReportId);
+                officaOfficialReport.Id = officaOfficialReport.ReportId;
+                return officaOfficialReport;
             }
             catch (MobileServiceInvalidOperationException e)
             {
                 Debug.WriteLine(e);
-
-                //if 404 we create a new record
+                
                 if (e.Response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    CreateNewRecord();
+                    // if not found we return null
+                    return null;
                 }
-                else
-                {
-                    throw;
-                }
-                
             }
             catch (Exception ex)
             {
                 //shit hit the fan
                 Debug.WriteLine(ex.Message + " " + ex.StackTrace);
+
+                var popModalTask = Application.Current.MainPage.Navigation.PopModalAsync();
+
                 await Application.Current.MainPage.DisplayAlert("Ophalen proces-verbaal mislukt", "Probeer later opnieuw " + ex.Message, "OK");
+
+                await popModalTask;
             }
+            return null;
         }
         
-        private async void CreateNewRecord()
+        private async Task<OfficialReport> CreateNewRecordAsync()
         {
-            OfficialReport = new OfficialReport
+            var newReport = new OfficialReport
             {
                 ReportId = report.ReportId,
                 ReporterId = User.Id,
@@ -118,19 +124,31 @@ namespace KBS2.WijkagentApp.ViewModels
 
             try
             {
-                await App.DataController.OfficialeReportTable.InsertAsync(OfficialReport);
-                OfficialReport.id = OfficialReport.ReportId;
-                officialReportDbEntryMirror = CreateMirrorRecord(OfficialReport);
-                UpdateCommands();
+                await App.DataController.InsertIntoAsync(newReport);
+                newReport.Id = newReport.ReportId;
+                return newReport;
             }
             catch (Exception ex)
             {
-                //ignore this warning
-                Application.Current.MainPage.DisplayAlert("Aanmaken record mislukt", "Er ging iets mis. Probeer opnieuw " + ex.Message, "OK");
-
-                await Application.Current.MainPage.Navigation.PopModalAsync();
                 Debug.WriteLine(ex.Message + " " + ex.StackTrace);
+
+                var popModalTask = Application.Current.MainPage.Navigation.PopModalAsync();
+                
+                await Application.Current.MainPage.DisplayAlert("Aanmaken record mislukt", "Er ging iets mis. Probeer opnieuw " + ex.Message, "OK");
+
+                await popModalTask;
             }
+            return null;
+        }
+        
+        private ObservableCollection<Person> SelectHeardPersons()
+        {
+            return new ObservableCollection<Person>(
+                (from involvedPerson in involvedPersons
+                    where reportDetails.Any(x => x.ReportId.Equals(report.ReportId)
+                                             && x.PersonId.Equals(involvedPerson.PersonId)
+                                             && (x.IsHeard ?? false))
+                    select involvedPerson));
         }
 
         private void GoToAddVerbalisatPage(Person person = null)
@@ -152,7 +170,7 @@ namespace KBS2.WijkagentApp.ViewModels
                 vm = new VerbalisantViewModel(person, report.ReportId, reportDetails);
             }
 
-            vm.NotifyDatabaseChanged += OnNotifyDatabaseChanged;
+            vm.ReportDetailsChanged += OnReportDetailsChangedAsync;
             Application.Current.MainPage.Navigation.PushModalAsync(new VerbalisantPage(vm));
         }
 
@@ -164,97 +182,101 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private void EditPerson(Person person) => GoToAddVerbalisatPage(person);
 
-        private async void Cancel()
+        private async Task CancelAsync()
         {
             if (!OfficialReport.Equals(officialReportDbEntryMirror))
             {
                 var result = await Application.Current.MainPage.DisplayAlert("Bevestig annuleren", "Gegevens zijn gewijzigd, gewijzigde gegevens opslaan?", "Ja", "Nee");
-                if (result) SaveReport(OfficialReport);
+                if (result)
+                {
+                    await SaveReportAsync(OfficialReport);
+                    officialReportDbEntryMirror = CreateMirrorRecord(OfficialReport);
+                    UpdateCommands();
+                }
             }
 
             await Application.Current.MainPage.Navigation.PopModalAsync();
         }
 
-        private async void Delete()
+        private async Task DeleteAsync()
         {
             var result = await Application.Current.MainPage.DisplayAlert("Bevestig verwijderen", "Alle gegevens met betrekking tot proces-verbaal verwijderen?", "Ja", "Nee");
 
             if (result)
             {
-                if (reportDetails.Any())
+                if (reportDetails.Any(x => x.IsHeard == true))
                 {
-                    foreach (var reportDetail in reportDetails)
+                    await Application.Current.MainPage.DisplayAlert("Verbalisant(en) aanwezig", "Verwijder eerst (alle) verbalisant(en)", "Ok");
+                }
+                else
+                {
+                    try
                     {
-                        try
-                        {
-                            reportDetail.IsHeard = false;
-                            await App.DataController.ReportDetailsTable.UpdateAsync(reportDetail);
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.WriteLine(e);
-                            await Application.Current.MainPage.DisplayAlert("Er ging iets mis..", "Verwijderen verbalisanten mislukt", "Ok");
-                        }
+                        await App.DataController.OfficialeReportTable.DeleteAsync(OfficialReport);
+                        
+                        OfficialReport.Observation = String.Empty;
+                        OfficialReport = null;
+                        
+                        var popModalTask = Application.Current.MainPage.Navigation.PopModalAsync();
+
+                        await Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens verwijderd", "Ok");
+
+                        await popModalTask;
                     }
-                }
-
-                try
-                {
-                    await App.DataController.OfficialeReportTable.DeleteAsync(OfficialReport);
-
-                    //ignore this warning
-                    Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens verwijderd", "Ok");
-
-                    await Application.Current.MainPage.Navigation.PopModalAsync();
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    await Application.Current.MainPage.DisplayAlert("Er ging iets mis..", "Verwijderen proces-verbaal mislukt", "Ok");
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                        await Application.Current.MainPage.DisplayAlert("Er ging iets mis..", "Verwijderen proces-verbaal mislukt", "Ok");
+                    }
                 }
             }
         }
 
-        private async void Save()
+        private async Task SaveAsync()
         {
-            SaveReport(OfficialReport);
+            OfficialReport = await SaveReportAsync(OfficialReport);
+
+            officialReportDbEntryMirror = CreateMirrorRecord(OfficialReport);
+            UpdateCommands();
 
             var result = await Application.Current.MainPage.DisplayAlert("Gelaagd", "Gegevens opgeslagen. Pagina sluiten?", "Ja", "Nee");
             
             if (result) await Application.Current.MainPage.Navigation.PopModalAsync();
         }
         
-        private async void SaveReport(OfficialReport report)
+        private async Task<OfficialReport> SaveReportAsync(OfficialReport report)
         {
             try
             {
-                await App.DataController.OfficialeReportTable.UpdateAsync(report);
-                officialReportDbEntryMirror = CreateMirrorRecord(report);
-                UpdateCommands();
+                if (report.Id == Guid.Empty)
+                {
+                    report = await App.DataController.InsertIntoAsync(report);
+                }
+                else
+                {
+                    report = await App.DataController.UpdateSetAsync(report);
+                }
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
                 await Application.Current.MainPage.DisplayAlert("Er ging iets mis..", "Opslaan proces-verbaal mislukt", "Ok");
             }
+
+            return report;
         }
 
-        private List<ImageSource> images = new List<ImageSource>();
-
-        private ImageSource image;
-        public ImageSource Image { get { return image;} set{ if (image != value) { image = value; NotifyPropertyChanged(); } } }
-
-        private async void OpenCamera()
+        private async Task OpenCameraAsync()
         {
             var photo = await new CameraManager().TakePhoto();
             
             if (photo != null)
             {
-                await Application.Current.MainPage.DisplayAlert("Foto opgeslagen", $"locatie: {photo.AlbumPath}","OK");
+                Device.BeginInvokeOnMainThread(() => Application.Current.MainPage.DisplayAlert("Foto opgeslagen", $"locatie: {photo.AlbumPath}", "OK"));
             }
         }
 
-        private async void StartRecorder()
+        private async Task StartRecorderAsync()
         {
             var micStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Microphone);
             var storageStatus = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Storage);
@@ -303,50 +325,49 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private bool CanDelete() => OfficialReport != null;
 
-        private async void OnNotifyDatabaseChanged(object sender, EventArgs eventArgs)
+        private async void OnReportDetailsChangedAsync(object sender, ReportDetails details)
         {
             try
             {
-                reportDetails = await App.DataController.FetchReportDetailsAsync(report.ReportId);
-                
-                foreach (var reportDetail in reportDetails)
+                if (details.IsHeard ?? false)
                 {
-                    reportDetail.id = reportDetail.ReportDetailsId;
+                    if (!Verbalisants.Any(x => x.PersonId.Equals(details.PersonId)))
+                    {
+                        var newPerson = await App.DataController.PersonTable.LookupAsync(details.PersonId);
+                        Verbalisants.Add(newPerson);
 
-                    try
-                    {
-                        var person = await App.DataController.PersonTable.LookupAsync(reportDetail.PersonId);
-                        if (reportDetail.IsHeard ?? false)
+                        if (!involvedPersons.Any(x => x.PersonId.Equals(details.PersonId)))
                         {
-                            if (!Verbalisants.Any(x => x.PersonId.Equals(person.PersonId)))
-                            {
-                                Verbalisants.Add(person);
-                            }
+                            involvedPersons.Add(newPerson);
                         }
-                        else
+                        if (!reportDetails.Any(x => x.ReportDetailsId.Equals(details.ReportDetailsId)))
                         {
-                            Verbalisants.Remove(person);
+                            reportDetails.Add(details);
                         }
+
+                        OnInvolvedPersonChanged(newPerson);
                     }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e);
-                        await Application.Current.MainPage.DisplayAlert("Er ging iets mis..", "Bijwerken verbalisantenlijst mislukt", "Ok");
-                    }
+                }
+                else
+                {
+                    var oldPerson = Verbalisants.First(x => x.PersonId.Equals(details.PersonId));
+                    reportDetails.Where(x => x.PersonId.Equals(details.PersonId)).ForEach(x => x.IsHeard = false);
+                    Verbalisants.Remove(oldPerson);
+                    OnInvolvedPersonChanged(oldPerson);
                 }
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                await Application.Current.MainPage.DisplayAlert("Er ging iets mis..", "Ophalen proces-verbaal detailgegevens mislukt.", "OK");
+                await Application.Current.MainPage.DisplayAlert("Er ging iets mis..", "Bijwerken reportdetails misluk. Probeer later opnieuw.", "OK");
             }
-        } 
+        }
 
         private OfficialReport CreateMirrorRecord(OfficialReport report)
         {
             return new OfficialReport
             {
-                id = report.id,
+                Id = report.Id,
                 ReportId = report.ReportId,
                 ReporterId = report.ReporterId,
                 Location = report.Location,
@@ -359,6 +380,16 @@ namespace KBS2.WijkagentApp.ViewModels
         {
             ((ActionCommand)DeleteCommand).RaiseCanExecuteChanged();
             ((ActionCommand)SaveCommand).RaiseCanExecuteChanged();
+        }
+
+        protected virtual void OnInvolvedPersonChanged(Person person)
+        {
+            InvolvedPersonChanged?.Invoke(this, person);
+        }
+
+        protected virtual void OnOfficialReportPropertyChanged(object sender, PropertyChangedEventArgs eventArgs)
+        {
+            OfficialReportPropertyChanged?.Invoke(this, OfficialReport);
         }
     }
 }
