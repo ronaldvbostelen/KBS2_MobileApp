@@ -29,7 +29,7 @@ namespace KBS2.WijkagentApp.Droid.Services
                 // if its from the same user the report is already added to the list
                 if (newReport.ReporterId != User.Id)
                 {
-                    newReport.id = newReport.ReportId;
+                    newReport.Id = newReport.ReportId;
                     App.ReportsCollection.Reports.Add(newReport);
                 }
             }
