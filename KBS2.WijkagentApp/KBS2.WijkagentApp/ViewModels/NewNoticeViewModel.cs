@@ -26,8 +26,8 @@ namespace KBS2.WijkagentApp.ViewModels
         private ICommand cancelCommand;
         private ICommand validateCanSaveCommand;
 
-        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => Save(), x => CanSave()));
-        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => Cancel()));
+        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => SaveAsync(), x => CanSave()));
+        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => CancelAsync()));
         public ICommand ValidateCanSaveCommand => validateCanSaveCommand ?? (validateCanSaveCommand = new Command(() => ((ActionCommand) SaveCommand).RaiseCanExecuteChanged()));
 
         public Report Report { get; set; }
@@ -41,14 +41,15 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private bool CanSave() => !string.IsNullOrWhiteSpace(Report.Type) && !string.IsNullOrWhiteSpace(Report.Location) && Report.Priority != null;
 
-        private async void Save()
+        private async void SaveAsync()
         {
-            if (await SaveNewReport())
+            if (await SaveNewReportAsync())
             {
-                //ignore warning
-                Application.Current.MainPage.DisplayAlert("Geslaagd", "Report opgeslagen", "OK");
+                var popModalTask = Application.Current.MainPage.Navigation.PopModalAsync();
                 
-                await Application.Current.MainPage.Navigation.PopModalAsync();
+                await Application.Current.MainPage.DisplayAlert("Geslaagd", "Report opgeslagen", "OK");
+
+                await popModalTask;
             }
             else
             {
@@ -56,20 +57,23 @@ namespace KBS2.WijkagentApp.ViewModels
             }
         }
 
-        private async void Cancel()
+        private async void CancelAsync()
         {
             if (CanSave())
             {
                 var result = await Application.Current.MainPage.DisplayAlert("Bevestig annuleren", "Gegegevens zij gewijzigd. Gegevens opslaan?", "Ja", "Nee");
                 if (result)
                 {
-                    var saved = await SaveNewReport();
+                    var saved = await SaveNewReportAsync();
                     if (saved)
                     {
                         //ignore warning
-                        Application.Current.MainPage.DisplayAlert("Geslaagd", "Report opgeslagen", "OK");
                         
-                        await Application.Current.MainPage.Navigation.PopModalAsync();
+                        var popModalTask = Application.Current.MainPage.Navigation.PopModalAsync();
+
+                        await Application.Current.MainPage.DisplayAlert("Geslaagd", "Report opgeslagen", "OK");
+
+                        await popModalTask;
                     }
                     else
                     {
@@ -87,12 +91,12 @@ namespace KBS2.WijkagentApp.ViewModels
             }
         }
 
-        private async Task<bool> SaveNewReport()
+        private async Task<bool> SaveNewReportAsync()
         {
             try
             {
                 await App.DataController.ReportTable.InsertAsync(Report);
-                Report.id = Report.ReportId;
+                Report.Id = Report.ReportId;
                 App.ReportsCollection.Reports.Add(Report);
                 return true;
             }

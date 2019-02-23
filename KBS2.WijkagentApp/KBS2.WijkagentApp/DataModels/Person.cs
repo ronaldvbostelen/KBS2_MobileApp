@@ -1,7 +1,5 @@
 ﻿using System;
-using KBS2.WijkagentApp.Models.Interfaces;
 using Newtonsoft.Json;
-using Xamarin.Forms;
 
 namespace KBS2.WijkagentApp.DataModels
 {
@@ -97,7 +95,7 @@ namespace KBS2.WijkagentApp.DataModels
             {
                 if (value != birthDate)
                 {
-                    birthDate = value;
+                    birthDate = new DateTime(value.Value.Year, value.Value.Month,value.Value.Day, 12, 00, 00);
                     NotifyPropertyChanged();
                 }
             }

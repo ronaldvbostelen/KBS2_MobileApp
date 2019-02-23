@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -17,7 +15,7 @@ namespace KBS2.WijkagentApp.DataModels
         public static string Name => Base.UserName;
 
         
-        public static async Task<Person> FetchUserPersonRecord()
+        public static async Task<Person> FetchUserPersonRecordAsync()
         {
             try
             {

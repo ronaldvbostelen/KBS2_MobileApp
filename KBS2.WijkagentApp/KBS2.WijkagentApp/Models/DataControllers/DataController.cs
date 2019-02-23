@@ -8,10 +8,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.Extensions;
 using KBS2.WijkagentApp.Managers;
 using KBS2.WijkagentApp.Models.Interfaces;
 using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json;
+using Xamarin.Forms;
 
 namespace KBS2.WijkagentApp.Models.DataControllers
 {
@@ -40,7 +42,7 @@ namespace KBS2.WijkagentApp.Models.DataControllers
         public IMobileServiceTable<Socials> SocialsTable => Client.GetTable<Socials>();
         public IMobileServiceTable<SoundRecord> SoundRecordTable => Client.GetTable<SoundRecord>();
 
-        public async Task<HttpResponseMessage> CheckOfficerCredentials(Officer officer)
+        public async Task<HttpResponseMessage> CheckOfficerCredentialsAsync(Officer officer)
         {
             //first hash before we send it over the ether
             officer.Password = new PasswordManager().GenerateHash(officer.Password);
@@ -61,6 +63,25 @@ namespace KBS2.WijkagentApp.Models.DataControllers
             {
                 Debug.WriteLine(ex.Message + " " + ex.StackTrace);
                 return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public async Task<ObservableCollection<Report>> FetchReportsAsync()
+        {
+            try
+            {
+                var reportList = await App.DataController.ReportTable.ToListAsync();
+
+                // setting ID (!important!) & adding to ReportsCollection
+                reportList.ForEach(x => x.Id = x.ReportId);
+
+                return reportList.ListToObservableCollection();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                await Application.Current.MainPage.DisplayAlert("Mislukt", "Er ging iets fout tijdens het ophalen van de reportgegevens. Probeer opnieuw.", "OK");
+                return new ObservableCollection<Report>();
             }
         }
 
@@ -87,45 +108,45 @@ namespace KBS2.WijkagentApp.Models.DataControllers
             /* this shitty code is needed because async processing screws up this framework (if we dont initialise a new instance
              * we get some illogical exception.
              */
-        public async Task<HttpStatusCode> InsertIntoAsync<T>(T entryObject) where T : IDatabaseObject
+        public async Task<T> InsertIntoAsync<T>(T entryObject) where T : IDatabaseObject
         {
             Client = new MobileServiceClient(apiUrl);
 
             try
             {
                 await Client.GetTable<T>().InsertAsync(entryObject);
-                return HttpStatusCode.OK;
+                return entryObject;
             }
             catch (MobileServiceInvalidOperationException e)
             {
                 Debug.WriteLine(e);
-                return e.Response.StatusCode;
+                throw;
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                return HttpStatusCode.BadRequest;
+                throw;
             }
         }
 
-        public async Task<HttpStatusCode> UpdateSetAsync<T>(T entryObject) where T : IDatabaseObject
+        public async Task<T> UpdateSetAsync<T>(T entryObject) where T : IDatabaseObject
         {
             Client = new MobileServiceClient(apiUrl);
 
             try
             {
                 await Client.GetTable<T>().UpdateAsync(entryObject);
-                return HttpStatusCode.OK;
+                return entryObject;
             }
             catch (MobileServiceInvalidOperationException e)
             {
                 Debug.WriteLine(e);
-                return e.Response.StatusCode;
+                throw;
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                return HttpStatusCode.BadRequest;
+                throw;
             }
         }
     }

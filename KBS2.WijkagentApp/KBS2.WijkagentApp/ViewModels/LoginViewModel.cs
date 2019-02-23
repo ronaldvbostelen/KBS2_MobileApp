@@ -29,10 +29,12 @@ namespace KBS2.WijkagentApp.ViewModels
             officer = new Officer();
         }
 
-        public ICommand LoginCommand => loginCommand ?? (loginCommand = new ActionCommand(x => Login(), x => CanLogin()));
+        public ICommand LoginCommand => loginCommand ?? (loginCommand = new ActionCommand(x => LoginAsync(), x => CanLogin()));
 
-        private async void Login()
+        private async void LoginAsync()
         {
+            var validateLoginTask = App.DataController.CheckOfficerCredentialsAsync(officer);
+            
             //show message while processing/computing
             ErrorMessageIsVisible = false;
             LoginAttemptMessage = "Moment geduld a.u.b.\nUw gegevens worden gecontroleerd...";
@@ -40,18 +42,23 @@ namespace KBS2.WijkagentApp.ViewModels
 
             //datacontroller creates costum api request based on userinput
             //api sends respons back (succes (with officer object) or notfound/bad request when login failed)
-            var apiRespons = await App.DataController.CheckOfficerCredentials(officer);
+            var apiRespons = await validateLoginTask;
 
             //credentials are correct
             if (apiRespons.IsSuccessStatusCode)
             {
-                var toString = apiRespons.Content.ReadAsStringAsync();
-                var toObject = JsonConvert.DeserializeObject(toString.Result, Type.GetType("KBS2.WijkagentApp.DataModels.Officer"));
+                var toString = await apiRespons.Content.ReadAsStringAsync();
+                var toObject = JsonConvert.DeserializeObject(toString, Type.GetType("KBS2.WijkagentApp.DataModels.Officer"));
                 User.Base = (Officer) toObject;
-
-                //task is awaited cause we need the credentials (if fetching fails we still initiate the user)
-                User.Person = await User.FetchUserPersonRecord();
-
+                
+                //create asynctasks..
+                var userPersonalInfoTask = User.FetchUserPersonRecordAsync();
+                var repoortsTask = App.DataController.FetchReportsAsync();
+                
+                // we need these before we can continue
+                User.Person = await userPersonalInfoTask;
+                App.ReportsCollection.Reports = await repoortsTask;
+                
                 Application.Current.MainPage = new MainPage();
             }
             //too bad, try again

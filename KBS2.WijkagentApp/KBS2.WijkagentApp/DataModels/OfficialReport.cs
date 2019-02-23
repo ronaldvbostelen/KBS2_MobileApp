@@ -113,7 +113,7 @@ namespace KBS2.WijkagentApp.DataModels
 
             OfficialReport report = (OfficialReport)obj;
 
-            return id.Equals(report.id) && reportId.Equals(report.ReportId)
+            return Id.Equals(report.Id) && reportId.Equals(report.ReportId)
                                         && reporterId.Equals(report.ReporterId)
                                         && observation.Equals(report.Observation)
                                         && time.Equals(report.Time)

@@ -9,6 +9,7 @@ using Xamarin.Forms.Internals;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using KBS2.WijkagentApp.Extensions;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
@@ -23,13 +24,14 @@ namespace KBS2.WijkagentApp.ViewModels
         private ReportDetails noteDetails = new ReportDetails();
         private OfficialReport officialReport;
         private ObservableCollection<Person> involvedPersons;
+        private ObservableCollection<Person> allInvolvedPersons;
         private ObservableCollection<ReportDetails> reportDetails;
 
         public string Note { get { return noteDetails.Statement; } set { if (value != noteDetails.Statement) { noteDetails.Statement = value; NotifyPropertyChanged(); ((ActionCommand)CloseNoticeCommand).RaiseCanExecuteChanged(); } } }
         public Report Report { get; }
         public ObservableCollection<Person> InvolvedPersons { get { return involvedPersons; } set { if (value != involvedPersons) { involvedPersons = value; NotifyPropertyChanged(); } } }
-        public ICommand OfficialReportCommand => officalReportCommand ?? (officalReportCommand = new ActionCommand(report => GoToReportPage((Report)report), x => CanGoToReportPage()));
-        public ICommand CloseNoticeCommand => closeNoticeCommand ?? (closeNoticeCommand = new ActionCommand(report => CloseReport(), x => CanCloseReport()));
+        public ICommand OfficialReportCommand => officalReportCommand ?? (officalReportCommand = new ActionCommand(report => GoToOfficialReportPage((Report)report), x => CanGoToReportPage()));
+        public ICommand CloseNoticeCommand => closeNoticeCommand ?? (closeNoticeCommand = new ActionCommand(report => CloseReportAsync(), x => CanCloseReport()));
         public bool SwitchToggleIsEnabled { get { return switchToggleIsEnabled; } set { if (value != switchToggleIsEnabled) { switchToggleIsEnabled = value; NotifyPropertyChanged(); } } }
         public bool CloseButtonIsEnabled { get { return closeButtonIsEnabled; } set { if (value != closeButtonIsEnabled) { closeButtonIsEnabled = value; NotifyPropertyChanged(); } } }
 
@@ -41,7 +43,7 @@ namespace KBS2.WijkagentApp.ViewModels
                 if (value != switchToggle)
                 {
                     switchToggle = value;
-                    EditReport(value);
+                    var editReportTask = EditReportAsync(value);
                     NotifyPropertyChanged();
                     ((ActionCommand)OfficialReportCommand).RaiseCanExecuteChanged();
                     ((ActionCommand)CloseNoticeCommand).RaiseCanExecuteChanged();
@@ -52,37 +54,47 @@ namespace KBS2.WijkagentApp.ViewModels
         public NoticeDetailViewModel(Report report)
         {
             Report = report;
-            InvolvedPersons = new ObservableCollection<Person>();
 
-            Initialize();
+            var initTask = InitializeAsync();
         }
 
-        private async void Initialize()
+        private async Task InitializeAsync()
         {
+            var reportDetailsTask = GetReportDetailsAsync();
+            var officalReportTask = GetOfficialReportAsync();
+
             //so only when the report is active or the procced officer is the user the swich is enabled
             SwitchToggleIsEnabled = Report.Status == "A" || Report.ProcessedBy.Equals(User.Id);
 
             //toggle is off when there's no processing officer
             SwitchToggle = Report.ProcessedBy != null;
+            
+            reportDetails = await reportDetailsTask; 
 
-            reportDetails = await GetReportDetails();
-            officialReport = await GetOfficialReport();
-            InvolvedPersons = await SelectInvolvedPersons();
+            var involvedPersonsTask = SelectInvolvedPersonsAsync();
 
             noteDetails = SetNoteOrReportDetail();
+
             mirrorNote = String.Copy(noteDetails.Statement ?? String.Empty);
+
+            officialReport = await officalReportTask;
 
             CloseButtonIsEnabled = CanCloseReport();
 
             ((ActionCommand)CloseNoticeCommand).RaiseCanExecuteChanged();
-        }
 
-        private async Task<ObservableCollection<ReportDetails>> GetReportDetails()
+            allInvolvedPersons = await involvedPersonsTask;
+            
+            //we only display the persons with a filled description
+            InvolvedPersons = allInvolvedPersons.Where(x => x.Description != null).EnumerableToObservableCollection();
+        }
+        
+        private async Task<ObservableCollection<ReportDetails>> GetReportDetailsAsync()
         {
             try
             {
                 var reportsDetails = await App.DataController.FetchReportDetailsAsync(Report.ReportId);
-                reportsDetails.ForEach(x => x.id = x.ReportDetailsId);
+                reportsDetails.ForEach(x => x.Id = x.ReportDetailsId);
                 return reportsDetails;
             }
             catch (Exception e)
@@ -92,11 +104,13 @@ namespace KBS2.WijkagentApp.ViewModels
             }
         }
 
-        private async Task<OfficialReport> GetOfficialReport()
+        private async Task<OfficialReport> GetOfficialReportAsync()
         {
             try
             {
-                return await App.DataController.OfficialeReportTable.LookupAsync(Report.ReportId);
+                var officalReport = await App.DataController.OfficialeReportTable.LookupAsync(Report.ReportId);
+                officalReport.Id = officalReport.ReportId;
+                return officalReport;
             }
             catch (Exception e)
             {
@@ -104,9 +118,40 @@ namespace KBS2.WijkagentApp.ViewModels
                 return null;
             }
         }
+        
+        //select involved persons
+        private async Task<ObservableCollection<Person>> SelectInvolvedPersonsAsync()
+        {
+            var involvedPersons = new ObservableCollection<Person>();
+
+            foreach (var reportDetail in reportDetails)
+            {
+                if (reportDetail.Type != "N")
+                {
+                    try
+                    {
+                        var person = await App.DataController.PersonTable.LookupAsync(reportDetail.PersonId);
+                        person.Id = person.PersonId;
+                        involvedPersons.Add(person);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                        await Application.Current.MainPage.DisplayAlert("Ophalen betrokkenen mislukt", "Probeer later opnieuw", "Ok");
+                    }
+                }
+            }
+
+            if (involvedPersons.Count(x => x.Description != null) == 0)
+            {
+                await Application.Current.MainPage.DisplayAlert("Geen betrokkenen gevonden", "Voeg handmatig personen toe of probeer het later opnieuw", "Ok");
+            }
+
+            return involvedPersons;
+        }
 
         //update record when officer decides to process notice
-        private async void EditReport(bool value)
+        private async Task<Report> EditReportAsync(bool value)
         {
             if (value)
             {
@@ -122,6 +167,7 @@ namespace KBS2.WijkagentApp.ViewModels
             try
             {
                 await App.DataController.ReportTable.UpdateAsync(Report);
+                return Report;
             }
             catch (Exception e)
             {
@@ -129,40 +175,10 @@ namespace KBS2.WijkagentApp.ViewModels
                 switchToggle = !value;
                 NotifyPropertyChanged(nameof(SwitchToggle));
                 await Application.Current.MainPage.DisplayAlert("Wijzigen mislukt", "Sorry, er ging iets mis tijdens het wijzigen van de meldingsgegevens. Probeer later opnieuw", "Ok");
+                return null;
             }
         }
-
-        //select involved persons
-        private async Task<ObservableCollection<Person>> SelectInvolvedPersons()
-        {
-            var involvedPersons = new ObservableCollection<Person>();
-
-            foreach (var reportDetail in reportDetails)
-            {
-                if (reportDetail.Type != "N")
-                {
-                    try
-                    {
-                        var person = await App.DataController.PersonTable.LookupAsync(reportDetail.PersonId);
-                        person.id = person.PersonId;
-                        involvedPersons.Add(person);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e);
-                        await Application.Current.MainPage.DisplayAlert("Ophalen betrokkenen mislukt", "Probeer later opnieuw", "Ok");
-                    }
-                }
-            }
-
-            if (involvedPersons.Count == 0)
-            {
-                await Application.Current.MainPage.DisplayAlert("Geen betrokkenen gevonden", "Voeg handmatig personen toe of probeer het later opnieuw", "Ok");
-            }
-
-            return involvedPersons;
-        }
-
+        
         private ReportDetails SetNoteOrReportDetail()
         {
             try
@@ -172,7 +188,7 @@ namespace KBS2.WijkagentApp.ViewModels
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                return new ReportDetails { ReportId = Report.ReportId, PersonId = User.Id, Type = "D" }; 
+                return new ReportDetails { ReportId = Report.ReportId, PersonId = User.Person.PersonId, Type = "N" }; 
             }
         }
 
@@ -180,21 +196,31 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private bool CanCloseReport() => User.Id.Equals(Report.ProcessedBy) && !String.IsNullOrWhiteSpace(Note) && SwitchToggle || officialReport != null && !string.IsNullOrWhiteSpace(officialReport.Observation);
 
-        private void GoToReportPage(Report report) => Application.Current.MainPage.Navigation.PushModalAsync(new OfficalReportPage(new OfficalReportViewModel(report, involvedPersons, reportDetails)));
-        
-        private async void CloseReport()
+        private void GoToOfficialReportPage(Report report)
         {
-            SaveNote();
-
+            var officalReportVm = new OfficalReportViewModel(report, officialReport, allInvolvedPersons, reportDetails);
+            officalReportVm.InvolvedPersonChanged += OnInvolvedPersonChanged;
+            officalReportVm.OfficialReportPropertyChanged += OnOfficialReportPropertyChanged;
+            Application.Current.MainPage.Navigation.PushModalAsync(new OfficalReportPage(officalReportVm));
+        }
+        
+        private async void CloseReportAsync()
+        {
+            if (!string.IsNullOrWhiteSpace(Note)) await SaveNoteAsync();
+            
             try
             {
                 Report.Status = "D";
 
-                await App.DataController.ReportTable.UpdateAsync(Report);
+                await App.DataController.UpdateSetAsync(Report);
                 
                 App.ReportsCollection.Reports.Remove(Report);
 
-                await Application.Current.MainPage.Navigation.PopModalAsync();
+                var popModalTask = Application.Current.MainPage.Navigation.PopModalAsync();
+
+                await Application.Current.MainPage.DisplayAlert("Geslaagd", "Melding opgeslagen en afgesloten", "Ok");
+
+                await popModalTask;
             }
             catch (Exception e)
             {
@@ -203,14 +229,15 @@ namespace KBS2.WijkagentApp.ViewModels
             }
         }
 
-        private async void SaveNote()
+        private async Task<ReportDetails> SaveNoteAsync()
         {
-            if (noteDetails.id == Guid.Empty)
+            if (noteDetails.Id == Guid.Empty)
             {
                 try
                 {
                     await App.DataController.InsertIntoAsync(noteDetails);
-                    noteDetails.id = noteDetails.ReportDetailsId;
+                    noteDetails.Id = noteDetails.ReportDetailsId;
+                    return noteDetails;
                 }
                 catch (Exception e)
                 {
@@ -223,6 +250,7 @@ namespace KBS2.WijkagentApp.ViewModels
                 try
                 {
                     await App.DataController.UpdateSetAsync(noteDetails);
+                    return noteDetails;
                 }
                 catch (Exception e)
                 {
@@ -232,6 +260,25 @@ namespace KBS2.WijkagentApp.ViewModels
             }
 
             mirrorNote = string.Copy(noteDetails.Statement);
+            return null;
         }
+        
+        private void OnInvolvedPersonChanged(object sender, Person person)
+        {
+            if (person.Description == null)
+            {
+                InvolvedPersons.Remove(person);
+            }
+            else
+            {
+                InvolvedPersons.Add(person);
+            }
+        }
+
+        private void OnOfficialReportPropertyChanged(object sender, OfficialReport officialReport)
+        {
+            this.officialReport = officialReport;
+            ((ActionCommand)CloseNoticeCommand).RaiseCanExecuteChanged();
+        } 
     }
 }

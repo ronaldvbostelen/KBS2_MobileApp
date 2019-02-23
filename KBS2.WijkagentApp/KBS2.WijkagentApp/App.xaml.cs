@@ -5,6 +5,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
+
 namespace KBS2.WijkagentApp
 {
     public partial class App : Application
@@ -16,9 +17,10 @@ namespace KBS2.WijkagentApp
         {
             InitializeComponent();
 
-            DataController = new DataController();
-
             MainPage = new LoginPage();
+
+            DataController = new DataController();
+            ReportsCollection = new ReportsCollection();
         }
 
         protected override void OnStart()

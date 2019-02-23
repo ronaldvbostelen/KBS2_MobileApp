@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -24,7 +22,7 @@ namespace KBS2.WijkagentApp.ViewModels
         private Person verbalisant;
         private Person verbalisantDbMirror;
         private Person selectedInvolvedPerson;
-        private Person dummyPerson = new Person{PersonId = Guid.NewGuid(), FirstName = "[Keuze ongedaan maken]"};
+        private readonly Person dummyPerson = new Person{PersonId = Guid.NewGuid(), FirstName = "[Keuze ongedaan maken]"};
         private ReportDetails reportDetails;
 
         private ICommand saveCommand;
@@ -33,12 +31,12 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private IEnumerable<ReportDetails> ExistingReportDetails { get; set; }
 
-        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => Save(), x => CanSave()));
-        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(x => Delete(), x => CanDelete()));
-        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => Cancel()));
+        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => SaveAsync(), x => CanSave()));  
+        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(x => DeleteAsync(), x => CanDelete()));
+        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => CancelAsync()));
         public ICommand ValidateCommands { get { return new ActionCommand(x => UpdateCommands()); } }
-
-        public EventHandler NotifyDatabaseChanged;
+        
+        public event EventHandler<ReportDetails> ReportDetailsChanged;
 
         public ObservableCollection<Person> InvolvedPersons { get; set; }
 
@@ -111,32 +109,24 @@ namespace KBS2.WijkagentApp.ViewModels
         {
             this.reportId = reportId;
             this.reportDetails = reportDetails;
-
             Verbalisant = verbalisant;
-            verbalisantDbMirror = CreateDbMirror(Verbalisant);
 
-            SetPickers(Verbalisant);
-            UpdateCommands();
+            Initialize();
         }
 
-        public VerbalisantViewModel(ObservableCollection<Person> persons, Guid reportId, IEnumerable<ReportDetails> reportDetails) 
-            : this (new Person { BirthDate = new DateTime(1950, 01, 01) }, reportId, new ReportDetails())
+        public VerbalisantViewModel(ObservableCollection<Person> persons, Guid reportId, IEnumerable<ReportDetails> reportDetails)
+            : this(new Person { BirthDate = new DateTime(1950, 01, 01) }, reportId, new ReportDetails())
         {
             InvolvedPersons = persons;
             InvolvedPersons.Add(dummyPerson);
             ExistingReportDetails = reportDetails;
         }
 
-        private async Task<bool> SaveNewVerbalisant(Person verbalisant)
+        private void Initialize()
         {
-            await CreateNewVerbalisantEntry(verbalisant);
-
-            //cause these methodes depend on the new entry we cant call them async (and therefore we wait till the task is completed)
             verbalisantDbMirror = CreateDbMirror(Verbalisant);
             SetPickers(Verbalisant);
             UpdateCommands();
-
-            return true;
         }
 
         private int GenderToIndex(string chr)
@@ -179,32 +169,23 @@ namespace KBS2.WijkagentApp.ViewModels
             verbalisantDbMirror = CreateDbMirror(Verbalisant);
         }
 
-        private async Task<Person> CreateNewVerbalisantEntry(Person verbalisant)
-        {
-            await App.DataController.InsertIntoAsync(verbalisant);
-            verbalisant.id = verbalisant.PersonId;
-            return verbalisant;
-        }
-  
-        private async Task<bool> UpdateReportDetails(ReportDetails reportDetails)
+        private async Task<ReportDetails> UpdateReportDetails(ReportDetails reportDetails)
         {
             if (reportDetails.ReportDetailsId.Equals(Guid.Empty))
             {
                 try
                 {
                     var newReportDetails = new ReportDetails {ReportId = reportId, PersonId = Verbalisant.PersonId, IsHeard = true, Type = "S"};
-                    var insertResult = await App.DataController.InsertIntoAsync(newReportDetails);
+                    newReportDetails = await App.DataController.InsertIntoAsync(newReportDetails);
+                    newReportDetails.Id = newReportDetails.ReportDetailsId;
 
-                    if (insertResult != HttpStatusCode.OK) throw new HttpRequestException(insertResult.ToString());
-
-                    reportDetails = newReportDetails;
-                    reportDetails.id = reportDetails.ReportDetailsId;
+                    return newReportDetails;
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e);
                     await Application.Current.MainPage.DisplayAlert("Opslaan procesverbaal-detailgegevens mislukt", "Probeer later opnieuw", "Ok");
-                    return false;
+                    return null;
                 }
             }
             else
@@ -213,26 +194,26 @@ namespace KBS2.WijkagentApp.ViewModels
                 {
                     reportDetails.IsHeard = true;
                     await App.DataController.ReportDetailsTable.UpdateAsync(reportDetails);
+                    return reportDetails;
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e);
                     await Application.Current.MainPage.DisplayAlert("Bijwerken procesverbaal-detailgegevens mislukt", "Probeer later opnieuw", "Ok");
-                    return false;
+                    return null;
                 }
             }
-            OnDatabaseChanged();
-            return true;
         }
          
 
-        private async Task<bool> ResetVerbalisant()
+        private async Task<bool> Reset()
         {
             if (string.IsNullOrWhiteSpace(reportDetails.Statement))
             {
                 try
                 {
-                    UpdateIsHeard(false);
+                    await UpdateIsHeard(false);
+                    await DeleteDescription();
                     return true;
                 }
                 catch (Exception e)
@@ -246,8 +227,7 @@ namespace KBS2.WijkagentApp.ViewModels
             await Application.Current.MainPage.DisplayAlert("Verklaring aanwezig", "Verwijder eerst verklaring, alvorens overige gegevens te verwijderen.", "Ok");
             return false;
         }
-
-
+        
         private void SetReportDetails(Person verbalisant)
         {
             if (verbalisant == null)
@@ -269,96 +249,129 @@ namespace KBS2.WijkagentApp.ViewModels
             
         }
 
-        private async void Cancel()
+        private async Task CancelAsync()
         {
             if (CanSave())
             {
                 var result = await Application.Current.MainPage.DisplayAlert("Bevestig annuleren", "Gegevens zijn gewijzigd, gewijzigde gegevens opslaan?", "Ja", "Nee");
-
-                // ignore these warnings
+                
                 if (result)
                 {
-                    SaveVerbalisant(Verbalisant); UpdateReportDetails(reportDetails);
-                }
-                else
-                {
-                    RestoreVerbalisantValues();
+                    if (Verbalisant.Description != null)
+                    {
+                        var saveTask = SaveVerbalisant(Verbalisant);
+                        var updateTask = UpdateReportDetails(reportDetails);
+
+                        await saveTask;
+                        await updateTask;
+
+                        OnReportDetailsChanged(reportDetails);
+                    }
+                    else
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Beschrijving ontbreekt", "Selecteer a.u.b. een beschrijving", "Ok");
+                        return;
+                    }
                 }
             }
 
             await Application.Current.MainPage.Navigation.PopModalAsync();
         }
 
-        private async void Delete()
+        private async Task DeleteAsync()
         {
             var result = await Application.Current.MainPage.DisplayAlert("Bevestig verwijderen", "Alle verbalisant-gegevens verwijderen?", "Ja", "Nee");
             if (result)
             {
-                var confirmDelete = await ResetVerbalisant();
-                if (confirmDelete)
-                {
-                    verbalisantDbMirror = null;
 
-                    //ignore this warning
-                    Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens verwijderd","Ok");
-                    await Application.Current.MainPage.Navigation.PopModalAsync();
+                var resetTask = Reset();
+
+                if (await resetTask)
+                {
+                    OnReportDetailsChanged(reportDetails);
+                    await Application.Current.MainPage.Navigation.PopModalAsync();   
                 }
             };
         }
 
-        private async Task<bool> SaveVerbalisant(Person verbalisant)
+        private async Task<Person> SaveVerbalisant(Person verbalisant)
         {
-                if (Verbalisant.PersonId.Equals(Guid.Empty))
-                {
-                    try
-                    {
-                    await SaveNewVerbalisant(verbalisant);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e);
-                        await Application.Current.MainPage.DisplayAlert("Mislukt", "Sorry, er ging iets mis tijdens het aanmaken van de gegevens. Probeer opnieuw", "Ok");
-                        return false;
-                    }
-                }
-                else
-                {
-                    try
-                    {
-                        await App.DataController.UpdateSetAsync(verbalisant);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e);
-                        await Application.Current.MainPage.DisplayAlert("Mislukt", "Sorry, er ging iets mis tijdens het bijwerken van de gegevens. Probeer opnieuw", "Ok");
-                    }   
-                }
-            verbalisantDbMirror = CreateDbMirror(verbalisant);
-            UpdateCommands();
-            OnDatabaseChanged();
-            return true;
-        }
-
-
-        private async void Save()
-        {
-            var saveSucceed = await SaveVerbalisant(Verbalisant);
-            var saveReportDetailsSucceed = await UpdateReportDetails(reportDetails);
-
-            if (saveSucceed && saveReportDetailsSucceed)
+            if (Verbalisant.PersonId.Equals(Guid.Empty))
             {
-                //ignore this warning
-                Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens opgeslagen", "Ok");
-
-                await Application.Current.MainPage.Navigation.PopModalAsync();
+                try
+                {
+                    verbalisant = await SaveNewVerbalisant(verbalisant);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    await Application.Current.MainPage.DisplayAlert("Mislukt", "Sorry, er ging iets mis tijdens het aanmaken van de gegevens. Probeer opnieuw", "Ok");
+                    return null;
+                }
             }
             else
             {
-                await Application.Current.MainPage.DisplayAlert("Mislukt", "Er ging iets mis tijdens het opslaan. Probeer opnieuw", "Ok"); 
+                try
+                {
+                    await App.DataController.UpdateSetAsync(verbalisant);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    await Application.Current.MainPage.DisplayAlert("Mislukt", "Sorry, er ging iets mis tijdens het bijwerken van de gegevens. Probeer opnieuw", "Ok");
+                    return null;
+                }
+            }
+            return verbalisant;
+        }
+        
+        private async Task SaveAsync()
+        {
+            if (Verbalisant.Description != null)
+            {
+                Verbalisant = await SaveVerbalisant(Verbalisant);
+                reportDetails = await UpdateReportDetails(reportDetails);
+
+                verbalisantDbMirror = CreateDbMirror(Verbalisant);
+                UpdateCommands();
+                OnReportDetailsChanged(reportDetails);
+
+                if (Verbalisant != null && reportDetails != null)
+                {
+                    var popModalTask = Application.Current.MainPage.Navigation.PopModalAsync();
+
+                    await Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens opgeslagen", "Ok");
+
+                    await popModalTask;
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Mislukt", "Er ging iets mis tijdens het opslaan. Probeer opnieuw", "Ok");
+                }
+            }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert("Beschrijving ontbreekt", "Selecteer a.u.b. een beschrijving", "Ok");
             }
         }
 
-        
+        private async Task<Person> SaveNewVerbalisant(Person verbalisant)
+        {
+            try
+            {
+                await App.DataController.InsertIntoAsync(verbalisant);
+                verbalisant.Id = verbalisant.PersonId;
+
+                return verbalisant;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                await Application.Current.MainPage.DisplayAlert("Mislukt", "Er ging iets mis tijdens het opslaan van de verbalisant. Probeer opnieuw", "Ok");
+                return null;
+            }
+        }
+
         private bool CanSave() => Verbalisant !=null && !Verbalisant.Equals(verbalisantDbMirror);
 
         private bool CanDelete() => Verbalisant != null;
@@ -368,25 +381,35 @@ namespace KBS2.WijkagentApp.ViewModels
             ((ActionCommand)DeleteCommand).RaiseCanExecuteChanged();
             ((ActionCommand)SaveCommand).RaiseCanExecuteChanged();
         }
-
-
-        private async void UpdateIsHeard(bool b)
+        
+        private async Task UpdateIsHeard(bool b)
         {
             try
             {
                 reportDetails.IsHeard = b;
                 await App.DataController.UpdateSetAsync(reportDetails);
-                OnDatabaseChanged();
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                await Application.Current.MainPage.DisplayAlert("Er ging iets mis..", "Toevoegen verbalisant mislukt", "Ok");
+                await Application.Current.MainPage.DisplayAlert("Er ging iets mis..", "Verwijderen verbalisant mislukt", "Ok");
             }
         }
 
+        private async Task DeleteDescription()
+        {
+            try
+            {
+                Verbalisant.Description = null;
+                await App.DataController.UpdateSetAsync(Verbalisant);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                await Application.Current.MainPage.DisplayAlert("Er ging iets mis..", "Verwijderen verbalisant mislukt", "Ok");
+            }
+        }
 
-        //temp way of mirriring database compare
         private Person CreateDbMirror(Person verbalisant)
         {
            return new Person
@@ -403,21 +426,9 @@ namespace KBS2.WijkagentApp.ViewModels
             };
         }
 
-        private void RestoreVerbalisantValues()
+        protected virtual void OnReportDetailsChanged(ReportDetails details)
         {
-            Verbalisant.SocialSecurityNumber = verbalisantDbMirror.SocialSecurityNumber;
-            Verbalisant.EmailAddress = verbalisantDbMirror.EmailAddress;
-            Verbalisant.PhoneNumber = verbalisantDbMirror.PhoneNumber;
-            Verbalisant.BirthDate = verbalisantDbMirror.BirthDate;
-            Verbalisant.Description = verbalisantDbMirror.Description;
-            Verbalisant.FirstName = verbalisantDbMirror.FirstName;
-            Verbalisant.LastName = verbalisantDbMirror.LastName;
-            Verbalisant.Gender = verbalisantDbMirror.Gender;
-        }
-
-        protected virtual void OnDatabaseChanged()
-        {
-            NotifyDatabaseChanged?.Invoke(this, EventArgs.Empty);
+            ReportDetailsChanged?.Invoke(this, details);
         }
     }
 }

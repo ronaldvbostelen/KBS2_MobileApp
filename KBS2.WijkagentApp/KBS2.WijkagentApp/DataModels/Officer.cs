@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using KBS2.WijkagentApp.Models.Interfaces;
 using Newtonsoft.Json;
 
 namespace KBS2.WijkagentApp.DataModels

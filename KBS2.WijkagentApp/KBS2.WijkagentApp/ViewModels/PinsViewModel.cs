@@ -26,10 +26,10 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public PinsViewModel()
         {
-            App.ReportsCollection.Reports.CollectionChanged += Reports_CollectionChanged;
+            App.ReportsCollection.Reports.CollectionChanged += ReportsCollectionChanged;
         }
 
-        private void Reports_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void ReportsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {

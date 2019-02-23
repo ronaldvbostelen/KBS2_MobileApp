@@ -1,13 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:pages="clr-namespace:KBS2.WijkagentApp.Views.Pages;assembly=KBS2.WijkagentApp"
-            xmlns:viewModels="clr-namespace:KBS2.WijkagentApp.ViewModels;assembly=KBS2.WijkagentApp"
             x:Class="KBS2.WijkagentApp.MainPage">
-    <TabbedPage.BindingContext>
-        <viewModels:MainPageViewModel/>
-    </TabbedPage.BindingContext>
     <TabbedPage.Children>
         <NavigationPage Title="Map">
             <NavigationPage.Icon>
