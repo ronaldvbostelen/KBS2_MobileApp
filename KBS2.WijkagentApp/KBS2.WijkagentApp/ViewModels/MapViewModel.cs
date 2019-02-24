@@ -10,6 +10,7 @@ using TK.CustomMap;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading.Tasks;
 using KBS2.WijkagentApp.DataModels;
 using System.Diagnostics;
 
@@ -22,26 +23,39 @@ namespace KBS2.WijkagentApp.ViewModels
         private MapSpan mapRegion = MapSpan.FromCenterAndRadius(new Position(52.4996, 6.07895), Distance.FromKilometers(500)); //preventing nullpointerexception
         private bool showingUser;
 
-        public ObservableCollection<TKCustomMapPin> Pins { get { return pins; } private set { if (value != pins) { pins = value; NotifyPropertyChanged();} } }
-        public TKCustomMapPin SelectedPin { get { return selectedPin; } set { if (value != selectedPin) { selectedPin = value; NotifyPropertyChanged();} } }
-        public MapSpan MapRegion { get { return mapRegion; } set { if (value != mapRegion) { mapRegion = value; NotifyPropertyChanged();} } }
+        public ObservableCollection<TKCustomMapPin> Pins { get { return pins; } private set { if (value != pins) { pins = value; NotifyPropertyChanged(); } } }
+        public TKCustomMapPin SelectedPin { get { return selectedPin; } set { if (value != selectedPin) { selectedPin = value; NotifyPropertyChanged(); } } }
+        public MapSpan MapRegion { get { return mapRegion; } set { if (value != mapRegion) { mapRegion = value; NotifyPropertyChanged(); } } }
         public bool ShowingUser { get { return showingUser; } set { if (value != showingUser) { showingUser = value; NotifyPropertyChanged(); } } }
 
-        public MapType MapType { get; }
-        public bool RegionChangeAnimated { get; }
-        
+        public MapType MapType { get; set; }
+        public bool RegionChangeAnimated { get; set; }
+
+        public ICommand CalloutClickedCommand { get { return new ActionCommand(x => CalloutClicked(x)); } }
+        public ICommand SelectedPinCommand { get { return new ActionCommand(pin => PinSelect(pin), pin => PinExists(pin)); } }
+        public ICommand MapLongPressCommand { get { return new ActionCommand(position => MapLongPress((Position)position)); } }
+
         //creates a xamarin map instance and sets the currentlocation and loaded pins
         public MapViewModel()
         {
             MapType = MapType.Hybrid;
             RegionChangeAnimated = true;
-            SetInitialLocation();
+
+            var initTask = InitializeAsync();
 
             //subscribe to collectionchanged event of central reportslist
-            App.ReportsCollection.Reports.CollectionChanged += Reports_CollectionChanged;
+            App.ReportsCollection.Reports.CollectionChanged += ReportsCollectionChanged;
+        }
+
+        private async Task InitializeAsync()
+        {
+            var currentPositionTask = GetCurrentLocationAsync();
 
             // set pins on map (based of central list)
             Pins = new ObservableCollection<TKCustomMapPin>(App.ReportsCollection.Reports.Select(PinCreator));
+
+            MapRegion = await currentPositionTask;
+            ShowingUser = MapRegion != null;
         }
 
         private void Reports_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -51,7 +65,7 @@ namespace KBS2.WijkagentApp.ViewModels
                 // little failsave =D
                 if (e.OldItems.Count > 0)
                 {
-                    var removedItem = (Report) e.OldItems[0];
+                    var removedItem = (Report)e.OldItems[0];
                     // so we search in the pinslist for the removed items coordinates so we can assume that pin/report is deleted
 
                     // UI change, therefore we need the Mainthread
@@ -67,19 +81,19 @@ namespace KBS2.WijkagentApp.ViewModels
                 // little failsave =D
                 if (e.NewItems.Count > 0)
                 {
-                    var newReport = (Report) e.NewItems[0];
+                    var newReport = (Report)e.NewItems[0];
                     // UI change, therefore we need the Mainthread
                     Device.BeginInvokeOnMainThread(() =>
                     {
                         Pins.Add(PinCreator(newReport));
                     });
-                    
+
                 }
             }
         }
 
         //async method to set the current location, this uses the permissionplugin to request the needed permission to get the GPS 
-        async void SetInitialLocation() 
+        async Task<MapSpan> GetCurrentLocationAsync()
         {
             try
             {
@@ -89,44 +103,37 @@ namespace KBS2.WijkagentApp.ViewModels
                     var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Location);
                     status = results[Permission.Location];
                 }
-
                 if (status == PermissionStatus.Granted)
                 {
                     var locator = CrossGeolocator.Current;
                     var position = await locator.GetPositionAsync();
-                    MapRegion = MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMeters(125));
-                    ShowingUser = true;
+                    return MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMeters(125));
                 }
             }
             catch (Exception ex)
             {
-                Console.Write("Error: " + ex);
+                Debug.Write("Error: " + ex);
             }
+            return null;
         }
-
-        public ICommand CalloutClickedCommand { get { return new ActionCommand(x => CalloutClicked(x)); } }
-
-        public ICommand SelectedPinCommand { get { return new ActionCommand(pin => PinSelect(pin), pin => PinExists(pin)); } }
-
-        public ICommand MapLongPressCommand { get { return new ActionCommand(position => MapLongPress((Position)position)); } }
 
         //based on the pin-object it searches the report and then creates a NoticeDetailPage
         private void CalloutClicked(object pin)
         {
-            var clickedPin = (TKCustomMapPin) pin;
+            var clickedPin = (TKCustomMapPin)pin;
             var clickedReport = App.ReportsCollection.Reports.First(x => x.Latitude.Equals(clickedPin.Position.Latitude) && x.Longitude.Equals(clickedPin.Position.Longitude));
-            
+
             Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel(clickedReport)));
         }
-            
-        private void PinSelect(object pin) => SelectedPin = (TKCustomMapPin) pin;
-        
+
+        private void PinSelect(object pin) => SelectedPin = (TKCustomMapPin)pin;
+
         private void MapLongPress(Position position) => Application.Current.MainPage.Navigation.PushModalAsync(new NewNoticePage(new NewNoticeViewModel(position)));
 
-        private bool PinExists(object pin) => Pins.Contains((TKCustomMapPin) pin);
+        private bool PinExists(object pin) => Pins.Contains((TKCustomMapPin)pin);
 
         //creates a pin based on database entry
-        public TKCustomMapPin PinCreator(Report report)
+        private TKCustomMapPin PinCreator(Report report)
         {
             try
             {
@@ -148,6 +155,30 @@ namespace KBS2.WijkagentApp.ViewModels
                 Debug.WriteLine(e);
                 Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Weergeven map-pin(nen) mislukt. Probeer later opnieuw", "OK");
                 return null;
+            }
+        }
+
+        private void ReportsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                // little failsave =D
+                if (e.OldItems.Count > 0)
+                {
+                    var removedItem = (Report)e.OldItems[0];
+                    // so we search in the pinslist for the removed items coordinates so we can assume that pin/report is deleted
+                    Pins.Remove(Pins.First(x => x.Position.Equals(new Position(removedItem.Latitude ?? 0, removedItem.Longitude ?? 0))));
+                }
+            }
+
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                // little failsave =D
+                if (e.NewItems.Count > 0)
+                {
+                    var newReport = (Report)e.NewItems[0];
+                    Pins.Add(PinCreator(newReport));
+                }
             }
         }
     }

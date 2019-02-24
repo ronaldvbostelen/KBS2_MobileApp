@@ -81,20 +81,20 @@ namespace KBS2.WijkagentApp.DataModels
             }
         }
 
-        public TimeSpan ReportTime
+        public TimeSpan OfficialReportTime
         {
             get { return Time.Value.TimeOfDay; }
             set {
                 if (value != Time.Value.TimeOfDay)
                 {
                     Time = new DateTime(Time.Value.Year, Time.Value.Month, Time.Value.Day, value.Hours, value.Minutes, value.Seconds, value.Milliseconds);
-                    NotifyPropertyChanged(nameof(Time), nameof(ReportTime));
+                    NotifyPropertyChanged(nameof(Time), nameof(OfficialReportTime));
                 }
             }
 
         }
 
-        public DateTime ReportDate
+        public DateTime OfficialReportDate
         {
             get { return Time.Value.Date; }
             set
@@ -102,7 +102,7 @@ namespace KBS2.WijkagentApp.DataModels
                 if (value != Time.Value.Date)
                 {
                     Time = new DateTime(value.Year,value.Month,value.Day,Time.Value.Hour, Time.Value.Minute, Time.Value.Second, Time.Value.Millisecond);
-                    NotifyPropertyChanged(nameof(Time), nameof(ReportDate));
+                    NotifyPropertyChanged(nameof(Time), nameof(OfficialReportDate));
                 }
             }
         }
@@ -113,7 +113,7 @@ namespace KBS2.WijkagentApp.DataModels
 
             OfficialReport report = (OfficialReport)obj;
 
-            return id.Equals(report.id) && reportId.Equals(report.ReportId)
+            return Id.Equals(report.Id) && reportId.Equals(report.ReportId)
                                         && reporterId.Equals(report.ReporterId)
                                         && observation.Equals(report.Observation)
                                         && time.Equals(report.Time)

@@ -2,10 +2,9 @@
 using KBS2.WijkagentApp.ViewModels.Commands;
 using System;
 using System.Diagnostics;
-using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Application = Xamarin.Forms.Application;
+using Xamarin.Forms;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
@@ -22,64 +21,69 @@ namespace KBS2.WijkagentApp.ViewModels
         private ICommand deleteCommand;
         private ICommand cancelCommand;
 
-        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => Save(), x => CanSave()));
-        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(x => Delete(), x => CanDelete()));
-        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => Cancel()));
+        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => SaveAsync(), x => CanSave()));
+        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(x => DeleteAsync(), x => CanDelete()));
+        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => CancelAsync()));
 
         public StatementViewmodel(Person verbalisant, ReportDetails reportDetails)
         {
             Verbalisant = verbalisant;
             this.reportDetails = reportDetails;
 
+            Initialize();
+        }
+
+        private void Initialize()
+        {
             CreateStatementCopies();
         }
-        
-        private async void Cancel()
+
+        private async Task CancelAsync()
         {
             if (Statement != statementDbMirror)
             {
                 var result = await Application.Current.MainPage.DisplayAlert("Bevestig annuleren", "Gegevens zijn gewijzigd, gewijzigde gegevens opslaan?", "Ja", "Nee");
-                if (result) SaveStatement();
+                if (result)
+                {
+                    var saveStatementTask = SaveStatementAsync();
+
+                    CreateStatementCopies();
+                    UpdateCommands();
+
+                    await saveStatementTask;
+                }
             }
 
             await Application.Current.MainPage.Navigation.PopModalAsync();
         }
 
-        private async void SaveStatement()
+        private async Task SaveStatementAsync()
         {
             try
             {
                 reportDetails.Statement = Statement;
                 await App.DataController.UpdateSetAsync(reportDetails);
+                
+                var popModalTask = Application.Current.MainPage.Navigation.PopModalAsync();
 
-                CreateStatementCopies();
+                await Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens opgeslagen", "Ok");
 
-                UpdateCommands();
-
-                //ignore this warning
-                Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens opgeslagen", "Ok");
-
-                await Application.Current.MainPage.Navigation.PopModalAsync();
+                await popModalTask;
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
                 await Application.Current.MainPage.DisplayAlert("Mislukt", "Er ging iets mis tijdens het opslaan van de gegevens. Probeer later opnieuw", "Ok");
             }
-
         }
 
-        private async Task<bool> DeleteStatement()
+        private async Task<bool> DeleteStatementAsync()
         {
             try
             {
                 reportDetails.Statement = string.Empty;
-                var respons = App.DataController.UpdateSetAsync(reportDetails);
-
-                CreateStatementCopies();
-                UpdateCommands();
-
-                return respons.Result.Equals(HttpStatusCode.OK);
+                await App.DataController.UpdateSetAsync(reportDetails);
+                return true;
             }
             catch (Exception e)
             {
@@ -89,23 +93,23 @@ namespace KBS2.WijkagentApp.ViewModels
             }
         }
 
-        private async void Delete()
+        private async Task DeleteAsync()
         {
             var result = await Application.Current.MainPage.DisplayAlert("Bevestig verwijderen", "Verklaring verwijderen?", "Ja", "Nee");
             if (result)
             {
-                var confirmDelete = await DeleteStatement();
-                if (confirmDelete)
+                if (await DeleteStatementAsync())
                 {
-                    //ignore this warning
-                    Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens verwijderd", "Ok");
+                    var popModalTask = Application.Current.MainPage.Navigation.PopModalAsync();
+                    
+                    await Application.Current.MainPage.DisplayAlert("Geslaagd", "Gegevens verwijderd", "Ok");
 
-                    await Application.Current.MainPage.Navigation.PopModalAsync();
+                    await popModalTask;
                 }
-            };
+            }
         }
 
-        private void Save() => SaveStatement();
+        private async Task SaveAsync() => await SaveStatementAsync();
 
         private bool CanSave() => !Statement.Equals(statementDbMirror);
 

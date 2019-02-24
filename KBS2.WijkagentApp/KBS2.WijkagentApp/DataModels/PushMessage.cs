@@ -8,7 +8,7 @@ namespace KBS2.WijkagentApp.DataModels
         private Guid pushMessageId;
         private Guid officerId;
         private string message;
-        public DateTime? time { get; set; }
+        private DateTime? time { get; set; }
         private string location;
         private double? longitude;
         private double? latitude;
