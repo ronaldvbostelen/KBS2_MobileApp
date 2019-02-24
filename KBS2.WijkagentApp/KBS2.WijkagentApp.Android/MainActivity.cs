@@ -1,15 +1,18 @@
-﻿using Android.App;
+﻿using System;
+using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Plugin.CurrentActivity;
 using Plugin.Permissions;
 using Xamarin.Forms;
 using TK.CustomMap.Droid;
+using Android.Content;
 
 namespace KBS2.WijkagentApp.Droid
 {
     //MainLauncher false: splashscreen will be used
     [Activity(Label = "Wijkagent App", Icon = "@drawable/politie_embleem", Theme = "@style/MainTheme", MainLauncher = false, LaunchMode  = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [IntentFilter(new []{ Intent.ActionView }, Categories = new []{Intent.ActionView, Intent.CategoryDefault, Intent.CategoryBrowsable}, DataScheme = "testAppForLinks")]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public static string CHANNEL_ID = "notify";
@@ -24,7 +27,23 @@ namespace KBS2.WijkagentApp.Droid
             
             base.OnCreate(savedInstanceState);
 
-            var data = Intent?.Data?.EncodedAuthority;
+            if (Intent != null && Intent.DataString != null)
+            {
+                try
+                {
+                    string email = "";
+                    email = Intent.Data.GetQueryParameter("email");
+
+                    if (email != null && email != "")
+                    {
+                        Xamarin.Forms.MessagingCenter.Send<string, string>("", "AppLaunchedFromDeepLink", email);
+                    }
+                }
+                catch (Exception e)
+                {
+                    //Catch error
+                }
+            }
 
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
