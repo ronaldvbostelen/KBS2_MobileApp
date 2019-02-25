@@ -29,13 +29,45 @@ namespace KBS2.WijkagentApp.ViewModels
             App.ReportsCollection.Reports.CollectionChanged += ReportsCollectionChanged;
         }
 
+        /*
+         * this method makes it possible that a double tap on a listitem a new modal with details will popup
+         */
+        private void ShowDetailPageOfReport(ItemTappedEventArgs eventArgs)
+        {
+            if (!ReferenceEquals(eventArgs.Item, currentTappedReport))
+            {
+                currentTappedReport = (Report) eventArgs.Item;
+            }
+            else
+            {
+                Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel((Report)eventArgs.Item)));
+                currentTappedReport = null;
+            }
+        }
+
+        /*
+         * !![-DISCLAIMER-]!!
+         * this is some hella ugly code. prolly not up to standards. searched alot and tried alot. pretty hard to navigate + set some parameters
+         * so i came up with this. its prolly temporary, if you got a better way: please inform me / make it better ~RvB
+         */
+        private void ShowPinOnMap(Report report)
+        {
+            TabbedPage tabbed = (TabbedPage) Application.Current.MainPage;
+            NavigationPage mappage = (NavigationPage) tabbed.Children[0];
+            var mapPage = mappage.CurrentPage;
+            MapViewModel mapPageMapViewModel = (MapViewModel) mapPage.BindingContext;
+            mapPageMapViewModel.SelectedPin = mapPageMapViewModel.Pins.First(x => x.Position.Equals(new Position((report.Latitude ?? 0),(report.Longitude ?? 0))));
+            mapPageMapViewModel.MapRegion = MapSpan.FromCenterAndRadius(mapPageMapViewModel.SelectedPin.Position, Distance.FromMeters(35));
+            tabbed.CurrentPage = tabbed.Children[0];
+        }
+
         private void ReportsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
                 if (e.OldItems.Count > 0)
                 {
-                    var removedReport = (Report) e.OldItems[0];
+                    var removedReport = (Report)e.OldItems[0];
                     switch (removedReport.Priority)
                     {
                         case 1:
@@ -76,38 +108,6 @@ namespace KBS2.WijkagentApp.ViewModels
                     }
                 }
             }
-        }
-
-        /*
-         * this method makes it possible that a double tap on a listitem a new modal with details will popup
-         */
-        private void ShowDetailPageOfReport(ItemTappedEventArgs eventArgs)
-        {
-            if (!ReferenceEquals(eventArgs.Item, currentTappedReport))
-            {
-                currentTappedReport = (Report) eventArgs.Item;
-            }
-            else
-            {
-                Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel((Report)eventArgs.Item)));
-                currentTappedReport = null;
-            }
-        }
-
-        /*
-         * !![-DISCLAIMER-]!!
-         * this is some hella ugly code. prolly not up to standards. searched alot and tried alot. pretty hard to navigate + set some parameters
-         * so i came up with this. its prolly temporary, if you got a better way: please inform me / make it better ~RvB
-         */
-        private void ShowPinOnMap(Report report)
-        {
-            TabbedPage tabbed = (TabbedPage) Application.Current.MainPage;
-            NavigationPage mappage = (NavigationPage) tabbed.Children[0];
-            var mapPage = mappage.CurrentPage;
-            MapViewModel mapPageMapViewModel = (MapViewModel) mapPage.BindingContext;
-            mapPageMapViewModel.SelectedPin = mapPageMapViewModel.Pins.First(x => x.Position.Equals(new Position((report.Latitude ?? 0),(report.Longitude ?? 0))));
-            mapPageMapViewModel.MapRegion = MapSpan.FromCenterAndRadius(mapPageMapViewModel.SelectedPin.Position, Distance.FromMeters(35));
-            tabbed.CurrentPage = tabbed.Children[0];
         }
     }
 }
