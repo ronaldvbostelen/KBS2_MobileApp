@@ -4,17 +4,6 @@
           package="com.companyname.Wijkagent_App">
   <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="27" />
   <application android:label="Wijkagent App">
-    <activity
-      android:name=".MainActivity"
-      android:label="A deeplink!" >
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="test"
-              android:host="wijkagent" />
-      </intent-filter>
-    </activity>
     <meta-data android:name="com.google.android.maps.v2.API_KEY"
                android:value="AIzaSyCRz3fE0BEIPYYvrS8L9sAznIzk3WvUFbw" />
     <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
