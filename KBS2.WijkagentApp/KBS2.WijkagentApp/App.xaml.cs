@@ -1,6 +1,7 @@
 ﻿using KBS2.WijkagentApp.DataModels.Collections;
 using KBS2.WijkagentApp.Models.DataControllers;
 using KBS2.WijkagentApp.Views.Pages;
+using TK.CustomMap.Api.Google;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -21,6 +22,9 @@ namespace KBS2.WijkagentApp
 
             DataController = new DataController();
             ReportsCollection = new ReportsCollection();
+
+            GmsPlace.Init("AIzaSyCRz3fE0BEIPYYvrS8L9sAznIzk3WvUFbw");
+            GmsDirection.Init("AIzaSyCzNkb9SgLoEkkRAmsSBafZmrPDYf7Pe0w");
         }
 
         protected override void OnStart()
