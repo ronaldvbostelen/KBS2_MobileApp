@@ -27,23 +27,13 @@ namespace KBS2.WijkagentApp.Droid
             
             base.OnCreate(savedInstanceState);
 
-            if (Intent != null && Intent.DataString != null)
-            {
-                try
-                {
-                    string email = "";
-                    email = Intent.Data.GetQueryParameter("email");
+            // Get the latitude en longitude from the push notification
+            double originLatitude = Intent.Extras.GetDouble("originLatitude", 0);
+            double originLongitude = Intent.Extras.GetDouble("originLongitude", 0);
+            double destinationLatitude = Intent.Extras.GetDouble("destinationLatitude", 0);
+            double destinationLongitude = Intent.Extras.GetDouble("destinationLongitude", 0);
 
-                    if (email != null && email != "")
-                    {
-                        Xamarin.Forms.MessagingCenter.Send<string, string>("", "AppLaunchedFromDeepLink", email);
-                    }
-                }
-                catch (Exception e)
-                {
-                    //Catch error
-                }
-            }
+            // bovenstaande waardes doorgeven aan de PinsViewModel om de route te berekenen
 
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
