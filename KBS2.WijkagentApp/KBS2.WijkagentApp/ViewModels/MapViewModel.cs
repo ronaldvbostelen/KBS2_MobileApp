@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.ViewModels.Interfaces;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
@@ -54,10 +55,12 @@ namespace KBS2.WijkagentApp.ViewModels
             // set pins on map (based of central list)
             Pins = new ObservableCollection<TKCustomMapPin>(App.ReportsCollection.Reports.Select(PinCreator));
 
+            MessagingCenter.Subscribe<IBroadcastReport, Report>(this, "A Report Is Selected", (sender,report) => SetMapFocus(report));
+
             MapRegion = await currentPositionTask;
             ShowingUser = MapRegion != null;
         }
-
+        
         //async method to set the current location, this uses the permissionplugin to request the needed permission to get the GPS 
         async Task<MapSpan> GetCurrentLocationAsync() 
         {
@@ -121,6 +124,20 @@ namespace KBS2.WijkagentApp.ViewModels
                 Debug.WriteLine(e);
                 Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Weergeven map-pin(nen) mislukt. Probeer later opnieuw", "OK");
                 return null;
+            }
+        }
+
+        private void SetMapFocus(Report report)
+        {
+            try
+            {
+                SelectedPin = Pins.First(x => x.Position.Equals(new Position(report.Latitude ?? 0, report.Longitude ?? 0)));
+                MapRegion = MapSpan.FromCenterAndRadius(SelectedPin.Position, Distance.FromMeters(35));
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Weergeven map-pin mislukt. Probeer later opnieuw", "OK");
             }
         }
 

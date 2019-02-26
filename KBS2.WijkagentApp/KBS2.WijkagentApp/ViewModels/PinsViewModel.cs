@@ -5,13 +5,13 @@ using System.Windows.Input;
 using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.Extensions;
 using KBS2.WijkagentApp.ViewModels.Commands;
+using KBS2.WijkagentApp.ViewModels.Interfaces;
 using KBS2.WijkagentApp.Views.Pages;
-using TK.CustomMap;
 using Xamarin.Forms;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
-    public class PinsViewModel : BaseViewModel
+    public class PinsViewModel : BaseViewModel, IBroadcastReport
     {
         private Report currentTappedReport;
         private ICommand showPinOnMapCommand;
@@ -23,6 +23,8 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public ICommand ShowPinOnMapCommand => showPinOnMapCommand ?? (showPinOnMapCommand = new ActionCommand(report => ShowPinOnMap((Report)report)));
         public ICommand ItemTappedCommand => itemTappedCommand ?? (itemTappedCommand = new ActionCommand(eventArgs => ShowDetailPageOfReport((ItemTappedEventArgs)eventArgs)));
+
+        public Report Report { get; set; }
 
         public PinsViewModel()
         {
@@ -95,19 +97,16 @@ namespace KBS2.WijkagentApp.ViewModels
         }
 
         /*
-         * !![-DISCLAIMER-]!!
-         * this is some hella ugly code. prolly not up to standards. searched alot and tried alot. pretty hard to navigate + set some parameters
-         * so i came up with this. its prolly temporary, if you got a better way: please inform me / make it better ~RvB
+         * we send a message with messagingcenter containing the selected report object, after that we move to out first (map) page
          */
         private void ShowPinOnMap(Report report)
         {
-            TabbedPage tabbed = (TabbedPage) Application.Current.MainPage;
-            NavigationPage mappage = (NavigationPage) tabbed.Children[0];
-            var mapPage = mappage.CurrentPage;
-            MapViewModel mapPageMapViewModel = (MapViewModel) mapPage.BindingContext;
-            mapPageMapViewModel.SelectedPin = mapPageMapViewModel.Pins.First(x => x.Position.Equals(new Position((report.Latitude ?? 0),(report.Longitude ?? 0))));
-            mapPageMapViewModel.MapRegion = MapSpan.FromCenterAndRadius(mapPageMapViewModel.SelectedPin.Position, Distance.FromMeters(35));
-            tabbed.CurrentPage = tabbed.Children[0];
+            Report = report;
+
+            MessagingCenter.Send<IBroadcastReport, Report>(this, "A Report Is Selected", Report);
+
+            ((TabbedPage)Application.Current.MainPage).CurrentPage = ((TabbedPage)Application.Current.MainPage).Children[0];
         }
+
     }
 }
