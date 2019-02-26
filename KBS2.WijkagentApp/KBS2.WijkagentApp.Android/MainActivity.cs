@@ -27,13 +27,16 @@ namespace KBS2.WijkagentApp.Droid
             
             base.OnCreate(savedInstanceState);
 
-            // Get the latitude en longitude from the push notification
-            double originLatitude = Intent.Extras.GetDouble("originLatitude", 0);
-            double originLongitude = Intent.Extras.GetDouble("originLongitude", 0);
-            double destinationLatitude = Intent.Extras.GetDouble("destinationLatitude", 0);
-            double destinationLongitude = Intent.Extras.GetDouble("destinationLongitude", 0);
+            if (Intent != null)
+            {
+                // Get the latitude en longitude from the push notification
+                double originLatitude = Intent.Extras.GetDouble("originLatitude", 0);
+                double originLongitude = Intent.Extras.GetDouble("originLongitude", 0);
+                double destinationLatitude = Intent.Extras.GetDouble("destinationLatitude", 0);
+                double destinationLongitude = Intent.Extras.GetDouble("destinationLongitude", 0);
 
-            // bovenstaande waardes doorgeven aan de PinsViewModel om de route te berekenen
+                // bovenstaande waardes doorgeven aan de PinsViewModel om de route te berekenen
+            }
 
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
