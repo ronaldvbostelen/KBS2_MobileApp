@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <Folder Include="DataModels\Delegates\" />
-    <Folder Include="DataModels\Interfaces\" />
     <Folder Include="Models\DataProviders\" />
     <Folder Include="Services\Interfaces\" />
     <Folder Include="Views\Attached\" />

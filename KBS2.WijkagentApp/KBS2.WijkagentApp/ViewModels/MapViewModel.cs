@@ -13,6 +13,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using KBS2.WijkagentApp.DataModels;
 using System.Diagnostics;
+using KBS2.WijkagentApp.DataModels.Interfaces;
+using TK.CustomMap.Overlays;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
@@ -24,6 +26,7 @@ namespace KBS2.WijkagentApp.ViewModels
         private bool showingUser;
 
         public ObservableCollection<TKCustomMapPin> Pins { get { return pins; } private set { if (value != pins) { pins = value; NotifyPropertyChanged(); } } }
+        public ObservableCollection<TKRoute> Routes { get; set; }
         public TKCustomMapPin SelectedPin { get { return selectedPin; } set { if (value != selectedPin) { selectedPin = value; NotifyPropertyChanged(); } } }
         public MapSpan MapRegion { get { return mapRegion; } set { if (value != mapRegion) { mapRegion = value; NotifyPropertyChanged(); } } }
         public bool ShowingUser { get { return showingUser; } set { if (value != showingUser) { showingUser = value; NotifyPropertyChanged(); } } }
@@ -53,6 +56,9 @@ namespace KBS2.WijkagentApp.ViewModels
 
             // set pins on map (based of central list)
             Pins = new ObservableCollection<TKCustomMapPin>(App.ReportsCollection.Reports.Select(PinCreator));
+            Routes = new ObservableCollection<TKRoute>();
+
+            MessagingCenter.Subscribe<IRoute, TKRoute>(this, "Route", (sender, args) => Device.BeginInvokeOnMainThread(() => Routes.Add(args)));
 
             MapRegion = await currentPositionTask;
             ShowingUser = MapRegion != null;

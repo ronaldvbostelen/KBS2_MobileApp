@@ -29,6 +29,7 @@ namespace KBS2.WijkagentApp.Views.Pages
             map.SetBinding(TKCustomMap.PinSelectedCommandProperty, "SelectedPinCommand");
             map.SetBinding(TKCustomMap.MapLongPressCommandProperty, "MapLongPressCommand");
             map.SetBinding(TKCustomMap.CalloutClickedCommandProperty, "CalloutClickedCommand");
+            map.SetBinding(TKCustomMap.RoutesProperty, "Routes");
             MapLayout.Content = map;
         }
 

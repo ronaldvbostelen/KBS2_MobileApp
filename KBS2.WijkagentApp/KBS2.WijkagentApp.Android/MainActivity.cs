@@ -12,7 +12,6 @@ namespace KBS2.WijkagentApp.Droid
 {
     //MainLauncher false: splashscreen will be used
     [Activity(Label = "Wijkagent App", Icon = "@drawable/politie_embleem", Theme = "@style/MainTheme", MainLauncher = false, LaunchMode  = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    [IntentFilter(new []{ Intent.ActionView }, Categories = new []{Intent.ActionView, Intent.CategoryDefault, Intent.CategoryBrowsable}, DataScheme = "testAppForLinks")]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public static string CHANNEL_ID = "notify";
@@ -26,17 +25,6 @@ namespace KBS2.WijkagentApp.Droid
             CrossCurrentActivity.Current.Activity = this;
             
             base.OnCreate(savedInstanceState);
-
-            if (Intent != null)
-            {
-                // Get the latitude en longitude from the push notification
-                double originLatitude = Intent.Extras.GetDouble("originLatitude", 0);
-                double originLongitude = Intent.Extras.GetDouble("originLongitude", 0);
-                double destinationLatitude = Intent.Extras.GetDouble("destinationLatitude", 0);
-                double destinationLongitude = Intent.Extras.GetDouble("destinationLongitude", 0);
-
-                // bovenstaande waardes doorgeven aan de PinsViewModel om de route te berekenen
-            }
 
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
