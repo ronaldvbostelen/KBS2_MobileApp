@@ -9,6 +9,7 @@ using Xamarin.Forms.Internals;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using KBS2.WijkagentApp.DataModels.EventArgs;
 using KBS2.WijkagentApp.Extensions;
 
 namespace KBS2.WijkagentApp.ViewModels
@@ -27,20 +28,20 @@ namespace KBS2.WijkagentApp.ViewModels
         private ObservableCollection<Person> allInvolvedPersons;
         private ObservableCollection<ReportDetails> reportDetails;
 
-        public string Note { get { return noteDetails.Statement; } set { if (value != noteDetails.Statement) { noteDetails.Statement = value; NotifyPropertyChanged(); ((ActionCommand)CloseNoticeCommand).RaiseCanExecuteChanged(); } } }
         public Report Report { get; }
+        public string Note { get { return noteDetails.Statement; } set { if (value != noteDetails.Statement) { noteDetails.Statement = value; NotifyPropertyChanged(); ((ActionCommand)CloseNoticeCommand).RaiseCanExecuteChanged(); } } }
         public ObservableCollection<Person> InvolvedPersons { get { return involvedPersons; } set { if (value != involvedPersons) { involvedPersons = value; NotifyPropertyChanged(); } } }
         public ICommand OfficialReportCommand => officalReportCommand ?? (officalReportCommand = new ActionCommand(report => GoToOfficialReportPage((Report)report), x => CanGoToReportPage()));
         public ICommand CloseNoticeCommand => closeNoticeCommand ?? (closeNoticeCommand = new ActionCommand(report => CloseReportAsync(), x => CanCloseReport()));
-        public bool SwitchToggleIsEnabled { get { return switchToggleIsEnabled; } set { if (value != switchToggleIsEnabled) { switchToggleIsEnabled = value; NotifyPropertyChanged(); } } }
-        public bool CloseButtonIsEnabled { get { return closeButtonIsEnabled; } set { if (value != closeButtonIsEnabled) { closeButtonIsEnabled = value; NotifyPropertyChanged(); } } }
+        public bool SwitchToggleIsEnabled { get { return switchToggleIsEnabled; } set { if (value != switchToggleIsEnabled) { switchToggleIsEnabled = value; NotifyPropertyChanged(nameof(SwitchToggleIsEnabled), nameof(NoteEditorIsEnabled)); } } }
+        public bool NoteEditorIsEnabled => switchToggleIsEnabled;
 
         public bool SwitchToggle
         {
             get { return switchToggle; }
             set
             {
-                if (value != switchToggle)
+                if (value != switchToggle && SwitchToggleIsEnabled)
                 {
                     switchToggle = value;
                     var editReportTask = EditReportAsync(value);
@@ -60,8 +61,11 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private async Task InitializeAsync()
         {
+            Task<Person> getProcessingOfficerTask = null;
+
             var reportDetailsTask = GetReportDetailsAsync();
             var officalReportTask = GetOfficialReportAsync();
+            if (Report.ProcessedBy != null & !Report.ProcessedBy.Equals(User.Id)) getProcessingOfficerTask = GetProcessingOfficerAsync(Report.ProcessedBy);
 
             //so only when the report is active or the procced officer is the user the swich is enabled
             SwitchToggleIsEnabled = Report.Status == "A" || Report.ProcessedBy.Equals(User.Id);
@@ -79,14 +83,18 @@ namespace KBS2.WijkagentApp.ViewModels
 
             officialReport = await officalReportTask;
 
-            CloseButtonIsEnabled = CanCloseReport();
-
             ((ActionCommand)CloseNoticeCommand).RaiseCanExecuteChanged();
 
             allInvolvedPersons = await involvedPersonsTask;
             
             //we only display the persons with a filled description
             InvolvedPersons = allInvolvedPersons.Where(x => x.Description != null).EnumerableToObservableCollection();
+
+            if (getProcessingOfficerTask != null)
+            {
+                var processingOfficer = await getProcessingOfficerTask;
+                Note = $"Deze melding is reeds in behandeling bij uw collega: {processingOfficer.FullName}. U kunt deze melding daarom niet in behandeling nemen of acties op uitvoeren.";
+            }
         }
         
         private async Task<ObservableCollection<ReportDetails>> GetReportDetailsAsync()
@@ -192,9 +200,9 @@ namespace KBS2.WijkagentApp.ViewModels
             }
         }
 
-        private bool CanGoToReportPage() => SwitchToggle;
+        private bool CanGoToReportPage() => SwitchToggle && Report.ProcessedBy.Equals(User.Id);
 
-        private bool CanCloseReport() => User.Id.Equals(Report.ProcessedBy) && !String.IsNullOrWhiteSpace(Note) && SwitchToggle || officialReport != null && !string.IsNullOrWhiteSpace(officialReport.Observation);
+        private bool CanCloseReport() => User.Id.Equals(Report.ProcessedBy) && (!String.IsNullOrWhiteSpace(Note) || officialReport != null && !string.IsNullOrWhiteSpace(officialReport.Observation));
 
         private void GoToOfficialReportPage(Report report)
         {
@@ -262,22 +270,39 @@ namespace KBS2.WijkagentApp.ViewModels
             mirrorNote = string.Copy(noteDetails.Statement);
             return null;
         }
-        
-        private void OnInvolvedPersonChanged(object sender, Person person)
+
+        private async Task<Person> GetProcessingOfficerAsync(Guid? proccessingofficerId)
         {
-            if (person.Description == null)
+            try
             {
-                InvolvedPersons.Remove(person);
+                // get officer record..
+                var lookupOfficer = await App.DataController.OfficerTable.LookupAsync(proccessingofficerId);
+                // get person record..
+                return await App.DataController.PersonTable.LookupAsync(lookupOfficer.PersonId);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                await Application.Current.MainPage.DisplayAlert("Er ging iets mis..", "Ophalen behandelend collega mislukt. Probeer later opnieuw", "Ok");
+                return null;
+            }
+        }
+        
+        private void OnInvolvedPersonChanged(object sender, PersonEventArgs args)
+        {
+            if (args.Person.Description == null)
+            {
+                InvolvedPersons.Remove(args.Person);
             }
             else
             {
-                InvolvedPersons.Add(person);
+                InvolvedPersons.Add(args.Person);
             }
         }
 
-        private void OnOfficialReportPropertyChanged(object sender, OfficialReport officialReport)
+        private void OnOfficialReportPropertyChanged(object sender, OfficialReportEventArgs args)
         {
-            this.officialReport = officialReport;
+            this.officialReport = args.OfficialReport;
             ((ActionCommand)CloseNoticeCommand).RaiseCanExecuteChanged();
         } 
     }
