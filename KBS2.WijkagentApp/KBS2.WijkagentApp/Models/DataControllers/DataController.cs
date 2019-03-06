@@ -44,6 +44,11 @@ namespace KBS2.WijkagentApp.Models.DataControllers
 
         public async Task<HttpResponseMessage> CheckOfficerCredentialsAsync(Officer officer)
         {
+            if (string.IsNullOrWhiteSpace(officer.UserName) || string.IsNullOrWhiteSpace(officer.Password))
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+
             //first hash before we send it over the ether
             officer.Password = new PasswordManager().GenerateHash(officer.Password);
 
