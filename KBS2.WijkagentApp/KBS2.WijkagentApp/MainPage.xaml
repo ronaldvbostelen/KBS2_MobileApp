@@ -33,7 +33,7 @@
                 </OnPlatform>
             </NavigationPage.Icon>
             <x:Arguments>
-                <pages:AntecedentsInvestigationPage />
+                <pages:ReportLookupPage />
             </x:Arguments>
         </NavigationPage>
 

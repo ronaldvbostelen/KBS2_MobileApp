@@ -18,8 +18,6 @@ namespace KBS2.WijkagentApp.ViewModels
     {
         private bool switchToggle;
         private bool switchToggleIsEnabled;
-        private bool closeButtonIsEnabled;
-        private string mirrorNote;
         private ICommand officalReportCommand;
         private ICommand closeNoticeCommand;
         private ReportDetails noteDetails = new ReportDetails();
@@ -78,8 +76,6 @@ namespace KBS2.WijkagentApp.ViewModels
             var involvedPersonsTask = SelectInvolvedPersonsAsync();
 
             noteDetails = SetNoteOrReportDetail();
-
-            mirrorNote = String.Copy(noteDetails.Statement ?? String.Empty);
 
             officialReport = await officalReportTask;
 
@@ -267,7 +263,6 @@ namespace KBS2.WijkagentApp.ViewModels
                 }
             }
 
-            mirrorNote = string.Copy(noteDetails.Statement);
             return null;
         }
 

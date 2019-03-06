@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:KBS2.WijkagentApp.ViewModels;assembly=KBS2.WijkagentApp"
+             xmlns:converters="clr-namespace:KBS2.WijkagentApp.Views.Converters;assembly=KBS2.WijkagentApp"
+             xmlns:Behavior="clr-namespace:KBS2.WijkagentApp.Views.Behaviors"
+             x:Class="KBS2.WijkagentApp.Views.Pages.ReportLookupPage"
+             x:Name="ThisPage"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.BindingContext>
+        <viewModels:ReportLookupViewModel />
+    </ContentPage.BindingContext>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:TextToBoolConverter x:Key="TextToBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout
+            Margin="{StaticResource MarginLeftRightTop}"
+            VerticalOptions="StartAndExpand">
+            <StackLayout Spacing="0">
+                <StackLayout Orientation="Horizontal" Spacing="0">
+                    <Label
+                        Text="Melding zoeken"
+                        Style="{StaticResource Title}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding HelpCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                    <StackLayout Spacing="0" HorizontalOptions="EndAndExpand">
+                        <Label
+                            Margin="0"
+                            Text="Alleen actieve meldingen" HorizontalTextAlignment="Center" />
+                        <Switch
+                            Margin="0"
+                            IsToggled="{Binding OnlyActiveReports}" HorizontalOptions="CenterAndExpand" />
+                    </StackLayout>
+                </StackLayout>
+                <SearchBar
+                    x:Name="SearchBar"
+                    SearchCommand="{Binding SearchCommand}"
+                    SearchCommandParameter="{Binding Text, Source={x:Reference SearchBar}}">
+                    <SearchBar.Behaviors>
+                        <Behavior:EventToCommandBehavior EventName="TextChanged" Command="{Binding SearchTextCommand}" />
+                    </SearchBar.Behaviors>
+                </SearchBar>
+            </StackLayout>
+            <Grid RowSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="2*" />
+                </Grid.RowDefinitions>
+                <ListView
+                    ItemsSource="{Binding FoundReports}"
+                    SelectedItem="{Binding SelectedReport}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <StackLayout>
+                                    <Label HorizontalTextAlignment="Center"
+                                           Text="{Binding Type, StringFormat='Aanleiding melding: {0:N}'}" />
+                                    <Label HorizontalTextAlignment="Center"
+                                           Text="{Binding Location, StringFormat='Locatie: {0:N}'}" />
+                                </StackLayout>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <AbsoluteLayout
+                    VerticalOptions="FillAndExpand"
+                    Grid.Row="1"
+                    AbsoluteLayout.LayoutBounds="1,1,1,1">
+                    <StackLayout
+                        x:Name="ReportDetailsView"
+                        AbsoluteLayout.LayoutBounds="0,0,1,0.94"
+                        AbsoluteLayout.LayoutFlags="All"
+                        Spacing="0">
+                        <Label
+                            Text="Meldingdetails" HorizontalTextAlignment="Center" FontAttributes="Bold"
+                            IsVisible="{Binding Text, Source={x:Reference ReportIdLabel}, Converter={StaticResource TextToBoolConverter}}" />
+                        <ScrollView
+                            BindingContext="{Binding DetailReport}">
+                            <StackLayout>
+                                <Label x:Name="ReportIdLabel" Text="{Binding ReportId, StringFormat='Report ID: {0:N}'}" 
+                                       TextColor="{StaticResource BluePolice}" />
+                                <Label Text="{Binding BindingContext.ReporterOfficerFullname, Source={x:Reference ThisPage}, StringFormat='Rapporteur: {0:N}'}"
+                                       IsVisible="{Binding Text, Source={x:Reference ReportIdLabel}, Converter={StaticResource TextToBoolConverter}}" 
+                                       TextColor="{StaticResource BluePolice}"/>
+                                <Label Text="{Binding BindingContext.ProcessingOfficerFullname, Source={x:Reference ThisPage}, StringFormat='Behandelend agent: {0:N}'}"
+                                       IsVisible="{Binding Text, Source={x:Reference ReportIdLabel}, Converter={StaticResource TextToBoolConverter}}" 
+                                       TextColor="{StaticResource BluePolice}" />
+                                <Label Text="{Binding Type, StringFormat='Aanleiding: {0:N}'}" 
+                                       TextColor="{StaticResource BluePolice}"/>
+                                <Label Text="{Binding ReportTime, StringFormat='Tijd: {0:hh}:{0:mm}:{0:ss}'}" 
+                                       TextColor="{StaticResource BluePolice}" />
+                                <Label Text="{Binding ReportDate, StringFormat='Datum: {0:dd-MM-yyyy}'}" 
+                                       TextColor="{StaticResource BluePolice}"/>
+                                <Label Text="{Binding Location, StringFormat='Locatie: {0:N}'}" 
+                                       TextColor="{StaticResource BluePolice}" />
+                                <Label Text="{Binding Status, StringFormat='Status: {0:N}'}" 
+                                       TextColor="{StaticResource BluePolice}"/>
+                                <Label Text="{Binding BindingContext.Priority, Source={x:Reference ThisPage}, StringFormat='Prioriteit: {0:N}'}"
+                                       IsVisible="{Binding Text, Source={x:Reference ReportIdLabel}, Converter={StaticResource TextToBoolConverter}}" 
+                                       TextColor="{StaticResource BluePolice}" />
+                                <Label Text="{Binding Comment, StringFormat='Omschrijving: {0:N}'}" 
+                                       TextColor="{StaticResource BluePolice}"/>
+                                <Label Text="{Binding Longitude, StringFormat='Lengtegraad: {0:N}'}" 
+                                       TextColor="{StaticResource BluePolice}"/>
+                                <Label Text="{Binding Latitude, StringFormat='Breedtegraad: {0:N}'}" 
+                                       TextColor="{StaticResource BluePolice}"/>
+                            </StackLayout>
+                        </ScrollView>
+                    </StackLayout>
+                    <StackLayout
+                        x:Name="TwitterDetailsView"
+                        AbsoluteLayout.LayoutBounds="1,1,1,0.06"
+                        AbsoluteLayout.LayoutFlags="All"
+                        Spacing="0">
+                        <Label
+                            Text="Twitterberichten" HorizontalTextAlignment="Center" FontAttributes="Bold"
+                            IsVisible="{Binding Text, Source={x:Reference ReportIdLabel}, Converter={StaticResource TextToBoolConverter}}" >
+                            <Label.GestureRecognizers>
+                                <PanGestureRecognizer PanUpdated="PanUpdated" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                        <ListView
+                            ItemsSource="{Binding Tweets}"
+                            SelectedItem="{Binding SelectedTweet}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextCell Text="{Binding Text}" Detail="{Binding UserName}" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.Behaviors>
+                                <Behavior:EventToCommandBehavior EventName="ItemTapped" Command="{Binding TweetTappedCommand}" />
+                            </ListView.Behaviors>
+                        </ListView>
+                    </StackLayout>
+                </AbsoluteLayout>
+            </Grid>
+        </StackLayout>
+
+    </ContentPage.Content>
+</ContentPage>
