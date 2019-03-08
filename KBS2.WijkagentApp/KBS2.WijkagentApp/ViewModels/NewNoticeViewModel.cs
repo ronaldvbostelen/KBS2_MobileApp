@@ -12,10 +12,14 @@ namespace KBS2.WijkagentApp.ViewModels
 {
     public class NewNoticeViewModel : BaseViewModel
     {
-        public string[] Priorities { get; } = {"Hoog", "Gemiddeld", "Laag"};
-        public string FullName { get; } = User.Person.FullName;
-
         private string selectedPriority;
+        private Position position;
+
+        public string[] Priorities { get; } = {"Hoog", "Gemiddeld", "Laag"};
+
+        public string FullName { get; } = User.Person.FullName;
+        public Report Report { get; set; }
+
         public string SelectedPriority
         {
             get { return selectedPriority;}
@@ -29,12 +33,24 @@ namespace KBS2.WijkagentApp.ViewModels
         public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => SaveAsync(), x => CanSave()));
         public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => CancelAsync()));
         public ICommand ValidateCanSaveCommand => validateCanSaveCommand ?? (validateCanSaveCommand = new Command(() => ((ActionCommand) SaveCommand).RaiseCanExecuteChanged()));
-
-        public Report Report { get; set; }
-
+        
         public NewNoticeViewModel(Position position)
         {
-            Report = new Report{ReporterId = User.Id, Longitude = position.Longitude, Latitude = position.Latitude, Time = DateTime.Now, Status = "A"};
+            this.position = position;
+            
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            Report = new Report
+            {
+                ReporterId = User.Id,
+                Longitude = position.Longitude,
+                Latitude = position.Latitude,
+                Time = DateTime.Now,
+                Status = "A"
+            };
         }
 
         private void ConvertStringToIntPriority(string value) => Report.Priority = Priorities.IndexOf(value) + 1;

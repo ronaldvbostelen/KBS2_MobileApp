@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.Models.DataControllers;
@@ -20,6 +19,8 @@ namespace KBS2.WijkagentApp.UnitTests
 
         [TestCase("Agent101", "1234", HttpStatusCode.OK, Description = "right credentials")]
         [TestCase("Agent102", "1234", HttpStatusCode.OK, Description = "right credentials")]
+        [TestCase("Agent104", "Wachtwoord", HttpStatusCode.OK, Description = "right credentials")]
+        [TestCase("Agent104", "wachtwoord", HttpStatusCode.NotFound, Description = "wrong credentials")]
         [TestCase("Agent1O2", "1234", HttpStatusCode.NotFound, Description = "wrong credentials")]
         [TestCase("11111111111111", "1234", HttpStatusCode.NotFound, Description = "wrong credentials")]
         [TestCase("Agent", "3333", HttpStatusCode.NotFound, Description = "wrong credentials")]

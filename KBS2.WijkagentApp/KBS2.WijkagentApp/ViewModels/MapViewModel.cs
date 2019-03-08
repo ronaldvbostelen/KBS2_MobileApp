@@ -62,7 +62,7 @@ namespace KBS2.WijkagentApp.ViewModels
         }
         
         //async method to set the current location, this uses the permissionplugin to request the needed permission to get the GPS 
-        async Task<MapSpan> GetCurrentLocationAsync() 
+        private async Task<MapSpan> GetCurrentLocationAsync() 
         {
             try
             {
@@ -82,6 +82,7 @@ namespace KBS2.WijkagentApp.ViewModels
             catch (Exception ex)
             {
                 Debug.Write("Error: " + ex);
+                await Application.Current.MainPage.DisplayAlert("Bepalen locatie mislukt", "Locatiebepaling a.d.h.v. GPS mislukt, wijzig uw GPS instellingen", "OK");
             }
             return null;
         }

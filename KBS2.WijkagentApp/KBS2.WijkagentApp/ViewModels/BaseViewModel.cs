@@ -7,7 +7,6 @@ namespace KBS2.WijkagentApp.ViewModels
      * Baseclass for viewmodels
      * Implements INotifyPropertyChanged
      */
-
     public class BaseViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
