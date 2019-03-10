@@ -1,5 +1,4 @@
-﻿using System;
-using Android.App;
+﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Plugin.CurrentActivity;
@@ -7,15 +6,19 @@ using Plugin.Permissions;
 using Xamarin.Forms;
 using TK.CustomMap.Droid;
 using Android.Content;
+using KBS2.WijkagentApp.DataModels.Interfaces;
+using TK.CustomMap;
+using TK.CustomMap.Overlays;
 
 namespace KBS2.WijkagentApp.Droid
 {
     //MainLauncher false: splashscreen will be used
     [Activity(Label = "Wijkagent App", Icon = "@drawable/politie_embleem", Theme = "@style/MainTheme", MainLauncher = false, LaunchMode  = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, IRoute
     {
         public static string CHANNEL_ID = "notify";
         public static int NOTIFY_ID;
+        public TKRoute Route { get; set; }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -60,6 +63,35 @@ namespace KBS2.WijkagentApp.Droid
             var notificationManager = (NotificationManager)GetSystemService(NotificationService);
             notificationManager.CreateNotificationChannel(channel);
             NOTIFY_ID = channel.JniIdentityHashCode;
+        }
+
+        protected override void OnNewIntent(Intent intent)
+        {
+            base.OnNewIntent(intent);
+            Intent = intent;
+        }
+
+        protected override void OnPostResume()
+        {
+            base.OnPostResume();
+            if (Intent.Extras != null)
+            {  
+                // Get the latitudes and longitudes from the intent:
+                Bundle extras = Intent.Extras;
+
+                // only used for debugging
+                var originLatitude = extras.GetDouble("originLatitude");
+                var originLongitude = extras.GetDouble("originLongitude");
+                var destinationLatitude = extras.GetDouble("destinationLatitude");
+                var destinationLongitude = extras.GetDouble("destinationLongitude");
+
+                // Build the route to display on the map
+                TKRoute tkRoute = new TKRoute { Source = new Position(extras.GetDouble("originLatitude"), extras.GetDouble("originLongitude")), Destination = new Position(extras.GetDouble("destinationLatitude"), extras.GetDouble("destinationLongitude")), Color = Color.Red, LineWidth = 8f };
+
+                // Publish a message for the MapViewModel to act upon
+                // THIS PART IS NOT WORKING YET
+                MessagingCenter.Send<IRoute, TKRoute>(this, "Route", tkRoute);
+            }
         }
     }
 }
