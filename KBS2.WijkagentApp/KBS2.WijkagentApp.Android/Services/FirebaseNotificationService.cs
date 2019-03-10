@@ -78,6 +78,7 @@ namespace KBS2.WijkagentApp.Droid.Services
         {
             // Set up an intent so that tapping the notifications returns to this app:
             Intent intent = new Intent(this, typeof(EmergencyActivity));
+            intent.PutExtras(extras);
             intent.AddFlags(ActivityFlags.ClearTop);
 
             // Create a PendingIntent; we're only using one PendingIntent (ID = 0):
