@@ -13,7 +13,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.DataModels.Interfaces;
 using KBS2.WijkagentApp.ViewModels.Interfaces;
+using TK.CustomMap.Overlays;
 
 namespace KBS2.WijkagentApp.ViewModels
 {
@@ -25,6 +27,7 @@ namespace KBS2.WijkagentApp.ViewModels
         private bool showingUser;
 
         public ObservableCollection<TKCustomMapPin> Pins { get { return pins; } private set { if (value != pins) { pins = value; NotifyPropertyChanged();} } }
+        public ObservableCollection<TKRoute> Routes { get; set; }
         public TKCustomMapPin SelectedPin { get { return selectedPin; } set { if (value != selectedPin) { selectedPin = value; NotifyPropertyChanged();} } }
         public MapSpan MapRegion { get { return mapRegion; } set { if (value != mapRegion) { mapRegion = value; NotifyPropertyChanged();} } }
         public bool ShowingUser { get { return showingUser; } set { if (value != showingUser) { showingUser = value; NotifyPropertyChanged(); } } }
@@ -51,11 +54,13 @@ namespace KBS2.WijkagentApp.ViewModels
             
             // set pins on map (based of central list)
             Pins = new ObservableCollection<TKCustomMapPin>(App.ReportsCollection.Reports.Select(PinCreator));
+            Routes = new ObservableCollection<TKRoute>();
 
             //subscribe to collectionchanged event of central reportslist
             App.ReportsCollection.Reports.CollectionChanged += ReportsCollectionChanged;
 
             MessagingCenter.Subscribe<IBroadcastReport, Report>(this, "A Report Is Selected", (sender,report) => SetMapFocus(report));
+            MessagingCenter.Subscribe<IRoute, TKRoute>(this, "Route", (sender, args) => Device.BeginInvokeOnMainThread(() => Routes.Add(args)));
 
             MapRegion = await currentPositionTask;
             ShowingUser = MapRegion != null;
