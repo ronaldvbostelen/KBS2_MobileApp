@@ -54,7 +54,7 @@ namespace KBS2.WijkagentApp.Models.DataControllers
             {
                 return await Client.InvokeApiAsync("/login/", httpContent, HttpMethod.Post, new Dictionary<string, string>(), new Dictionary<string, string>());
             }
-            catch (MobileServiceInvalidOperationException e) 
+            catch (MobileServiceInvalidOperationException e)
             {
                 Debug.WriteLine(e);
                 return e.Response;

@@ -97,6 +97,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EmergencyActivity.cs" />
     <Compile Include="PublicPathManager.cs" />
     <Compile Include="SendDialog.cs" />
     <Compile Include="Services\AzureNotificationHubService.cs" />

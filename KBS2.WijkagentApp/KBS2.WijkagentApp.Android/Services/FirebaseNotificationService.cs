@@ -10,20 +10,17 @@ using Firebase.Messaging;
 using KBS2.WijkagentApp.DataModels;
 using Newtonsoft.Json;
 using Plugin.Geolocator;
-using TK.CustomMap.Overlays;
-using Xamarin.Forms;
 using Application = Android.App.Application;
-using KBS2.WijkagentApp.DataModels.Interfaces;
-using TK.CustomMap;
+using Plugin.Geolocator.Abstractions;
+using Position = Plugin.Geolocator.Abstractions.Position;
 
 namespace KBS2.WijkagentApp.Droid.Services
 {
     [Service]
     [IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
-    public class FirebaseNotificationService : FirebaseMessagingService, IRoute
+    public class FirebaseNotificationService : FirebaseMessagingService
     {
         const string TAG = "FirebaseNotificationService";
-        public TKRoute Route { get; set; }
 
         public override async void OnMessageReceived(RemoteMessage message)
         {
@@ -56,45 +53,46 @@ namespace KBS2.WijkagentApp.Droid.Services
 
             if (message.Data["key"] == "emergency")
             {
-                var emergency = JsonConvert.DeserializeObject<Emergency>(message.Data["content"]);
-                var locator = CrossGeolocator.Current;
-                var position = await locator.GetPositionAsync();
+                Emergency emergency = JsonConvert.DeserializeObject<Emergency>(message.Data["content"]);
+                string fullName = message.Data["fullName"];
+                IGeolocator locator = CrossGeolocator.Current;
+                Position position = await locator.GetPositionAsync();
 
                 StringBuilder stringBuilder = new StringBuilder();
-                // TODO agent die hem invoert toevoegen en testen hoe het er in de pushmelding uitziet
+                stringBuilder.Append($"Officier: {fullName}\n");
                 stringBuilder.Append($"Tijdstip: {emergency.Time}\n");
                 stringBuilder.Append($"Omschrijving: {emergency.Description}\n");
                 stringBuilder.Append($"Locatie: {emergency.Location}");
 
-                try
-                {
-                    TKRoute tkRoute = new TKRoute { Source = new Position(position.Latitude, position.Longitude), Destination = new Position(emergency.Latitude ?? 0, emergency.Longitude ?? 0), Color = Color.Red, LineWidth = 8f };
-                    MessagingCenter.Send<IRoute, TKRoute>(this, "Route", tkRoute);
-                }
-                finally
-                {
-                    SendNotification("Emergency", $"{stringBuilder}");
-                }
+                Bundle extras = new Bundle();
+                extras.PutDouble("originLatitude", position.Latitude);
+                extras.PutDouble("originLongitude", position.Longitude);
+                if (emergency.Latitude != null) extras.PutDouble("destinationLatitude", (double) emergency.Latitude);
+                if (emergency.Longitude != null) extras.PutDouble("destinationLongitude", (double) emergency.Longitude);
+
+                SendNotification("Emergency", $"{stringBuilder}", extras);
             }
         }
 
-        void SendNotification(string title, string messageBody)
+        void SendNotification(string title, string messageBody, Bundle extras)
         {
             // Set up an intent so that tapping the notifications returns to this app:
-            Intent intent = new Intent(this, typeof(MainActivity));
+            Intent intent = new Intent(this, typeof(EmergencyActivity));
             intent.AddFlags(ActivityFlags.ClearTop);
 
             // Create a PendingIntent; we're only using one PendingIntent (ID = 0):
             PendingIntent pendingIntent = PendingIntent.GetActivity(this, 0, intent, PendingIntentFlags.OneShot);
 
             // Instantiate the builder and set notification elements, including pending intent:
-            Notification.Builder notificationBuilder = new Notification.Builder(Application.Context, MainActivity.CHANNEL_ID)
-                .SetSmallIcon(Resource.Drawable.error_message)
-                .SetContentTitle(title)
-                .SetContentText(messageBody)
-                .SetAutoCancel(true)
-                .SetContentIntent(pendingIntent)
-                .SetChannelId(MainActivity.CHANNEL_ID);
+            Notification.Builder notificationBuilder =
+                new Notification.Builder(Application.Context, MainActivity.CHANNEL_ID)
+                    .SetSmallIcon(Resource.Drawable.error_message)
+                    .SetContentTitle(title)
+                    .SetContentText(messageBody)
+                    .SetAutoCancel(true)
+                    .SetContentIntent(pendingIntent)
+                    .SetChannelId(MainActivity.CHANNEL_ID)
+                    .SetStyle(new Notification.BigTextStyle());
 
             // Get the notification manager:
             NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
