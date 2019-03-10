@@ -44,6 +44,11 @@ namespace KBS2.WijkagentApp.Models.DataControllers
 
         public async Task<HttpResponseMessage> CheckOfficerCredentialsAsync(Officer officer)
         {
+            if (string.IsNullOrWhiteSpace(officer.UserName) || string.IsNullOrWhiteSpace(officer.Password))
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+
             //first hash before we send it over the ether
             officer.Password = new PasswordManager().GenerateHash(officer.Password);
 
@@ -105,9 +110,32 @@ namespace KBS2.WijkagentApp.Models.DataControllers
             }
         }
 
-            /* this shitty code is needed because async processing screws up this framework (if we dont initialise a new instance
-             * we get some illogical exception.
-             */
+        public async Task<List<Report>> QueryReports(string parms)
+        {
+            //first we create a url
+            var patchingKeyWords = parms.Replace(' ', '_');
+            var url = $"/reportquery/{patchingKeyWords}";
+
+            try
+            {
+                return await Client.InvokeApiAsync<List<Report>>(url, HttpMethod.Get, new Dictionary<string, string>(), CancellationToken.None);
+            }
+            catch (MobileServiceInvalidOperationException e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                throw;
+            }
+        }
+
+
+        /* this shitty code is needed because async processing screws up this framework (if we dont initialise a new instance
+         * we get some illogical exception.
+         */
         public async Task<T> InsertIntoAsync<T>(T entryObject) where T : IDatabaseObject
         {
             Client = new MobileServiceClient(apiUrl);

@@ -39,21 +39,21 @@ namespace KBS2.WijkagentApp.ViewModels
         //creates a xamarin map instance and sets the currentlocation and loaded pins
         public MapViewModel()
         {
-            MapType = MapType.Hybrid;
-            RegionChangeAnimated = true;
-            
             var initTask = InitializeAsync();
-            
-            //subscribe to collectionchanged event of central reportslist
-            App.ReportsCollection.Reports.CollectionChanged += ReportsCollectionChanged;
         }
 
         private async Task InitializeAsync()
         {
+            MapType = MapType.Hybrid;
+            RegionChangeAnimated = true;
+
             var currentPositionTask = GetCurrentLocationAsync();
             
             // set pins on map (based of central list)
             Pins = new ObservableCollection<TKCustomMapPin>(App.ReportsCollection.Reports.Select(PinCreator));
+
+            //subscribe to collectionchanged event of central reportslist
+            App.ReportsCollection.Reports.CollectionChanged += ReportsCollectionChanged;
 
             MessagingCenter.Subscribe<IBroadcastReport, Report>(this, "A Report Is Selected", (sender,report) => SetMapFocus(report));
 
@@ -62,7 +62,7 @@ namespace KBS2.WijkagentApp.ViewModels
         }
         
         //async method to set the current location, this uses the permissionplugin to request the needed permission to get the GPS 
-        async Task<MapSpan> GetCurrentLocationAsync() 
+        private async Task<MapSpan> GetCurrentLocationAsync() 
         {
             try
             {
@@ -82,6 +82,7 @@ namespace KBS2.WijkagentApp.ViewModels
             catch (Exception ex)
             {
                 Debug.Write("Error: " + ex);
+                await Application.Current.MainPage.DisplayAlert("Bepalen locatie mislukt", "Locatiebepaling a.d.h.v. GPS mislukt, wijzig uw GPS instellingen", "OK");
             }
             return null;
         }

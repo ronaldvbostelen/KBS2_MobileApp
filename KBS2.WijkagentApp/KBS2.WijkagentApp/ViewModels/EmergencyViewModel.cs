@@ -14,15 +14,20 @@ namespace KBS2.WijkagentApp.ViewModels
 {
     class EmergencyViewModel : BaseViewModel
     {
-        public string FullName { get; set; }
-
         private Emergency emergency;
         public Emergency Emergency { get { return emergency; } set { if (value != emergency) { emergency = value; NotifyPropertyChanged(); } } }
 
         private ICommand emergencyTriggerCommand;
         public ICommand EmergencyTriggerCommand => emergencyTriggerCommand ?? (emergencyTriggerCommand = new ActionCommand(x => EmergencyTriggerAsync()));
 
+        public string FullName { get; set; }
+
         public EmergencyViewModel()
+        {
+            Initialize();
+        }
+
+        private void Initialize()
         {
             FullName = User.Person.FullName;
             Emergency = SetEmergency();
@@ -30,7 +35,7 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private Emergency SetEmergency() => new Emergency { Status = "A", OfficerId = User.Id, Time = DateTime.Now };
 
-        private async void EmergencyTriggerAsync()
+        private async Task EmergencyTriggerAsync()
         {
             var currentPositionTask = GetCurrentPositionAsync();
 
