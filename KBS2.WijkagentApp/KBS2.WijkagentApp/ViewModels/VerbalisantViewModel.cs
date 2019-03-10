@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using KBS2.WijkagentApp.DataModels.EventArgs;
 using Xamarin.Forms;
 
 namespace KBS2.WijkagentApp.ViewModels
@@ -36,7 +37,7 @@ namespace KBS2.WijkagentApp.ViewModels
         public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => CancelAsync()));
         public ICommand ValidateCommands { get { return new ActionCommand(x => UpdateCommands()); } }
         
-        public event EventHandler<ReportDetails> ReportDetailsChanged;
+        public event EventHandler<ReportDetailsEventArgs> ReportDetailsChanged;
 
         public ObservableCollection<Person> InvolvedPersons { get; set; }
 
@@ -428,7 +429,7 @@ namespace KBS2.WijkagentApp.ViewModels
 
         protected virtual void OnReportDetailsChanged(ReportDetails details)
         {
-            ReportDetailsChanged?.Invoke(this, details);
+            ReportDetailsChanged?.Invoke(this, new ReportDetailsEventArgs(details));
         }
     }
 }

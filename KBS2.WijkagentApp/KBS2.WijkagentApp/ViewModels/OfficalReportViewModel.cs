@@ -8,6 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.DataModels.EventArgs;
 using KBS2.WijkagentApp.ViewModels.Commands;
 using KBS2.WijkagentApp.Views.Pages;
 using Microsoft.WindowsAzure.MobileServices;
@@ -54,8 +55,8 @@ namespace KBS2.WijkagentApp.ViewModels
             ((ActionCommand)DeleteCommand).RaiseCanExecuteChanged(); ((ActionCommand)SaveCommand).RaiseCanExecuteChanged(); } } }
         public ObservableCollection<Person> Verbalisants { get { return verbalisants; } set { if (value != verbalisants) { verbalisants = value; NotifyPropertyChanged(); } } }
 
-        public event EventHandler<Person> InvolvedPersonChanged;
-        public event EventHandler<OfficialReport> OfficialReportPropertyChanged;
+        public event EventHandler<PersonEventArgs> InvolvedPersonChanged;
+        public event EventHandler<OfficialReportEventArgs> OfficialReportPropertyChanged;
 
         public OfficalReportViewModel(Report report, OfficialReport officialReport, ObservableCollection<Person> involvedPersons, ObservableCollection<ReportDetails> reportDetails)
         {
@@ -325,24 +326,24 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private bool CanDelete() => OfficialReport != null;
 
-        private async void OnReportDetailsChangedAsync(object sender, ReportDetails details)
+        private async void OnReportDetailsChangedAsync(object sender, ReportDetailsEventArgs args)
         {
             try
             {
-                if (details.IsHeard ?? false)
+                if (args.ReportDetails.IsHeard ?? false)
                 {
-                    if (!Verbalisants.Any(x => x.PersonId.Equals(details.PersonId)))
+                    if (!Verbalisants.Any(x => x.PersonId.Equals(args.ReportDetails.PersonId)))
                     {
-                        var newPerson = await App.DataController.PersonTable.LookupAsync(details.PersonId);
+                        var newPerson = await App.DataController.PersonTable.LookupAsync(args.ReportDetails.PersonId);
                         Verbalisants.Add(newPerson);
 
-                        if (!involvedPersons.Any(x => x.PersonId.Equals(details.PersonId)))
+                        if (!involvedPersons.Any(x => x.PersonId.Equals(args.ReportDetails.PersonId)))
                         {
                             involvedPersons.Add(newPerson);
                         }
-                        if (!reportDetails.Any(x => x.ReportDetailsId.Equals(details.ReportDetailsId)))
+                        if (!reportDetails.Any(x => x.ReportDetailsId.Equals(args.ReportDetails.ReportDetailsId)))
                         {
-                            reportDetails.Add(details);
+                            reportDetails.Add(args.ReportDetails);
                         }
 
                         OnInvolvedPersonChanged(newPerson);
@@ -350,8 +351,8 @@ namespace KBS2.WijkagentApp.ViewModels
                 }
                 else
                 {
-                    var oldPerson = Verbalisants.First(x => x.PersonId.Equals(details.PersonId));
-                    reportDetails.Where(x => x.PersonId.Equals(details.PersonId)).ForEach(x => x.IsHeard = false);
+                    var oldPerson = Verbalisants.First(x => x.PersonId.Equals(args.ReportDetails.PersonId));
+                    reportDetails.Where(x => x.PersonId.Equals(args.ReportDetails.PersonId)).ForEach(x => x.IsHeard = false);
                     Verbalisants.Remove(oldPerson);
                     OnInvolvedPersonChanged(oldPerson);
                 }
@@ -384,12 +385,12 @@ namespace KBS2.WijkagentApp.ViewModels
 
         protected virtual void OnInvolvedPersonChanged(Person person)
         {
-            InvolvedPersonChanged?.Invoke(this, person);
+            InvolvedPersonChanged?.Invoke(this, new PersonEventArgs(person));
         }
 
         protected virtual void OnOfficialReportPropertyChanged(object sender, PropertyChangedEventArgs eventArgs)
         {
-            OfficialReportPropertyChanged?.Invoke(this, OfficialReport);
+            OfficialReportPropertyChanged?.Invoke(this, new OfficialReportEventArgs(OfficialReport));
         }
     }
 }

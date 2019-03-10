@@ -7,7 +7,7 @@
              Title="Detail melding">
     <ContentPage.Resources>
         <ResourceDictionary>
-            <Converters:TextToBoolConverter x:Key="TextToBoolConverter"/>
+            <Converters:TextToBoolConverter x:Key="TextToBoolConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
@@ -31,8 +31,8 @@
 
             <StackLayout Spacing="0">
                 <BoxView Margin="0,25,0,0"
-                    BackgroundColor="{StaticResource BluePolice}" HeightRequest="1"
-                             VerticalOptions="End" HorizontalOptions="FillAndExpand" />
+                         BackgroundColor="{StaticResource BluePolice}" HeightRequest="1"
+                         VerticalOptions="End" HorizontalOptions="FillAndExpand" />
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="28" />
@@ -78,7 +78,7 @@
                     x:Name="Label3"
                     Style="{StaticResource SmallInfoLabel}"
                     Text="Aantekeningen"
-                    IsVisible="{Binding Text, Source={x:Reference Editor1}, Converter={StaticResource TextToBoolConverter}}"/>
+                    IsVisible="{Binding Text, Source={x:Reference Editor1}, Converter={StaticResource TextToBoolConverter}}" />
                 <ScrollView
                     Orientation="Vertical"
                     VerticalScrollBarVisibility="Default">
@@ -91,8 +91,8 @@
                                 VerticalOptions="FillAndExpand"
                                 AutoSize="TextChanges"
                                 Text="{Binding Note}"
-                                Placeholder="{Binding Text, Source={x:Reference Label3}}">
-                            </Editor>
+                                Placeholder="{Binding Text, Source={x:Reference Label3}}" 
+                                IsEnabled="{Binding NoteEditorIsEnabled}" />
                         </StackLayout>
                     </ScrollView.Content>
                 </ScrollView>
@@ -110,22 +110,22 @@
                 </StackLayout>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Button
-                    Text="Afsluiten melding"
-                    Command="{Binding CloseNoticeCommand}"
-                    Style="{StaticResource BlueButton}" />
+                        Text="Afsluiten melding"
+                        Command="{Binding CloseNoticeCommand}"
+                        Style="{StaticResource BlueButton}" />
                     <Button
-                    Grid.Column="1"
-                    Text="Opmaken proces-verbaal"
-                    Command="{Binding OfficialReportCommand}"
-                    CommandParameter="{Binding Report}"
-                    Style="{StaticResource BlueButton}" />
+                        Grid.Column="1"
+                        Text="Opmaken proces-verbaal"
+                        Command="{Binding OfficialReportCommand}"
+                        CommandParameter="{Binding Report}"
+                        Style="{StaticResource BlueButton}" />
                 </Grid>
             </StackLayout>
 
