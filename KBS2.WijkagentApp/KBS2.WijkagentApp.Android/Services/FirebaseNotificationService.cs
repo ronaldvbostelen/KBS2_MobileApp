@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Plugin.Geolocator;
 using Application = Android.App.Application;
 using Plugin.Geolocator.Abstractions;
+using Xamarin.Forms;
 using Position = Plugin.Geolocator.Abstractions.Position;
 
 namespace KBS2.WijkagentApp.Droid.Services
@@ -25,32 +26,29 @@ namespace KBS2.WijkagentApp.Droid.Services
         public override async void OnMessageReceived(RemoteMessage message)
         {
             Log.Debug(TAG, "From: " + message.From);
+
+            // modified reports will be send to the app through a pushmessages, so we can update the reports realtime
+            if (message.Data["key"] == "Report")
+            {
+                var report = JsonConvert.DeserializeObject<Report>(message.Data["content"]);
+                
+                switch (report.Status)
+                {
+                    case "A":
+                        App.ReportsCollection.Reports.Add(report);
+                        break;
+                    case "D":
+                        App.ReportsCollection.Reports.Remove(report);
+                        break;
+                    default:
+                        App.ReportsCollection.Reports[App.ReportsCollection.Reports
+                                .IndexOf(App.ReportsCollection.Reports
+                                    .First(x => x.ReportId
+                                        .Equals(report.ReportId)))] = report;
+                        break;
+                }
+            }
             
-            // the pushed report will be added to the central list
-            if (message.Data["key"] == "addReport")
-            {
-                var newReport = JsonConvert.DeserializeObject<Report>(message.Data["content"]);
-                
-                // if its from the same user the report is already added to the list
-                if (newReport.ReporterId != User.Id)
-                {
-                    newReport.Id = newReport.ReportId;
-                    App.ReportsCollection.Reports.Add(newReport);
-                }
-            }
-
-            if (message.Data["key"] == "deleteReport")
-            {
-                var reportId = new Guid(message.Data["content"]);
-                var removeRapport = App.ReportsCollection.Reports.Where(x => x.ReportId.Equals(reportId)).ToArray();
-                
-                //prevents removing nonexisting report
-                if (removeRapport.Any())
-                {
-                    App.ReportsCollection.Reports.Remove(removeRapport[0]);
-                }
-            }
-
             if (message.Data["key"] == "emergency")
             {
                 Emergency emergency = JsonConvert.DeserializeObject<Emergency>(message.Data["content"]);

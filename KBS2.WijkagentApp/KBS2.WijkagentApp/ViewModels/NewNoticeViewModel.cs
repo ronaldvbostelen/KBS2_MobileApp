@@ -113,7 +113,6 @@ namespace KBS2.WijkagentApp.ViewModels
             {
                 await App.DataController.ReportTable.InsertAsync(Report);
                 Report.Id = Report.ReportId;
-                App.ReportsCollection.Reports.Add(Report);
                 return true;
             }
             catch (Exception e)
