@@ -170,7 +170,8 @@ namespace KBS2.WijkagentApp.ViewModels
                 {
                     Device.BeginInvokeOnMainThread(() =>
                     {
-                        var newReport = (Report)e.NewItems[0]; Pins.Add(PinCreator(newReport));
+                        var newReport = (Report)e.NewItems[0];
+                        Pins.Add(PinCreator(newReport));
                     });
                 }
             }

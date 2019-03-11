@@ -46,13 +46,13 @@ namespace KBS2.WijkagentApp.ViewModels
                     switch (removedReport.Priority)
                     {
                         case 1:
-                            HighReports.Remove(removedReport);
+                            HighReports.Remove(HighReports.First(x => x.ReportId.Equals(removedReport.ReportId)));
                             break;
                         case 2:
-                            MidReports.Remove(removedReport);
+                            MidReports.Remove(MidReports.First(x => x.ReportId.Equals(removedReport.ReportId)));
                             break;
                         case 3:
-                            LowReports.Remove(removedReport);
+                            LowReports.Remove(LowReports.First(x => x.ReportId.Equals(removedReport.ReportId)));
                             break;
                         default:
                             Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Bijwerken meldingenlijst mislukt\r\n(verwijdering)", "OK");

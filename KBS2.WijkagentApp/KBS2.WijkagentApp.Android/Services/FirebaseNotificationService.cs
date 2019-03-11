@@ -31,6 +31,7 @@ namespace KBS2.WijkagentApp.Droid.Services
             if (message.Data["key"] == "Report")
             {
                 var report = JsonConvert.DeserializeObject<Report>(message.Data["content"]);
+                report.Id = report.ReportId; // #neverForget
                 
                 switch (report.Status)
                 {
@@ -38,7 +39,7 @@ namespace KBS2.WijkagentApp.Droid.Services
                         App.ReportsCollection.Reports.Add(report);
                         break;
                     case "D":
-                        App.ReportsCollection.Reports.Remove(report);
+                        App.ReportsCollection.Reports.Remove(App.ReportsCollection.Reports.First(x => x.ReportId.Equals(report.ReportId)));
                         break;
                     default:
                         App.ReportsCollection.Reports[App.ReportsCollection.Reports
