@@ -69,29 +69,15 @@ namespace KBS2.WijkagentApp.Droid
         {
             base.OnNewIntent(intent);
             Intent = intent;
-        }
 
-        protected override void OnPostResume()
-        {
-            base.OnPostResume();
-            if (Intent.Extras != null)
-            {  
-                // Get the latitudes and longitudes from the intent:
-                Bundle extras = Intent.Extras;
+            // Get the latitudes and longitudes from the intent:
+            Bundle extras = Intent.Extras;
 
-                // only used for debugging
-                var originLatitude = extras.GetDouble("originLatitude");
-                var originLongitude = extras.GetDouble("originLongitude");
-                var destinationLatitude = extras.GetDouble("destinationLatitude");
-                var destinationLongitude = extras.GetDouble("destinationLongitude");
+            TKRoute tkRoute = new TKRoute { Source = new Position(extras.GetDouble("originLatitude"), extras.GetDouble("originLongitude")), Destination = new Position(extras.GetDouble("destinationLatitude"), extras.GetDouble("destinationLongitude")), Color = Color.Red, LineWidth = 8f };
 
-                // Build the route to display on the map
-                TKRoute tkRoute = new TKRoute { Source = new Position(extras.GetDouble("originLatitude"), extras.GetDouble("originLongitude")), Destination = new Position(extras.GetDouble("destinationLatitude"), extras.GetDouble("destinationLongitude")), Color = Color.Red, LineWidth = 8f };
-
-                // Publish a message for the MapViewModel to act upon
-                // THIS PART IS NOT WORKING YET
-                MessagingCenter.Send<IRoute, TKRoute>(this, "Route", tkRoute);
-            }
+            // Publish a message for the MapViewModel to act upon
+            // THIS PART IS NOT WORKING YET
+            MessagingCenter.Send<IRoute, TKRoute>(this, "Route", tkRoute);
         }
     }
 }
