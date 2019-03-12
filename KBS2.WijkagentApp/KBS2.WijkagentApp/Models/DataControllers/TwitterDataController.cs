@@ -7,7 +7,7 @@ using LinqToTwitter;
 
 namespace KBS2.WijkagentApp.Models.DataControllers
 {
-    class TwitterDataController
+    public class TwitterDataController
     {
         private TwitterContext TwitterContext { get; set; }
 

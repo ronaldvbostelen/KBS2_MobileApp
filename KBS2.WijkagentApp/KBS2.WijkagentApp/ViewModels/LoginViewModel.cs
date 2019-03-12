@@ -52,19 +52,28 @@ namespace KBS2.WijkagentApp.ViewModels
             //credentials are correct
             if (apiRespons.IsSuccessStatusCode)
             {
-                var toString = await apiRespons.Content.ReadAsStringAsync();
-                var toObject = JsonConvert.DeserializeObject(toString, Type.GetType("KBS2.WijkagentApp.DataModels.Officer"));
-                User.Base = (Officer) toObject;
-                
-                //create asynctasks..
-                var userPersonalInfoTask = User.FetchUserPersonRecordAsync();
-                var repoortsTask = App.DataController.FetchReportsAsync();
-                
-                // we need these before we can continue
-                User.Person = await userPersonalInfoTask;
-                App.ReportsCollection.Reports = await repoortsTask;
-                
-                Application.Current.MainPage = new MainPage();
+                try
+                {
+                    var toString = await apiRespons.Content.ReadAsStringAsync();
+                    var toObject = JsonConvert.DeserializeObject(toString, Type.GetType("KBS2.WijkagentApp.DataModels.Officer"));
+                    User.Base = (Officer) toObject;
+
+                    //create asynctasks..
+                    var userPersonalInfoTask = App.DataController.PersonTable.LookupAsync(User.PersonId);
+                    var repoortsTask = App.DataController.FetchReportsAsync();
+
+                    // we need these before we can continue
+                    User.Person = await userPersonalInfoTask;
+                    App.ReportsCollection.Reports = await repoortsTask;
+
+                    Application.Current.MainPage = new MainPage();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    await Application.Current.MainPage.DisplayAlert("Ophalen gebruikersgegevens mislukt", "Probeer later opnieuw", "Ok");
+                }
+
             }
             //too bad, try again
             else

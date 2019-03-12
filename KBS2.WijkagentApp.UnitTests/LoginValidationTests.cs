@@ -7,12 +7,11 @@ using NUnit.Framework;
 namespace KBS2.WijkagentApp.UnitTests
 {
     [TestFixture]
-    public class LoginViewModelTests
+    public class LoginValidationTests
     {
-        // because we cant acces the methods in loginviewmodel publicly we create our own DAL.
         private DataController dataController;
         
-        public LoginViewModelTests()
+        public LoginValidationTests()
         {
             dataController = new DataController();
         }
@@ -26,8 +25,8 @@ namespace KBS2.WijkagentApp.UnitTests
         [TestCase("Agent", "3333", HttpStatusCode.NotFound, Description = "wrong credentials")]
         [TestCase("", "", HttpStatusCode.BadRequest, Description = "empty credentials")]
         [TestCase(null, null, HttpStatusCode.BadRequest, Description = "null credentials")]
-        [TestCase("                             ", "                                          ", HttpStatusCode.BadRequest, Description = "only space credentials")]
-        public async Task LoginCredentials_Validation(string loginName, string password, HttpStatusCode statusCode)
+        [TestCase("     ", "     ", HttpStatusCode.BadRequest, Description = "only space credentials")]
+        public async Task Login_Validation(string loginName, string password, HttpStatusCode statusCode)
         {
             var checkLoginCredentialsTask = dataController.CheckOfficerCredentialsAsync(new Officer {UserName = loginName, Password = password});
             var loginCheck = await checkLoginCredentialsTask;

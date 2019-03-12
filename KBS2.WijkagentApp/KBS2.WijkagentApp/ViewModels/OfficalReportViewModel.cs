@@ -269,7 +269,7 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private async Task OpenCameraAsync()
         {
-            var photo = await new CameraManager().TakePhoto();
+            var photo = await new CameraManager(officialReport.ReportId).TakePhoto();
             
             if (photo != null)
             {

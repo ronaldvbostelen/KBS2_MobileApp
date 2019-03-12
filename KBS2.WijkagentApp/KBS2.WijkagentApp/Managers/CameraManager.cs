@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 
@@ -8,10 +9,11 @@ namespace KBS2.WijkagentApp.Managers
     {
         private StoreCameraMediaOptions mediaOptions;
 
-        public CameraManager()
+        public CameraManager(Guid reportId)
         {
             mediaOptions = new StoreCameraMediaOptions
             {
+                Name = $"{reportId}_{DateTime.Now}",
                 Directory = "proces_verbaal_images",
                 SaveToAlbum = true,
                 CompressionQuality = 75,

@@ -75,7 +75,7 @@ namespace KBS2.WijkagentApp.Models.DataControllers
         {
             try
             {
-                var reportList = await App.DataController.ReportTable.ToListAsync();
+                var reportList = await ReportTable.ToListAsync();
 
                 // setting ID (!important!) & adding to ReportsCollection
                 reportList.ForEach(x => x.Id = x.ReportId);

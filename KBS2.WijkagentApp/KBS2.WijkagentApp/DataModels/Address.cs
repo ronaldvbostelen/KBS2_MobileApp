@@ -6,7 +6,7 @@ namespace KBS2.WijkagentApp.DataModels
     public partial class Address : BaseDataModel
     {
         private Guid personId;
-        public string town;
+        private string town;
         private string zipCode;
         private string street;
         private int number;

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace KBS2.WijkagentApp.DataModels
 {
@@ -13,20 +10,5 @@ namespace KBS2.WijkagentApp.DataModels
         public static Guid Id => Base.OfficerId;
         public static Guid? PersonId => Base.PersonId;
         public static string Name => Base.UserName;
-
-        
-        public static async Task<Person> FetchUserPersonRecordAsync()
-        {
-            try
-            {
-                return await App.DataController.PersonTable.LookupAsync(PersonId);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-                await Application.Current.MainPage.DisplayAlert("Ophalen gebruiker mislukt", "Probeer later opnieuw", "Ok");
-                return new Person{FirstName = string.Empty, LastName = string.Empty};
-            }
-        }
     }
 }
