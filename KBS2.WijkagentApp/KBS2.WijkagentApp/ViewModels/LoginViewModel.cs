@@ -32,7 +32,7 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private void Initialize()
         {
-            officer = new Officer{UserName = "Agent101", Password = "1234"};
+            officer = new Officer();
         }
 
         public ICommand LoginCommand => loginCommand ?? (loginCommand = new ActionCommand(x => LoginAsync(), x => CanLogin()));
