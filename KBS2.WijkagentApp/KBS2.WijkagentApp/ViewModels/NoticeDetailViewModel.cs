@@ -208,7 +208,7 @@ namespace KBS2.WijkagentApp.ViewModels
             Application.Current.MainPage.Navigation.PushModalAsync(new OfficalReportPage(officalReportVm));
         }
         
-        private async void CloseReportAsync()
+        private async Task CloseReportAsync()
         {
             if (!string.IsNullOrWhiteSpace(Note)) await SaveNoteAsync();
             

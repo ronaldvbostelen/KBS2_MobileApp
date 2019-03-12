@@ -57,7 +57,7 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private bool CanSave() => !string.IsNullOrWhiteSpace(Report.Type) && !string.IsNullOrWhiteSpace(Report.Location) && Report.Priority != null;
 
-        private async void SaveAsync()
+        private async Task SaveAsync()
         {
             if (await SaveNewReportAsync())
             {
@@ -73,7 +73,7 @@ namespace KBS2.WijkagentApp.ViewModels
             }
         }
 
-        private async void CancelAsync()
+        private async Task CancelAsync()
         {
             if (CanSave())
             {

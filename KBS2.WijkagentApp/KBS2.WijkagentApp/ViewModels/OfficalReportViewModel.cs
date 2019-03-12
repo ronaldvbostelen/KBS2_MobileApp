@@ -302,9 +302,10 @@ namespace KBS2.WijkagentApp.ViewModels
 
                 await Application.Current.MainPage.DisplayAlert("Audio-opname gestart", "Druk op STOP om opname te staken", "Stop");
 
-                recorder.Stop();
+                var stopTask = recorder.Stop();
 
                 await recordTask;
+                await stopTask;
 
                 if (recordTask.Result != null)
                 {
