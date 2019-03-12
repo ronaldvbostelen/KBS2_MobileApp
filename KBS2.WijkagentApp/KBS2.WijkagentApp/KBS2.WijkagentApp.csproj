@@ -53,9 +53,6 @@
     <Compile Update="Views\Pages\MapPage.xaml.cs">
       <DependentUpon>%(Filename)</DependentUpon>
     </Compile>
-    <Compile Update="Views\Pages\MessagePage.xaml.cs">
-      <DependentUpon>%(Filename)</DependentUpon>
-    </Compile>
     <Compile Update="Views\Pages\PinsPage.xaml.cs">
       <DependentUpon>%(Filename)</DependentUpon>
     </Compile>

@@ -37,15 +37,5 @@
             </x:Arguments>
         </NavigationPage>
 
-        <NavigationPage Title="Messages">
-            <NavigationPage.Icon>
-                <OnPlatform x:TypeArguments="FileImageSource">
-                    <On Platform="Android" Value="error_msg_icon.png" />
-                </OnPlatform>
-            </NavigationPage.Icon>
-            <x:Arguments>
-                <pages:MessagePage />
-            </x:Arguments>
-        </NavigationPage>
     </TabbedPage.Children>
 </TabbedPage>
