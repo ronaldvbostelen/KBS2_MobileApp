@@ -12,7 +12,6 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Javax.Xml.Transform;
 using KBS2.WijkagentApp.DataModels;
 using KBS2.WijkagentApp.Services.Dependecies;
 using KBS2.WijkagentApp.ViewModels.Interfaces;
