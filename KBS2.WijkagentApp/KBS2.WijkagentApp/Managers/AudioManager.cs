@@ -36,7 +36,7 @@ namespace KBS2.WijkagentApp.Managers
             return string.Empty;
         }
 
-        public async void Stop()
+        public async Task Stop()
         {
             if (IsRecording)
             {
