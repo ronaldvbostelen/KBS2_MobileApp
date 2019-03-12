@@ -36,23 +36,51 @@ namespace KBS2.WijkagentApp.ViewModels
             App.ReportsCollection.Reports.CollectionChanged += ReportsCollectionChanged;
         }
 
+        /*
+         * this method makes it possible that a double tap on a listitem a new modal with details will popup
+         */
+        private void ShowDetailPageOfReport(ItemTappedEventArgs eventArgs)
+        {
+            if (!ReferenceEquals(eventArgs.Item, currentTappedReport))
+            {
+                currentTappedReport = (Report) eventArgs.Item;
+            }
+            else
+            {
+                Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel((Report)eventArgs.Item)));
+                currentTappedReport = null;
+            }
+        }
+
+        /*
+         * we send a message with messagingcenter containing the selected report object, after that we move to out first (map) page
+         */
+        private void ShowPinOnMap(Report report)
+        {
+            Report = report;
+
+            MessagingCenter.Send<IBroadcastReport, Report>(this, "A Report Is Selected", Report);
+
+            ((TabbedPage)Application.Current.MainPage).CurrentPage = ((TabbedPage)Application.Current.MainPage).Children[0];
+        }
+
         private void ReportsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
                 if (e.OldItems.Count > 0)
                 {
-                    var removedReport = (Report) e.OldItems[0];
+                    var removedReport = (Report)e.OldItems[0];
                     switch (removedReport.Priority)
                     {
                         case 1:
-                            HighReports.Remove(removedReport);
+                            HighReports.Remove(HighReports.First(x => x.ReportId.Equals(removedReport.ReportId)));
                             break;
                         case 2:
-                            MidReports.Remove(removedReport);
+                            MidReports.Remove(MidReports.First(x => x.ReportId.Equals(removedReport.ReportId)));
                             break;
                         case 3:
-                            LowReports.Remove(removedReport);
+                            LowReports.Remove(LowReports.First(x => x.ReportId.Equals(removedReport.ReportId)));
                             break;
                         default:
                             Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Bijwerken meldingenlijst mislukt\r\n(verwijdering)", "OK");
@@ -83,34 +111,6 @@ namespace KBS2.WijkagentApp.ViewModels
                     }
                 }
             }
-        }
-
-        /*
-         * this method makes it possible that a double tap on a listitem a new modal with details will popup
-         */
-        private void ShowDetailPageOfReport(ItemTappedEventArgs eventArgs)
-        {
-            if (!ReferenceEquals(eventArgs.Item, currentTappedReport))
-            {
-                currentTappedReport = (Report) eventArgs.Item;
-            }
-            else
-            {
-                Application.Current.MainPage.Navigation.PushModalAsync(new NoticeDetailPage(new NoticeDetailViewModel((Report)eventArgs.Item)));
-                currentTappedReport = null;
-            }
-        }
-
-        /*
-         * we send a message with messagingcenter containing the selected report object, after that we move to out first (map) page
-         */
-        private void ShowPinOnMap(Report report)
-        {
-            Report = report;
-
-            MessagingCenter.Send<IBroadcastReport, Report>(this, "A Report Is Selected", Report);
-
-            ((TabbedPage)Application.Current.MainPage).CurrentPage = ((TabbedPage)Application.Current.MainPage).Children[0];
         }
 
     }

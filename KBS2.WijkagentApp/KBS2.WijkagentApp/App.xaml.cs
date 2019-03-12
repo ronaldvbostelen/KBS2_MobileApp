@@ -1,6 +1,7 @@
 ﻿using KBS2.WijkagentApp.DataModels.Collections;
 using KBS2.WijkagentApp.Models.DataControllers;
 using KBS2.WijkagentApp.Views.Pages;
+using TK.CustomMap.Api.Google;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 

@@ -10,8 +10,9 @@
     <ContentPage.Content>
         <StackLayout
             VerticalOptions="End">
-            <Label Text="Logged in as:"/>
-            <Label Text="{Binding UserName, StringFormat='{}{0:N}'}"/>
+            <Label Text="{Binding FullName, StringFormat='Fullname: {0:N}'}"/>
+            <Label Text="{Binding UserName, StringFormat='Logged in as: {0:N}'}"/>
+
             <Button Text="LOGOUT" Command="{Binding LogoutCommand}"/>
         </StackLayout>
     </ContentPage.Content>
