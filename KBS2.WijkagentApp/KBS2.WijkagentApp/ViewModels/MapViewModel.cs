@@ -154,9 +154,12 @@ namespace KBS2.WijkagentApp.ViewModels
                 // little failsave =D
                 if (e.OldItems.Count > 0)
                 {
-                    var removedItem = (Report)e.OldItems[0];
+                    var removedItem = (Report) e.OldItems[0];
                     // so we search in the pinslist for the removed items coordinates so we can assume that pin/report is deleted
-                    Pins.Remove(Pins.First(x => x.Position.Equals(new Position(removedItem.Latitude ?? 0, removedItem.Longitude ?? 0))));
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        Pins.Remove(Pins.First(x => x.Position.Equals(new Position(removedItem.Latitude ?? 0, removedItem.Longitude ?? 0))));
+                    });
                 }
             }
 
@@ -165,8 +168,11 @@ namespace KBS2.WijkagentApp.ViewModels
                 // little failsave =D
                 if (e.NewItems.Count > 0)
                 {
-                    var newReport = (Report)e.NewItems[0];
-                    Pins.Add(PinCreator(newReport));
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        var newReport = (Report)e.NewItems[0];
+                        Pins.Add(PinCreator(newReport));
+                    });
                 }
             }
         }

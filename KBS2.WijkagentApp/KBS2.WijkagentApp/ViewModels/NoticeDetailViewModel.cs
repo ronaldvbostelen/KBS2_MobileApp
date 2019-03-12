@@ -218,8 +218,6 @@ namespace KBS2.WijkagentApp.ViewModels
 
                 await App.DataController.UpdateSetAsync(Report);
                 
-                App.ReportsCollection.Reports.Remove(Report);
-
                 var popModalTask = Application.Current.MainPage.Navigation.PopModalAsync();
 
                 await Application.Current.MainPage.DisplayAlert("Geslaagd", "Melding opgeslagen en afgesloten", "Ok");
