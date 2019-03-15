@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using KBS2.WijkagentApp.DataModels;
+using KBS2.WijkagentApp.Services.Dependecies;
 using KBS2.WijkagentApp.ViewModels.Interfaces;
 
 namespace KBS2.WijkagentApp.ViewModels
@@ -48,6 +49,7 @@ namespace KBS2.WijkagentApp.ViewModels
             RegionChangeAnimated = true;
 
             var currentPositionTask = GetCurrentLocationAsync();
+            var timeoutTask = Task.Delay(20000); // maybe this is to low, we have to check
             
             // set pins on map (based of central list)
             Pins = new ObservableCollection<TKCustomMapPin>(App.ReportsCollection.Reports.Select(PinCreator));
@@ -57,8 +59,18 @@ namespace KBS2.WijkagentApp.ViewModels
 
             MessagingCenter.Subscribe<IBroadcastReport, Report>(this, "A Report Is Selected", (sender,report) => SetMapFocus(report));
 
-            MapRegion = await currentPositionTask;
-            ShowingUser = MapRegion != null;
+            // so we've created a get location task and a delay task. when any of these complete this method will continue
+            // if the delay task completes, we close the app because it took to long to get the current location
+            // if we dont have the location and a pin is clicked the app will crash somehow, so this is kind of a failsave
+            await Task.WhenAny(currentPositionTask, timeoutTask); 
+            
+            if (timeoutTask.IsCompleted)
+            {
+                await ExitApp();
+            }
+            
+            ShowingUser = true;
+            MapRegion = currentPositionTask.Result;
         }
         
         //async method to set the current location, this uses the permissionplugin to request the needed permission to get the GPS 
@@ -170,6 +182,14 @@ namespace KBS2.WijkagentApp.ViewModels
                     });
                 }
             }
+        }
+
+        private async Task ExitApp()
+        {
+            await Application.Current.MainPage.DisplayAlert("GPS-bepaling mislukt", "Wijzig uw GPS-instellingen zodat uw locatie kan worden bepaald (Locatiemodus: 'Zeer naukeurig'). " +
+                                                                                    "De applicatie is afhankelijk van uw huidige locatie. " +
+                                                                                    "Daarom wordt de applicatie nu gesloten", "Ok");
+            DependencyService.Get<ICloseApplication>().CloseApp();
         }
     }
 }

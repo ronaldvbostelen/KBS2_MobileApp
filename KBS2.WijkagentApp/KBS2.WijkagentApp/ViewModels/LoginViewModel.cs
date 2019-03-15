@@ -3,6 +3,7 @@ using KBS2.WijkagentApp.ViewModels.Commands;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -36,7 +37,7 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public ICommand LoginCommand => loginCommand ?? (loginCommand = new ActionCommand(x => LoginAsync(), x => CanLogin()));
 
-        private async void LoginAsync()
+        private async Task LoginAsync()
         {
             var validateLoginTask = App.DataController.CheckOfficerCredentialsAsync(officer);
             

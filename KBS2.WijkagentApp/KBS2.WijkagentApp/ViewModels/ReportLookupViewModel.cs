@@ -77,9 +77,9 @@ namespace KBS2.WijkagentApp.ViewModels
         }
 
         //if you press the "Zoek melding" words this will popup, its quite hidden because i couldnt get it nice in the UI / formatting / placing / #IwantToGoBackToWPFFuckXamarin
-        private async void HelpDialog()
+        private void HelpDialog()
         {
-            await Application.Current.MainPage.DisplayAlert("Zoeken",
+            Application.Current.MainPage.DisplayAlert("Zoeken",
                 "U kunt zoeken op aanleiding, locatie en omschrijving. Voer trefwoord(en) in en druk op enter. " +
                 "De gevonden meldingen worden direct getoond. De meldingen worden verrijkt met twitterberichten " +
                 "die in de nabije omgeving zijn verstuurd.", "Ok");

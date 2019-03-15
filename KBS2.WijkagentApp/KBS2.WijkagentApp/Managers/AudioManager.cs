@@ -25,7 +25,7 @@ namespace KBS2.WijkagentApp.Managers
             FilePath = Path.Combine(GetDroidSavePath(), $"{name}_{DateTime.Now}.wav");
         }
 
-        public async Task<string> Start()
+        public async Task<string> StartAsync()
         {
             if (!IsRecording)
             {
@@ -36,7 +36,7 @@ namespace KBS2.WijkagentApp.Managers
             return string.Empty;
         }
 
-        public async void Stop()
+        public async Task StopAsync()
         {
             if (IsRecording)
             {

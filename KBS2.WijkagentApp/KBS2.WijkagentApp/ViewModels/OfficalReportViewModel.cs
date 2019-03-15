@@ -298,13 +298,14 @@ namespace KBS2.WijkagentApp.ViewModels
                 var recorder = new AudioManager();
                 recorder.SetFileName(officialReport.ReportId.ToString());
                 
-                var recordTask = recorder.Start();
+                var recordTask = recorder.StartAsync();
 
                 await Application.Current.MainPage.DisplayAlert("Audio-opname gestart", "Druk op STOP om opname te staken", "Stop");
 
-                recorder.Stop();
+                var stopTask = recorder.StopAsync();
 
                 await recordTask;
+                await stopTask;
 
                 if (recordTask.Result != null)
                 {
