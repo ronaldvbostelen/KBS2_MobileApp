@@ -28,11 +28,6 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public PinsViewModel()
         {
-            Initialize();
-        }
-
-        private void Initialize()
-        {
             App.ReportsCollection.Reports.CollectionChanged += ReportsCollectionChanged;
         }
 
