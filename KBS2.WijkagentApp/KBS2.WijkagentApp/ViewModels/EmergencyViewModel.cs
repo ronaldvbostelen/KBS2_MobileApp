@@ -24,11 +24,6 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public EmergencyViewModel()
         {
-            Initialize();
-        }
-
-        private void Initialize()
-        {
             FullName = User.Person.FullName;
             Emergency = SetEmergency();
         }
