@@ -61,22 +61,14 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public ReportLookupViewModel()
         {
-            Initialize();
-        }
-
-        // we create new objects when we start the app/this viewmodel
-        private void Initialize()
-        {
+            // we create new objects when we start the app/this viewmodel
             FoundReports = new ObservableCollection<Report>();
-
             queryResults = new List<Report>();
-
             twitter = new TwitterDataController();
-
             Tweets = new ObservableCollection<Tweet>();
         }
 
-        //if you press the "Zoek melding" words this will popup, its quite hidden because i couldnt get it nice in the UI / formatting / placing / #IwantToGoBackToWPFFuckXamarin
+        // if you press the "Melding zoeken" words this will popup. It's quite hidden because I couldn't get it nice in the UI / formatting / placing
         private void HelpDialog()
         {
             Application.Current.MainPage.DisplayAlert("Zoeken",
@@ -85,7 +77,7 @@ namespace KBS2.WijkagentApp.ViewModels
                 "die in de nabije omgeving zijn verstuurd.", "Ok");
         }
 
-        // so if you press search this task will be triggered with the enterd text (parameter)
+        // if you press search this task will be triggered with the entered text (parameter)
         private async Task SearchAsync(string searchParameter)
         {
             try
