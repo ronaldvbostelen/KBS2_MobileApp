@@ -30,7 +30,7 @@ namespace KBS2.WijkagentApp.ViewModels
         public string Note { get { return noteDetails.Statement; } set { if (value != noteDetails.Statement) { noteDetails.Statement = value; NotifyPropertyChanged(); ((ActionCommand)CloseNoticeCommand).RaiseCanExecuteChanged(); } } }
         public ObservableCollection<Person> InvolvedPersons { get { return involvedPersons; } set { if (value != involvedPersons) { involvedPersons = value; NotifyPropertyChanged(); } } }
         public ICommand OfficialReportCommand => officalReportCommand ?? (officalReportCommand = new ActionCommand(report => GoToOfficialReportPage((Report)report), x => CanGoToReportPage()));
-        public ICommand CloseNoticeCommand => closeNoticeCommand ?? (closeNoticeCommand = new ActionCommand(report => CloseReportAsync(), x => CanCloseReport()));
+        public ICommand CloseNoticeCommand => closeNoticeCommand ?? (closeNoticeCommand = new ActionCommand(async report => await CloseReportAsync(), x => CanCloseReport()));
         public bool SwitchToggleIsEnabled { get { return switchToggleIsEnabled; } set { if (value != switchToggleIsEnabled) { switchToggleIsEnabled = value; NotifyPropertyChanged(nameof(SwitchToggleIsEnabled), nameof(NoteEditorIsEnabled)); } } }
         public bool NoteEditorIsEnabled => switchToggleIsEnabled;
 

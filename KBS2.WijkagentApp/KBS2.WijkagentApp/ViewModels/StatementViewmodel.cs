@@ -21,9 +21,9 @@ namespace KBS2.WijkagentApp.ViewModels
         private ICommand deleteCommand;
         private ICommand cancelCommand;
 
-        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => SaveAsync(), x => CanSave()));
-        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(x => DeleteAsync(), x => CanDelete()));
-        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => CancelAsync()));
+        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(async x => await SaveAsync(), x => CanSave()));
+        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(async x => await DeleteAsync(), x => CanDelete()));
+        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(async x => await CancelAsync()));
 
         public StatementViewmodel(Person verbalisant, ReportDetails reportDetails)
         {

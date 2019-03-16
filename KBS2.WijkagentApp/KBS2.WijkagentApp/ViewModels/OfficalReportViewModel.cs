@@ -43,11 +43,11 @@ namespace KBS2.WijkagentApp.ViewModels
         public ICommand AddVerbalisantCommand => addVerbalisantCommand ?? (addVerbalisantCommand = new ActionCommand(x => GoToAddVerbalisatPage())); 
         public ICommand EditPersonCommand => editPersonCommand ?? (editPersonCommand = new ActionCommand(x => EditPerson((Person) x))); 
         public ICommand StatementCommand => statementCommand ?? (statementCommand = new ActionCommand(x => GoToStatementPage((Person) x))); 
-        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => SaveAsync(), x => CanSave()));
-        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(x => DeleteAsync(), x => CanDelete()));
-        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => CancelAsync()));
+        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(async x => await SaveAsync(), x => CanSave()));
+        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(async x => await DeleteAsync(), x => CanDelete()));
+        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(async x => await CancelAsync()));
         public ICommand CameraCommand => cameraCommand ?? (cameraCommand = new ActionCommand(x => Task.Run(OpenCameraAsync)));
-        public ICommand AudioCommand => audioCommand ?? (audioCommand = new ActionCommand(x => StartRecorderAsync()));
+        public ICommand AudioCommand => audioCommand ?? (audioCommand = new ActionCommand(async x => await StartRecorderAsync()));
         public ICommand ValidateCanSaveCommand { get { return new ActionCommand(x => ((ActionCommand) SaveCommand).RaiseCanExecuteChanged()); } }
         
         public Report Report { get { return report; } set { if (value != report) { report = value; NotifyPropertyChanged(); } } }

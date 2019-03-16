@@ -35,7 +35,7 @@ namespace KBS2.WijkagentApp.ViewModels
             officer = new Officer();
         }
 
-        public ICommand LoginCommand => loginCommand ?? (loginCommand = new ActionCommand(x => LoginAsync(), x => CanLogin()));
+        public ICommand LoginCommand => loginCommand ?? (loginCommand = new ActionCommand(async x => await LoginAsync(), x => CanLogin()));
 
         private async Task LoginAsync()
         {

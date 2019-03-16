@@ -33,10 +33,10 @@ namespace KBS2.WijkagentApp.ViewModels
         private ICommand searchTextCommand;
         private ICommand tweetTappedCommand;
 
-        public ICommand SearchCommand => searchCommand ?? (searchCommand = new ActionCommand(searchParameter => SearchAsync((string) searchParameter)));
+        public ICommand SearchCommand => searchCommand ?? (searchCommand = new ActionCommand(async searchParameter => await SearchAsync((string) searchParameter)));
         public ICommand HelpCommand => helpCommand ?? (helpCommand = new ActionCommand(x => HelpDialog()));
         public ICommand SearchTextCommand => searchTextCommand ?? (searchTextCommand = new ActionCommand(x => SearchText((TextChangedEventArgs) x)));
-        public ICommand TweetTappedCommand => tweetTappedCommand ?? (tweetTappedCommand = new ActionCommand(x => TweetTappedAsync((ItemTappedEventArgs)x)));
+        public ICommand TweetTappedCommand => tweetTappedCommand ?? (tweetTappedCommand = new ActionCommand(async x => await TweetTappedAsync((ItemTappedEventArgs)x)));
 
         public ObservableCollection<Report> FoundReports { get; set; }
         public ObservableCollection<Tweet> Tweets { get; set; }

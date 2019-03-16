@@ -18,7 +18,7 @@ namespace KBS2.WijkagentApp.ViewModels
         public Emergency Emergency { get { return emergency; } set { if (value != emergency) { emergency = value; NotifyPropertyChanged(); } } }
 
         private ICommand emergencyTriggerCommand;
-        public ICommand EmergencyTriggerCommand => emergencyTriggerCommand ?? (emergencyTriggerCommand = new ActionCommand(x => EmergencyTriggerAsync()));
+        public ICommand EmergencyTriggerCommand => emergencyTriggerCommand ?? (emergencyTriggerCommand = new ActionCommand(async x => await EmergencyTriggerAsync()));
 
         public string FullName { get; set; }
 
