@@ -37,12 +37,7 @@ namespace KBS2.WijkagentApp.ViewModels
         public NewNoticeViewModel(Position position)
         {
             this.position = position;
-            
-            Initialize();
-        }
 
-        private void Initialize()
-        {
             Report = new Report
             {
                 ReporterId = User.Id,
