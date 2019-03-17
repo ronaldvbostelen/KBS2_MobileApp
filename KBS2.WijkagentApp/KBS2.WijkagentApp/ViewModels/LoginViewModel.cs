@@ -27,11 +27,6 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public LoginViewModel()
         {
-            Initialize();
-        }
-
-        private void Initialize()
-        {
             officer = new Officer();
         }
 
