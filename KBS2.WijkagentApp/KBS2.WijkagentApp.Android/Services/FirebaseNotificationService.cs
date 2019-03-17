@@ -53,8 +53,7 @@ namespace KBS2.WijkagentApp.Droid.Services
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.Append($"Officier: {fullName}\n");
                 stringBuilder.Append($"Tijdstip: {emergency.Time}\n");
-                stringBuilder.Append($"Omschrijving: {emergency.Description}\n");
-                stringBuilder.Append($"Locatie: {emergency.Location}");
+                stringBuilder.Append($"Locatie: {emergency.Latitude}, {emergency.Longitude}");
 
                 SendNotification("Emergency", $"{stringBuilder}", emergency);
             }
