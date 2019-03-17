@@ -48,12 +48,10 @@ namespace KBS2.WijkagentApp.Views.Pages
             }
         }
 
-        private void OnClicked(object sender, EventArgs e) => SlidePanel(false);
-
         private void SlidePanel(bool up)
         {
-            AbsoluteLayout.SetLayoutBounds(MapLayout, new Rectangle(0, 0, 1, up ? 0.5 : 0.96));
-            AbsoluteLayout.SetLayoutBounds(EmergencyPanel, new Rectangle(1, 1, 1, up ? 0.5 : 0.04));
+            AbsoluteLayout.SetLayoutBounds(MapLayout, new Rectangle(0, 0, 1, up ? 0.8 : 0.96));
+            AbsoluteLayout.SetLayoutBounds(EmergencyPanel, new Rectangle(1, 1, 1, up ? 0.3 : 0.04));
         }   
     }
 }
