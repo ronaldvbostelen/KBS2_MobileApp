@@ -116,7 +116,7 @@
                     </StackLayout>
                     <StackLayout
                         x:Name="TwitterDetailsView"
-                        AbsoluteLayout.LayoutBounds="1,1,1,0.08"
+                        AbsoluteLayout.LayoutBounds="1,1,1,0.06"
                         AbsoluteLayout.LayoutFlags="All"
                         Spacing="0">
                         <Label

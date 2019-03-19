@@ -50,8 +50,10 @@ namespace KBS2.WijkagentApp.Views.Pages
 
         private void SlidePanel(bool up)
         {
-            AbsoluteLayout.SetLayoutBounds(MapLayout, new Rectangle(0, 0, 1, up ? 0.8 : 0.96));
-            AbsoluteLayout.SetLayoutBounds(EmergencyPanel, new Rectangle(1, 1, 1, up ? 0.3 : 0.04));
-        }   
+            AbsoluteLayout.SetLayoutBounds(MapLayout, new Rectangle(0, 0, 1, up ? 0.75 : 0.96));
+            AbsoluteLayout.SetLayoutBounds(EmergencyPanel, new Rectangle(1, 1, 1, up ? 0.25 : 0.04));
+
+            Noodsituatielabel.FontSize = up ? 30 : 15; //just for funsies
+        }
     }
 }

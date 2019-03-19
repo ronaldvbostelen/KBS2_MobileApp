@@ -84,7 +84,7 @@ namespace KBS2.WijkagentApp.ViewModels
                     var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Location);
                     status = results[Permission.Location];
                 }
-                else
+                if (status == PermissionStatus.Granted)
                 {
                     var locator = CrossGeolocator.Current;
                     var position = await locator.GetPositionAsync();
