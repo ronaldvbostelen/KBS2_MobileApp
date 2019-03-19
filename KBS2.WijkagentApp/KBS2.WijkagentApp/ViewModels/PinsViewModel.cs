@@ -28,11 +28,6 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public PinsViewModel()
         {
-            Initialize();
-        }
-
-        private void Initialize()
-        {
             App.ReportsCollection.Reports.CollectionChanged += ReportsCollectionChanged;
         }
 
@@ -66,49 +61,43 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private void ReportsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Remove)
+            if (e.Action == NotifyCollectionChangedAction.Remove && e.OldItems.Count > 0)
             {
-                if (e.OldItems.Count > 0)
+                var removedReport = (Report)e.OldItems[0];
+                switch (removedReport.Priority)
                 {
-                    var removedReport = (Report)e.OldItems[0];
-                    switch (removedReport.Priority)
-                    {
-                        case 1:
-                            HighReports.Remove(HighReports.First(x => x.ReportId.Equals(removedReport.ReportId)));
-                            break;
-                        case 2:
-                            MidReports.Remove(MidReports.First(x => x.ReportId.Equals(removedReport.ReportId)));
-                            break;
-                        case 3:
-                            LowReports.Remove(LowReports.First(x => x.ReportId.Equals(removedReport.ReportId)));
-                            break;
-                        default:
-                            Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Bijwerken meldingenlijst mislukt\r\n(verwijdering)", "OK");
-                            break;
-                    }
+                    case 1:
+                        HighReports.Remove(HighReports.First(x => x.ReportId.Equals(removedReport.ReportId)));
+                        break;
+                    case 2:
+                        MidReports.Remove(MidReports.First(x => x.ReportId.Equals(removedReport.ReportId)));
+                        break;
+                    case 3:
+                        LowReports.Remove(LowReports.First(x => x.ReportId.Equals(removedReport.ReportId)));
+                        break;
+                    default:
+                        Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Bijwerken meldingenlijst mislukt\r\n(verwijdering)", "OK");
+                        break;
                 }
             }
 
-            if (e.Action == NotifyCollectionChangedAction.Add)
+            if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems.Count > 0)
             {
-                if (e.NewItems.Count > 0)
+                var addedReport = (Report)e.NewItems[0];
+                switch (addedReport.Priority)
                 {
-                    var addedReport = (Report)e.NewItems[0];
-                    switch (addedReport.Priority)
-                    {
-                        case 1:
-                            HighReports.Add(addedReport);
-                            break;
-                        case 2:
-                            MidReports.Add(addedReport);
-                            break;
-                        case 3:
-                            LowReports.Add(addedReport);
-                            break;
-                        default:
-                            Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Bijwerken meldingenlijst mislukt\r\n(toevoeging)", "OK");
-                            break;
-                    }
+                    case 1:
+                        HighReports.Add(addedReport);
+                        break;
+                    case 2:
+                        MidReports.Add(addedReport);
+                        break;
+                    case 3:
+                        LowReports.Add(addedReport);
+                        break;
+                    default:
+                        Application.Current.MainPage.DisplayAlert("Er ging iets mis", "Bijwerken meldingenlijst mislukt\r\n(toevoeging)", "OK");
+                        break;
                 }
             }
         }

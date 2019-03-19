@@ -30,19 +30,14 @@ namespace KBS2.WijkagentApp.ViewModels
         private ICommand cancelCommand;
         private ICommand validateCanSaveCommand;
 
-        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => SaveAsync(), x => CanSave()));
-        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => CancelAsync()));
+        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(async x => await SaveAsync(), x => CanSave()));
+        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(async x => await CancelAsync()));
         public ICommand ValidateCanSaveCommand => validateCanSaveCommand ?? (validateCanSaveCommand = new Command(() => ((ActionCommand) SaveCommand).RaiseCanExecuteChanged()));
         
         public NewNoticeViewModel(Position position)
         {
             this.position = position;
-            
-            Initialize();
-        }
 
-        private void Initialize()
-        {
             Report = new Report
             {
                 ReporterId = User.Id,

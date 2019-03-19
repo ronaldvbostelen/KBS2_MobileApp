@@ -33,10 +33,10 @@ namespace KBS2.WijkagentApp.ViewModels
         private ICommand searchTextCommand;
         private ICommand tweetTappedCommand;
 
-        public ICommand SearchCommand => searchCommand ?? (searchCommand = new ActionCommand(searchParameter => SearchAsync((string) searchParameter)));
+        public ICommand SearchCommand => searchCommand ?? (searchCommand = new ActionCommand(async searchParameter => await SearchAsync((string) searchParameter)));
         public ICommand HelpCommand => helpCommand ?? (helpCommand = new ActionCommand(x => HelpDialog()));
         public ICommand SearchTextCommand => searchTextCommand ?? (searchTextCommand = new ActionCommand(x => SearchText((TextChangedEventArgs) x)));
-        public ICommand TweetTappedCommand => tweetTappedCommand ?? (tweetTappedCommand = new ActionCommand(x => TweetTappedAsync((ItemTappedEventArgs)x)));
+        public ICommand TweetTappedCommand => tweetTappedCommand ?? (tweetTappedCommand = new ActionCommand(async x => await TweetTappedAsync((ItemTappedEventArgs)x)));
 
         public ObservableCollection<Report> FoundReports { get; set; }
         public ObservableCollection<Tweet> Tweets { get; set; }
@@ -61,22 +61,14 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public ReportLookupViewModel()
         {
-            Initialize();
-        }
-
-        // we create new objects when we start the app/this viewmodel
-        private void Initialize()
-        {
+            // we create new objects when we start the app/this viewmodel
             FoundReports = new ObservableCollection<Report>();
-
             queryResults = new List<Report>();
-
             twitter = new TwitterDataController();
-
             Tweets = new ObservableCollection<Tweet>();
         }
 
-        //if you press the "Zoek melding" words this will popup, its quite hidden because i couldnt get it nice in the UI / formatting / placing / #IwantToGoBackToWPFFuckXamarin
+        // if you press the "Melding zoeken" words this will popup. It's quite hidden because I couldn't get it nice in the UI / formatting / placing
         private void HelpDialog()
         {
             Application.Current.MainPage.DisplayAlert("Zoeken",
@@ -85,7 +77,7 @@ namespace KBS2.WijkagentApp.ViewModels
                 "die in de nabije omgeving zijn verstuurd.", "Ok");
         }
 
-        // so if you press search this task will be triggered with the enterd text (parameter)
+        // if you press search this task will be triggered with the entered text (parameter)
         private async Task SearchAsync(string searchParameter)
         {
             try

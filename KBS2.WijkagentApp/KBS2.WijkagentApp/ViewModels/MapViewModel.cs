@@ -49,7 +49,7 @@ namespace KBS2.WijkagentApp.ViewModels
             RegionChangeAnimated = true;
 
             var currentPositionTask = GetCurrentLocationAsync();
-            var timeoutTask = Task.Delay(20000); // maybe this is to low, we have to check
+            var timeoutTask = Task.Delay(20000); // maybe this is too low, we have to check
             
             // set pins on map (based of central list)
             Pins = new ObservableCollection<TKCustomMapPin>(App.ReportsCollection.Reports.Select(PinCreator));
@@ -59,7 +59,7 @@ namespace KBS2.WijkagentApp.ViewModels
 
             MessagingCenter.Subscribe<IBroadcastReport, Report>(this, "A Report Is Selected", (sender,report) => SetMapFocus(report));
 
-            // so we've created a get location task and a delay task. when any of these complete this method will continue
+            // so we've created a get location task and a delay task. when any of these complete, this method will continue
             // if the delay task completes, we close the app because it took to long to get the current location
             // if we dont have the location and a pin is clicked the app will crash somehow, so this is kind of a failsave
             await Task.WhenAny(currentPositionTask, timeoutTask); 

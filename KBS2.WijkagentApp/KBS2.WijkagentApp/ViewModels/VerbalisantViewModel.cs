@@ -32,9 +32,9 @@ namespace KBS2.WijkagentApp.ViewModels
 
         private IEnumerable<ReportDetails> ExistingReportDetails { get; set; }
 
-        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(x => SaveAsync(), x => CanSave()));  
-        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(x => DeleteAsync(), x => CanDelete()));
-        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(x => CancelAsync()));
+        public ICommand SaveCommand => saveCommand ?? (saveCommand = new ActionCommand(async x => await SaveAsync(), x => CanSave()));  
+        public ICommand DeleteCommand => deleteCommand ?? (deleteCommand = new ActionCommand(async x => await DeleteAsync(), x => CanDelete()));
+        public ICommand CancelCommand => cancelCommand ?? (cancelCommand = new ActionCommand(async x => await CancelAsync()));
         public ICommand ValidateCommands { get { return new ActionCommand(x => UpdateCommands()); } }
         
         public event EventHandler<ReportDetailsEventArgs> ReportDetailsChanged;

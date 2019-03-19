@@ -27,15 +27,10 @@ namespace KBS2.WijkagentApp.ViewModels
 
         public LoginViewModel()
         {
-            Initialize();
-        }
-
-        private void Initialize()
-        {
             officer = new Officer();
         }
 
-        public ICommand LoginCommand => loginCommand ?? (loginCommand = new ActionCommand(x => LoginAsync(), x => CanLogin()));
+        public ICommand LoginCommand => loginCommand ?? (loginCommand = new ActionCommand(async x => await LoginAsync(), x => CanLogin()));
 
         private async Task LoginAsync()
         {
@@ -47,25 +42,25 @@ namespace KBS2.WijkagentApp.ViewModels
             LoginAttemptMessageIsVisible = true;
 
             //datacontroller creates costum api request based on userinput
-            //api sends respons back (succes (with officer object) or notfound/bad request when login failed)
-            var apiRespons = await validateLoginTask;
+            //api sends response back (succes (with officer object) or notfound/bad request when login failed)
+            var apiResponse = await validateLoginTask;
 
             //credentials are correct
-            if (apiRespons.IsSuccessStatusCode)
+            if (apiResponse.IsSuccessStatusCode)
             {
                 try
                 {
-                    var toString = await apiRespons.Content.ReadAsStringAsync();
+                    var toString = await apiResponse.Content.ReadAsStringAsync();
                     var toObject = JsonConvert.DeserializeObject(toString, Type.GetType("KBS2.WijkagentApp.DataModels.Officer"));
                     User.Base = (Officer) toObject;
 
                     //create asynctasks..
                     var userPersonalInfoTask = App.DataController.PersonTable.LookupAsync(User.PersonId);
-                    var repoortsTask = App.DataController.FetchReportsAsync();
+                    var reportsTask = App.DataController.FetchReportsAsync();
 
                     // we need these before we can continue
                     User.Person = await userPersonalInfoTask;
-                    App.ReportsCollection.Reports = await repoortsTask;
+                    App.ReportsCollection.Reports = await reportsTask;
 
                     Application.Current.MainPage = new MainPage();
                 }
@@ -79,7 +74,7 @@ namespace KBS2.WijkagentApp.ViewModels
             //too bad, try again
             else
             {
-                Debug.WriteLine(apiRespons.RequestMessage);
+                Debug.WriteLine(apiResponse.RequestMessage);
 
                 LoginAttemptMessageIsVisible = false;
                 LoginMessage = "Helaas..\nDe ingevulde gegevens komen niet voor in ons systeem";
