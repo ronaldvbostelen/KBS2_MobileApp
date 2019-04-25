@@ -22,8 +22,8 @@ namespace KBS2.WijkagentApp.Models.DataControllers
             {
                 CredentialStore = new InMemoryCredentialStore()
                 {
-                    ConsumerKey = "yFdnfYXOZmH5Z15qYk6srt2E6",
-                    ConsumerSecret = "6wOk2naxqyRd4xwhJlkfmagYuNxvbLZjUhILyOWxmgBAU1byf4"
+                    ConsumerKey = "[]",
+                    ConsumerSecret = "[]"
                 }
             };
             
